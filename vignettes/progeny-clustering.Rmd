@@ -1,0 +1,113 @@
+---
+title: "Progeny and Stability Clustering"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Progeny and Stability Clustering}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+library(stabilityselectr)
+knitr::opts_chunk$set(
+  collapse = TRUE, comment = "#>"
+)
+set.seed(101)
+```
+
+
+## Useful functions:
+
+* `progenyCluster()`: performs progeny clustering
+* `plot()`: S3 plot method for class `pclust`
+* `stabilityCluster()`: performs stability clustering
+
+
+--------------
+
+
+## Progeny Clustering via `progenyCluster()`
+
+Select the optimal number for clustering using Progeny Clustering. The "true"
+number of clusters in the `progeny_data` object is 3.
+
+
+
+```{r progeny}
+pc <- progenyCluster(progeny_data, clust.iter = 2:9, reps = 10, iter = 25, size = 6)
+pc
+```
+
+```{r plot-pclust, fig.height = 4.5, fig.width = 9}
+plot(pc)
+```
+
+
+-------------
+
+
+
+## Stability Clustering via `stabilityCluster()`
+
+Partitioning Around Medoids (PAM) is used both because
+is uses a more robust measurement of the cluster centers (medoids) and
+because this implementation keeps the cluster labels consistent across
+runs, a key feature in calculating the across run stability. This does
+not occur using `stats::kmeans()` where the initial cluster
+labels are arbitrarily assigned.
+
+Correct clusters are:
+
+* cluster 1 -> samples 1:50
+* cluster 2 -> samples 51:100
+* cluster 3 -> samples 101:150
+
+```{r stab-clusters}
+set.seed(999)
+stab_clust <- stabilityCluster(progeny_data, k = 3, iter = 500)
+stab_clust
+
+# view 3-way confusion matrix
+table(actual = rep(1:3, each = 50), predicted = stab_clust$ProbK)
+
+# identify false clusters
+stab_clust <- stab_clust |>
+  dplyr::mutate(
+    sample = dplyr::row_number(),
+    pch    = rep(16:18, each = 50),
+    pch    = dplyr::case_when(
+      sample <= 50 & ProbK != 1L ~ 13L,                 # cluster 1
+      sample > 50 & sample <= 100 & ProbK != 2L ~ 13L,  # cluster 2
+      sample > 100 & ProbK != 3L ~ 13L,                 # cluster 3
+      TRUE ~ pch
+    )
+  )
+
+# view incorrect clusters (n = 6)
+stab_clust |> dplyr::filter(pch == 13)
+```
+
+
+### Plotting Clusters
+
+We can plot the `progeny_data` object, which has 3 main clusters, and identify
+which samples that were "correctly" clustered via stability clustering with
+an "X".
+
+```{r plot-clusters, fig.height = 4.5, fig.width = 9}
+par.def <- list(mgp = c(2, 0.75, 0), mar = c(3, 4, 3, 1))
+par(par.def)
+par(mfrow = 1:2)
+plot(progeny_data, col = rep(2:4, each = 50),
+     pch = rep(16:18, each = 50), cex = 1.75, main = "Simulated 3 Cluster Data")
+plot(progeny_data, col = rep(2:4, each = 50), pch = stab_clust$pch, cex = 1.75,
+     main = "Stability Clustering")
+```
+
+
+-------------------
+
+## References
+Hu, C.W., Kornblau, S.M., Slater, J.H. and A.A. Qutub (2015).
+Progeny Clustering: A Method to Identify Biological Phenotypes. Scientific Reports,
+5:12894. http://www.nature.com/articles/srep12894
