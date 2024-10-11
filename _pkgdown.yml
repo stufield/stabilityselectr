@@ -7,8 +7,6 @@ home:
     href: http://bitbucket.sladmin.com/projects/SV/repos/somastabilityselection/browse
   - text: Report a bug
     href: bitools@somalogic.com
-  - text: Learn more about SomaScan
-    href: http://www.somalogic.com
   - text: The tidyverse
     href: https://www.tidyverse.org
 
@@ -33,7 +31,7 @@ articles:
 - title: Getting Started
   navbar: ~
   contents:
-  - SomaStabilitySelection
+  - stabilityselectr
 
 - title: Permutation Clustering
   navbar: ~
