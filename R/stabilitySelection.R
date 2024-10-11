@@ -121,7 +121,7 @@
 #' })
 #'
 #' # Cox
-#' xcox <- stripMeta(log10(sim_test_data))
+#' xcox <- strip_meta(log10(sim_test_data))
 #' # Note this works because colnames are already "time" and "status". In real
 #' # datasets, need to rename the final matrix as "time" and "status".
 #' ycox <- select(sim_test_data, time, status) |> as.matrix()
@@ -160,7 +160,7 @@ stabilitySelection <- function(x, y = NULL,
   kernel <- match.arg(kernel)
 
   if ( impute.outliers ) {
-    x <- apply(x, 2, imputeOutliers, n.sigma = impute.n.sigma)
+    x <- apply(x, 2, impute_outliers, n.sigma = impute.n.sigma)
   }
 
   # Checks for parallel processing
@@ -457,7 +457,7 @@ stabilitySelection <- function(x, y = NULL,
        perm.lambda      = perm_lambda,
        permpath.max     = perm_max_mat,
        beta             = beta,
-       r.seed           = r.seed) |> addClass("stab_sel")
+       r.seed           = r.seed) |> add_class("stab_sel")
 }
 
 

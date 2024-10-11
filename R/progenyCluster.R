@@ -122,7 +122,7 @@ progenyCluster <- function(data, clust.iter = 2:10, reps = 10,
   ret$repeats     <- reps
   ret             <- c(ret, list(...))
   ret$call        <- match.call(expand.dots = TRUE)
-  addClass(ret, "pclust")
+  add_class(ret, "pclust")
 }
 
 

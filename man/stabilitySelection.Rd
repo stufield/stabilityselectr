@@ -269,7 +269,7 @@ withr::with_seed(101, {
 })
 
 # Cox
-xcox <- stripMeta(log10(sim_test_data))
+xcox <- strip_meta(log10(sim_test_data))
 # Note this works because colnames are already "time" and "status". In real
 # datasets, need to rename the final matrix as "time" and "status".
 ycox <- select(sim_test_data, time, status) |> as.matrix()

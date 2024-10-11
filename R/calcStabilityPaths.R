@@ -65,7 +65,7 @@
 #'                      alpha = 0.8, Pw = 0.5))
 #'
 #' # Cox kernel example
-#' xcox <- stripMeta(log10(sim_test_data))
+#' xcox <- strip_meta(log10(sim_test_data))
 #'
 #' # Note this works because colnames are already "time" and "status". In real
 #' # datasets, need to rename the final matrix as "time" and "status".
@@ -234,14 +234,14 @@ calcStabilityPaths <- function(x, y = NULL, kernel, lambda.seq, alpha, Pw,
   stab1 <- lapply(e$lambda.seq, function(lambda) {
     apply(pr1$rotation[, 1:e$alpha], 2, function(.x) {
           # MAD approx. for normal dist; Robust alternative to ML
-          coefs <- globalr::calcRobustGaussFit(.x, mad = TRUE)
+          coefs <- globalr::fit_gauss(.x, mad = TRUE)
           as.numeric(abs(.x - coefs[1L]) > coefs[2L] * lambda) # lambda is SDs from mean.
           }) |> rowSums() |> as.logical() |> as.numeric()
   }) |> data.frame() |> as.matrix() |> unname()
   pr2   <- stats::prcomp(e$x2, center = TRUE, scale. = e$standardize)
   stab2 <- lapply(e$lambda.seq, function(lambda) {
     apply(pr2$rotation[, 1:e$alpha], 2, function(.x) {
-          coefs <- globalr::calcRobustGaussFit(.x, mad = TRUE)
+          coefs <- globalr::fit_gauss(.x, mad = TRUE)
           as.numeric(abs(.x - coefs[1L]) > coefs[2L] * lambda) # lambda is SDs from mean.
           }) |> rowSums() |> as.logical() |> as.numeric()
   }) |> data.frame() |> as.matrix() |> unname()
