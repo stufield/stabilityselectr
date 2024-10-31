@@ -234,14 +234,14 @@ calcStabilityPaths <- function(x, y = NULL, kernel, lambda.seq, alpha, Pw,
   stab1 <- lapply(e$lambda.seq, function(lambda) {
     apply(pr1$rotation[, 1:e$alpha], 2, function(.x) {
           # MAD approx. for normal dist; Robust alternative to ML
-          coefs <- globalr::fit_gauss(.x, mad = TRUE)
+          coefs <- helpr::fit_gauss(.x, mad = TRUE)
           as.numeric(abs(.x - coefs[1L]) > coefs[2L] * lambda) # lambda is SDs from mean.
           }) |> rowSums() |> as.logical() |> as.numeric()
   }) |> data.frame() |> as.matrix() |> unname()
   pr2   <- stats::prcomp(e$x2, center = TRUE, scale. = e$standardize)
   stab2 <- lapply(e$lambda.seq, function(lambda) {
     apply(pr2$rotation[, 1:e$alpha], 2, function(.x) {
-          coefs <- globalr::fit_gauss(.x, mad = TRUE)
+          coefs <- helpr::fit_gauss(.x, mad = TRUE)
           as.numeric(abs(.x - coefs[1L]) > coefs[2L] * lambda) # lambda is SDs from mean.
           }) |> rowSums() |> as.logical() |> as.numeric()
   }) |> data.frame() |> as.matrix() |> unname()

@@ -17,7 +17,7 @@ Description: The Stability Selection package performs stability
 License: GPL-3 | file LICENSE
 Depends:
     R (>= 4.1.0),
-    globalr,
+    helpr,
     splyr
 Imports:
     cluster,
