@@ -121,10 +121,10 @@
 #' })
 #'
 #' # Cox
-#' xcox <- strip_meta(log10(sim_test_data))
+#' xcox <- strip_meta(log10(sim_adat))
 #' # Note this works because colnames are already "time" and "status". In real
 #' # datasets, need to rename the final matrix as "time" and "status".
-#' ycox <- select(sim_test_data, time, status) |> as.matrix()
+#' ycox <- select(sim_adat, time, status) |> as.matrix()
 #' stab_sel_cox <- stabilitySelection(xcox, ycox, kernel = "Cox", r.seed = 101)
 #' @importFrom glmnet glmnet
 #' @importFrom stats runif setNames
