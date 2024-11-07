@@ -140,6 +140,7 @@ progeny_cluster <- function(data, clust_iter = 2:10L, reps = 10L,
 #' an object is class `pclust`. See [inherits()].
 #'
 #' @rdname progeny_cluster
+#' @param x A `pclust` class object (or an object to be tested for one).
 #' @return [is_pclust()] returns a logical boolean.
 #'
 #' @examples
