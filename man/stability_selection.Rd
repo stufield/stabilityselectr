@@ -145,10 +145,9 @@ This value can also be a vector of values in \verb{[0, 1]},
 but ideally greater than 0.50.}
 
 \item{custom_labels}{a character vector of additional
-features to label in the plot, see Details.}
+features to label in the plot, see \code{Details}.}
 
-\item{main}{optional title for the plot (defaults
-depend on the kernel used)}
+\item{main}{optional title for the plot (defaultsdepend on the kernel used)}
 
 \item{sort_by_AUC}{\code{logical(1)}. If \code{TRUE}, entries in
 the legend will be sorted by their curve AUC values
@@ -279,11 +278,11 @@ withr::with_seed(101, {
 })
 
 # Cox
-xcox <- strip_meta(log_rfu(sim_adat))
+xcox <- strip_meta(stabilityselectr:::log_rfu(sim_adat))
 
-# Note this works because colnames are already "time" and "status".
-In 'real' datasets, you may need to rename the final matrix as
-"time" and "status".
+# Note: this works because colnames are already "time" and "status".
+#   In 'real' datasets, you may need to rename the final matrix as
+#   "time" and "status".
 
 ycox <- select(sim_adat, time, status) |> as.matrix()
 stab_sel_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 3)
@@ -295,7 +294,7 @@ stab_sel
 
 # S3 summary method
 summary(stab_sel, thresh = 0.6)
-summary(stab_sel, thresh = 0.8, add.features = "feat_c")   # force feat_c into table
+summary(stab_sel, thresh = 0.8, add_features = "feat_c")   # force feat_c into table
 # S3 plot method
 plot(stab_sel, thresh = 0.8)
 

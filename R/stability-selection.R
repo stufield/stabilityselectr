@@ -137,11 +137,11 @@
 #' })
 #'
 #' # Cox
-#' xcox <- strip_meta(log_rfu(sim_adat))
+#' xcox <- strip_meta(stabilityselectr:::log_rfu(sim_adat))
 #'
-#' # Note this works because colnames are already "time" and "status".
-#' In 'real' datasets, you may need to rename the final matrix as
-#' "time" and "status".
+#' # Note: this works because colnames are already "time" and "status".
+#' #   In 'real' datasets, you may need to rename the final matrix as
+#' #   "time" and "status".
 #'
 #' ycox <- select(sim_adat, time, status) |> as.matrix()
 #' stab_sel_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 3)
@@ -571,7 +571,7 @@ print.stab_sel <- function(x, ...) {
 #' @examples
 #' # S3 summary method
 #' summary(stab_sel, thresh = 0.6)
-#' summary(stab_sel, thresh = 0.8, add.features = "feat_c")   # force feat_c into table
+#' summary(stab_sel, thresh = 0.8, add_features = "feat_c")   # force feat_c into table
 #' @importFrom dplyr select everything matches
 #'
 #' @export
@@ -618,9 +618,8 @@ summary.stab_sel <- function(object, ..., thresh) {
 #'   along with the AUC for its curve in parentheses.
 #'
 #' @param custom_labels a character vector of additional
-#'   features to label in the plot, see Details.
-#' @param main optional title for the plot (defaults
-#'   depend on the kernel used)
+#'   features to label in the plot, see `Details`.
+#' @param main optional title for the plot (defaultsdepend on the kernel used)
 #' @param sort_by_AUC `logical(1)`. If `TRUE`, entries in
 #'   the legend will be sorted by their curve AUC values
 #'   which are in parentheses following the variable name

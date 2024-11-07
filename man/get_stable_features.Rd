@@ -11,12 +11,18 @@ get_stable_features(x, thresh, add_features, warn)
 get_threshold_features(x, thresh_vec, ...)
 }
 \arguments{
-\item{x}{An object of class \code{stab_sel} OR a matrix containing
+\item{x}{An \code{stab_sel} class object OR a matrix containing
 selection probabilities, i.e. the \code{stabpath_matrix} entry
 of a \code{stab_sel} class object.}
 
-\item{thresh}{Numeric in \verb{[0, 1]}. Minimum selection
+\item{thresh}{\code{numeric(1)} in \verb{[0, 1]}. Minimum selection
 probability threshold.}
+
+\item{add_features}{\code{character(n)}. A string of additional features
+to \emph{force} into the resulting table, irrespective of their
+threshold. Used mostly in the S3 plot method to see a given
+stability path of a feature not meeting a threshold cutoff.
+Must be exact string match.}
 
 \item{warn}{\code{logical(1)}. Should warnings be triggered if no stable
 features were found at the specified threshold OR if the
@@ -26,12 +32,6 @@ FDR upper bound is undefined at thresholds \verb{<= 0.5}?}
 
 \item{...}{Additional arguments passed to \code{\link[=get_stable_features]{get_stable_features()}},
 typically the \verb{add_features =} and \verb{warn =} arguments.}
-
-\item{add.features}{Character. A string of additional features
-to \emph{force} into the resulting table, irrespective of their
-threshold. Used mostly in the S3 plot method to see a given
-stability path of a feature not meeting a threshold cutoff.
-Must be exact string match.}
 }
 \value{
 A two column data frame containing maximum selection probabilities

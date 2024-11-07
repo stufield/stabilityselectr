@@ -7,8 +7,9 @@
 \alias{progeny_data}
 \title{Package Objects}
 \format{
-\code{clust_data}: A 2 column data matrix containing the 2 features in the
-example, named "F1" and "F2", and containing 20 observations.
+\code{clust_data}: A 2 column data matrix containing
+the 2 features in the example, named "F1" and "F2",
+and containing 20 observations.
 
 \code{progeny_data}: A 2 column data matrix containing 2 features,
 "F1" and "F2", 150 observations, and 3 clusters in bivariate space.
@@ -34,15 +35,15 @@ example (see references) in the example illustration in
 Figure 1, page 3.
 
 \item \code{progeny_data}: A simulated clustering data set generated
-to contain \strong{3 true clusters} in bivariate space. There are 2 features,
-named "F1" and "F2" and 150 observations.
+to contain \strong{3 true clusters} in bivariate space.
+There are 2 features, named "F1" and "F2" and 150 observations.
 
 }}
 \examples{
 head(clust_data)
 
-plot(progeny_data, col = rep(2:4, each = 50),
-     pch = rep(16:18, each = 50), cex = 1.75,
+plot(progeny_data, col = rep(2:4, each = 50L),
+     pch = rep(16:18, each = 50L), cex = 1.75,
      main = "Simulated 3 Cluster Data")
 }
 \references{
@@ -52,6 +53,6 @@ Biological Phenotypes. Scientific Reports, 5:12894.
 pg. 3. \url{http://www.nature.com/articles/srep12894}
 }
 \seealso{
-\code{\link[MASS]{mvrnorm}}
+\code{\link[MASS:mvrnorm]{MASS::mvrnorm()}}
 }
 \keyword{datasets}

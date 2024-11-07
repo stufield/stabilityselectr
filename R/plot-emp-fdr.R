@@ -46,7 +46,7 @@ plot_emp_fdr <- function(x, thresh_seq = seq(1, 0.1, by = -0.01)) {
                                           emp_breaks$breaks$MeanFPs)
 
   emp_breaks$fdr_data |>
-    ggplot(ggplot2::aes(x = n_selected, y = MeanFPs)) +
+    ggplot(aes(x = n_selected, y = MeanFPs)) +
     geom_step(size = 0.5) +
     geom_point(alpha = 0.75, size = 3.5) +
     geom_abline(slope = 1, intercept = 0, linetype = "dashed") +

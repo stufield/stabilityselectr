@@ -29,6 +29,15 @@ calc_path_auc <- function(x, values) {
   )
 }
 
+get_analytes <- getFromNamespace("get_analytes", "helpr")
+
+log_rfu <- function(x) {
+  cls <- class(x)
+  cols <- get_analytes(x)
+  for ( i in cols ) x[[i]] <- log10(x[[i]])
+  structure(x, class = cls)
+}
+
 col_palette <- list(
   purple     = "#24135F",
   lightgreen = "#00A499",

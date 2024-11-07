@@ -67,7 +67,7 @@
 #'                        alpha = 0.8, Pw = 0.5))
 #'
 #' # Cox kernel example
-#' xcox <- strip_meta(log_rfu(sim_adat))
+#' xcox <- strip_meta(stabilityselectr:::log_rfu(sim_adat))
 #'
 #' # Note this works because colnames are already "time" and "status". In real
 #' # datasets, need to rename the final matrix as "time" and "status".

@@ -16,12 +16,12 @@
 #'   time and is not always desired, so this method offers the
 #'   user a control mechanism for the output behavior.
 #'
-#' @param x An object of class `stab_sel` OR a matrix containing
+#' @param x An `stab_sel` class object OR a matrix containing
 #'   selection probabilities, i.e. the `stabpath_matrix` entry
 #'   of a `stab_sel` class object.
-#' @param thresh Numeric in \verb{[0, 1]}. Minimum selection
+#' @param thresh `numeric(1)` in \verb{[0, 1]}. Minimum selection
 #'   probability threshold.
-#' @param add.features Character. A string of additional features
+#' @param add_features `character(n)`. A string of additional features
 #'   to *force* into the resulting table, irrespective of their
 #'   threshold. Used mostly in the S3 plot method to see a given
 #'   stability path of a feature not meeting a threshold cutoff.

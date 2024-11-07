@@ -10,14 +10,15 @@
 #'   selection probability can be created using [get_stable_features()].
 #'   See vignettes.
 #'
-#' @seealso [glmnet::glmnet()], [kmeans()]
 #' @import helpr splyr
+#' @seealso [glmnet::glmnet()], [kmeans()]
 #'
-#' @references **Meinshausen, N. and Buhlmann, P.** (*2010*), Stability selection.
-#'   Journal of the Royal Statistical Society: Series B (Statistical
-#'   Methodology), 72: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
+#' @references **Meinshausen, N. and Buhlmann, P.** (*2010*).
+#'   Stability selection. Journal of the Royal Statistical Society:
+#'   Series B (Statistical Methodology), **72**: 417-473.
+#'   doi: 10.1111/j.1467-9868.2010.00740.x
 #'
 #' @references **Hu, C.W., Kornblau, S.M., Slater, J.H. and A.A. Qutub** (*2015*).
-#'   Progeny Clustering: A Method to Identify Biological Phenotypes. Scientific Reports,
-#'   5:12894. \url{http://www.nature.com/articles/srep12894}
+#'   Progeny Clustering: A Method to Identify Biological Phenotypes.
+#'   Scientific Reports, **5**:12894. \url{http://www.nature.com/articles/srep12894}
 NULL

@@ -16,13 +16,14 @@ selection probability can be created using \code{\link[=get_stable_features]{get
 See vignettes.
 }
 \references{
-\strong{Meinshausen, N. and Buhlmann, P.} (\emph{2010}), Stability selection.
-Journal of the Royal Statistical Society: Series B (Statistical
-Methodology), 72: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
+\strong{Meinshausen, N. and Buhlmann, P.} (\emph{2010}).
+Stability selection. Journal of the Royal Statistical Society:
+Series B (Statistical Methodology), \strong{72}: 417-473.
+doi: 10.1111/j.1467-9868.2010.00740.x
 
 \strong{Hu, C.W., Kornblau, S.M., Slater, J.H. and A.A. Qutub} (\emph{2015}).
-Progeny Clustering: A Method to Identify Biological Phenotypes. Scientific Reports,
-5:12894. \url{http://www.nature.com/articles/srep12894}
+Progeny Clustering: A Method to Identify Biological Phenotypes.
+Scientific Reports, \strong{5}:12894. \url{http://www.nature.com/articles/srep12894}
 }
 \seealso{
 \code{\link[glmnet:glmnet]{glmnet::glmnet()}}, \code{\link[=kmeans]{kmeans()}}
