@@ -143,7 +143,7 @@ test_that("`stability_selection()` trips the correct errors if kernel = pca.sd",
 
 # Cox kernel ----
 test_that("`stability_selection()` generates expected values for the Cox kernel", {
-  xcox <- strip_meta(log10(sim_adat))
+  xcox <- strip_meta(log_rfu(sim_adat))
   ycox <- survival::Surv(sim_adat$time, sim_adat$status)
   ss_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 101)
 

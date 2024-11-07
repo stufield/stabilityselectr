@@ -64,7 +64,7 @@ test_that("`calc_stability_paths()` generates expected output for kernel = lasso
 
 # Cox ----
 test_that("`calc_stability_paths()` generates expected output with kernel = 'Cox'", {
-  xcox <- strip_meta(log10(sim_adat))
+  xcox <- strip_meta(log_rfu(sim_adat))
   ycox <- select(sim_adat, time, status) |> as.matrix()
   cox_pm <- withr::with_seed(
     1234,
