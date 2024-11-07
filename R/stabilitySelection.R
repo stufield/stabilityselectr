@@ -1,91 +1,103 @@
 #' Stability Selection
 #'
 #' Performs stability selection on a set of predictive features and a response
-#' variable. Stability selection is performed using a user-specified kernel.
-#' For classification problems the `l1-logistic` kernel should be used and the
-#' response should be a vector or factor of with two class labels. For lasso
-#' the response column should be a numeric vector. For "Cox" the response is a
-#' *two column matrix* containing the event time in the first column and the
-#' censoring indicator in the second column. Lastly, "ridge" regression was
-#' implemented as of Jan 21, 2014.
+#'   variable. Stability selection is performed using a user-specified kernel.
+#'   For classification problems the `l1-logistic` kernel should be used and the
+#'   response should be a vector or factor of with two class labels. For lasso
+#'   the response column should be a numeric vector. For "Cox" the response is a
+#'   *two column matrix* containing the event time in the first column and the
+#'   censoring indicator in the second column. Lastly, "ridge" regression was
+#'   implemented as of Jan 21, 2014.
 #
 #' The randomized lasso is used if the `alpha` parameter is set to a value
-#' less than 1. In a randomized Lasso the model coefficients are randomly
-#' re-weighted when calculating the regularization term. This weighting can be
-#' performed in two different ways. If `Pw = NA` then these random
-#' weights are sampled uniformly between `alpha` and 1. If `Pw` is
-#' supplied, then the random weights are chosen to be `alpha` with
-#' probability `Pw` and 1 otherwise. The latter choice is used in Theorem
-#' 2 in Meinshausen and Buhlmann. Recommended values of `alpha` and
-#' `Pw` are \verb{[0.5, 0.2]}.
+#'   less than 1. In a randomized Lasso the model coefficients are randomly
+#'   re-weighted when calculating the regularization term. This weighting can be
+#'   performed in two different ways. If `Pw = NA` then these random
+#'   weights are sampled uniformly between `alpha` and 1. If `Pw` is
+#'   supplied, then the random weights are chosen to be `alpha` with
+#'   probability `Pw` and 1 otherwise. The latter choice is used in Theorem
+#'   2 in Meinshausen and Buhlmann. Recommended values of `alpha` and
+#'   `Pw` are \verb{[0.5, 0.2]}.
 #'
 #' Stability selection can be performed on multiple cores by setting
-#' `parallel = TRUE`. This functionality requires
-#' [parallel::mclapply()] from the \pkg{parallel} package.
-#' This is *not* available for Windows based OS.
+#'   `parallel = TRUE`. This functionality requires
+#'   [parallel::mclapply()] from the \pkg{parallel} package.
+#'   This is *not* available for Windows based OS.
 #'
 #' @param x A numeric \eqn{n x p} matrix of predictive features containing `n`
-#' observation rows and `p` feature columns. Alternatively, an object of class
-#' `stab_sel` if passing to one of the S3 generic methods.
+#'   observation rows and `p` feature columns. Alternatively, an object of class
+#'   `stab_sel` if passing to one of the S3 generic methods.
 #' @param y The response variable. If kernel is "l1-logistic" then a
-#' vector of binary class labels. If kernel is "Cox" then it is a two column
-#' matrix with the event time in the first column and the censoring
-#' indicator (1 = event, 0 = censored) in the second column.
+#'   vector of binary class labels. If kernel is "Cox" then it is a two column
+#'   matrix with the event time in the first column and the censoring
+#'   indicator (1 = event, 0 = censored) in the second column.
 #' @param kernel Character. A string describing the underlying model
-#' used for selection. Options are:
-#' \itemize{
-#'   \item "l1-logistic" (default)
-#'   \item "lasso"
-#'   \item "Cox"
-#'   \item "ridge"
-#'   \item "multinomial"
-#'   \item "pca.sd"
-#'   \item "pca.thresh"
-#' }
-#' @param num.iter Integer. Defining the number of sub-sampling iterations for
-#'   the stability selection.
-#' @param parallel Logical. Should parallel processing via multiple cores be
-#'   implemented? Must be on a Linux platform and have the \pkg{parallel}
+#'   used for selection. Options are:
+#'   \itemize{
+#'     \item "l1-logistic" (default)
+#'     \item "lasso"
+#'     \item "Cox"
+#'     \item "ridge"
+#'     \item "multinomial"
+#'     \item "pca.sd"
+#'     \item "pca.thresh"
+#'   }
+#'
+#' @param num_iter `integer(1)`. Defining the number of
+#'   sub-sampling iterations for the stability selection.
+#' @param parallel `logical(1)`. Should parallel processing
+#'   via multiple cores be implemented? Must be on a Linux
+#'   platform and have the \pkg{parallel}
 #'   package installed. Otherwise defaults to 1 core.
-#' @param alpha Numeric. Value defining the weakness parameter for the
-#'   randomized regularization. This is the minimum random weight applied to each
+#' @param alpha `numeric(1)`. Value defining the weakness
+#'   parameter for the randomized regularization.
+#'   This is the minimum random weight applied to each
 #'   beta coefficient in the regularization.
-#' @param Pw Numeric. Value defining probability of a weak weight, see
-#'   `alpha`. If `Pw = NA` then the coefficient weights are sampled
-#'   uniformly from `alpha` to 1.
-#' @param standardize Logical. Whether the data should be centered and scaled.
-#' @param lambda.min.ratio The minimum value of lambda/max(lambda) to use during
+#' @param Pw `numeric(1)`. Value defining probability of
+#'   a weak weight, see `alpha`. If `Pw = NA` then the
+#'   coefficient weights are sampled uniformly from `alpha` to 1.
+#' @param standardize `logical(1)`. Whether the data should
+#'   be centered and scaled.
+#' @param lambda.min.ratio The minimum value of
+#'   lambda/max(lambda) to use during
 #'   the selection procedure. See [glmnet()].
-#' @param num.perms Integer. The number of permutations to use
-#'   in calculating the empirical false positive rate.
-#' @param beta.threshold Numeric. Floating point value defining selection
-#'   levels for `ridge regression`. Since ridge regression will not zero out
-#'   coefficients, selection of coefficient curves by selection probability
-#'   is not effective. Any variable having a coefficient with absolute value
-#'   greater than or equal to `beta.threshold` will be selected.
-#' @param elastic.alpha Numeric. Floating point value between 0 and 1. When 0,
-#'   the results of [glmnet()] are equivalent to Ridge regression.
-#'   When 1, the results are equivalent to Lasso. Any value between 0 and 1
-#'   creates a compromise between L1 and L2 penalty.
-#' @param lambda.pad The lambda path is padded with high values of lambda in
-#'   order to produce a more appealing plot. Occasionally, the degree of
-#'   padding needs to be adjusted in order to produce better resolution at low
-#'   values of lambda. Typical values for this parameter are 20 (default), 15,
-#'   10, or 5.
-#' @param impute.outliers Logical. Should statistical outliers
-#'   (\eqn{3 * \sigma}) be imputed to approximate a Gaussian distribution
-#'   during stability selection?
-#' @param impute.n.sigma Numeric. Standard deviation outlier threshold for
-#'   imputing outliers if `impute.outliers = TRUE`, ignored otherwise.
-#' @param r.seed Seed for the random number generator, allowing for
-#'   reproducibility of results.
+#' @param num_perms `integer(1)`. The number of permutations
+#'   to use in calculating the empirical false positive rate.
+#' @param beta_threshold `numeric(1)`. Floating point value
+#'   defining selection levels for `ridge regression`.
+#'   Since ridge regression will not zero out coefficients,
+#'   selection of coefficient curves by selection probability
+#'   is not effective. Any variable having a coefficient with
+#'   absolute value greater than or equal to `beta_threshold`
+#'   will be selected.
+#' @param elastic_alpha `numeric(1)`. Floating point value
+#'   between 0 and 1. When 0, the results of [glmnet()] are
+#'   equivalent to Ridge regression.
+#'   When 1, the results are equivalent to Lasso.
+#'   Any value between 0 and 1 creates a compromise
+#'   between L1 and L2 penalty.
+#' @param lambda_pad The lambda path is padded with high
+#'   values of lambda in order to produce a more appealing plot.
+#'   Occasionally, the degree of padding needs to be
+#'   adjusted in order to produce better resolution at low
+#'   values of lambda. Typical values for this parameter
+#'   are 20 (default), 15, 10, or 5.
+#' @param impute_outliers `logical(1)`. Should statistical
+#'   outliers (\eqn{3 * \sigma}) be imputed to approximate
+#'   a Gaussian distribution during stability selection?
+#' @param impute.n.sigma `numeric(1)`. Standard deviation
+#'   outlier threshold for imputing outliers if
+#'   `impute_outliers = TRUE`, ignored otherwise.
+#' @param r_seed `integer(1)`. Seed for the random number
+#'   generator, allowing for reproducibility of results.
 #' @param ... Additional arguments passed to one of the S3 methods for
 #'   objects of class `stab_sel`, generics include:
 #'   * [plot.stab_sel()]
 #'   * [print.stab_sel()]
 #'   * [summary.stab_sel()]
+#'
 #' @return An object of class `stab_sel`:
-#'   \item{stabpath.matrix}{A matrix of \eqn{features x lambda.seq} containing
+#'   \item{stabpath_matrix}{A matrix of \eqn{features x lambda.seq} containing
 #'     stability selection probabilities. A row in this matrix corresponds to a
 #'     stability selection path for a single feature.}
 #'   \item{lambda}{the sequence of lambdas used for regularization. They
@@ -93,22 +105,24 @@
 #'   \item{alpha}{the weakness parameter provided in the call.}
 #'   \item{Pw}{the weak weight probability provided in the call.}
 #'   \item{kernel}{the kernel used (e.g. l1-logistic).}
-#'   \item{num.iter}{Integer. The number of iterations used in computing
+#'   \item{num_iter}{The number of iterations used in computing
 #'     the stability paths.}
 #'   \item{standardize}{should the data be standardized prior to analysis?}
 #'   \item{lambda.min.ratio}{?}
-#'   \item{perm.data}{Logical. Is there permuted data to perform empirical FDR?}
+#'   \item{perm_data}{Logical. Is there permuted data to perform empirical FDR?}
 #'   \item{permpath.list}{list containing information to calculated the
 #'     permutation paths of the empirical false positive rate.}
-#'   \item{perm.lambda}{The lambda used in the permuted lists.}
+#'   \item{perm_lambda}{The lambda used in the permuted lists.}
 #'   \item{permpath.max}{max lambda for the permuted lists (I think).}
 #'   \item{beta}{A matrix of the betas calculated during the selection process.}
-#'   \item{r.seed}{The random seed used.}
+#'   \item{r_seed}{The random seed used.}
+#'
 #' @author Michael R. Mehan, Stu Field, and Robert Kirk DeLisle
-#' @seealso [glmnet()], [getStableFeatures()]
+#' @seealso [glmnet()], [get_stable_features()]
 #' @references Meinshausen, N. and Buhlmann, P. (2010), Stability selection.
 #'   Journal of the Royal Statistical Society: Series B (Statistical
 #'   Methodology), 72: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
+#'
 #' @examples
 #' # l1-logistic
 #' withr::with_seed(101, {
@@ -134,17 +148,17 @@ stabilitySelection <- function(x, y = NULL,
                                kernel = c("l1-logistic", "lasso", "ridge",
                                           "Cox", "pca.sd", "pca.thresh",
                                           "multinomial"),
-                               num.iter = 100,
+                               num_iter = 100,
                                parallel = FALSE,
                                alpha = 0.8, Pw = 0.5, num.perms = 0,
                                standardize = TRUE,
-                               lambda.min.ratio = 0.1,
+                               lambda_min_ratio = 0.1,
                                beta.threshold = 0L,
-                               elastic.alpha = 1.0,
-                               lambda.pad = 20,
-                               impute.outliers = FALSE,
-                               impute.n.sigma = 3,
-                               r.seed = sample(1000, 1), ...) {
+                               elastic_alpha = 1.0,
+                               lambda_pad = 20,
+                               impute_outliers = FALSE,
+                               impute_n_sigma = 3,
+                               r_seed = sample(1000, 1), ...) {
 
   x <- data.matrix(x)      # turn into data matrix
 
@@ -499,12 +513,11 @@ is.stab_sel <- function(x) inherits(x, "stab_sel")
 #'
 #' @export
 print.stab_sel <- function(x, ...) {
-  writeLines(
-    signal_rule(
-      sprintf("Stability Selection (%s: %s)",
-              add_color("Kernel", "cyan"),
-              add_color(x$kernel, "green")),
-      line_col = "blue", lty = "double")
+  signal_rule(
+    sprintf("Stability Selection (%s: %s)",
+            add_color("Kernel", "cyan"),
+            add_color(x$kernel, "green")),
+    line_col = "blue", lty = "double"
   )
   key <- c(
     "Weakness (alpha)",
@@ -520,36 +533,39 @@ print.stab_sel <- function(x, ...) {
   value <- list(
     round(x$alpha, 2L),
     round(x$Pw, 2L),
-    round(x$num.iter),
+    round(x$num_iter),
     ifelse(x$standardize, "Yes", "No"),
-    ifelse(x$impute.outliers, "Yes", "No"),
+    ifelse(x$impute_outliers, "Yes", "No"),
     round(x$lambda[1L], 4L),
-    round(x$lambda.min.ratio, 1L),
-    ifelse(x$perm.data, "Yes", "No"),
-    x$r.seed
+    round(x$lambda_min_ratio, 1L),
+    ifelse(x$perm_data, "Yes", "No"),
+    x$r_seed
   )
   liter(key, value, function(.x, .y) {
     writeLines(paste(add_color(symbl$bullet, "red"), .x, value(.y)))
   })
-  writeLines(signal_rule(line_col = "green", lty = "double"))
+  signal_rule(line_col = "green", lty = "double")
   invisible(x)
 }
 
 
 #' @describeIn stabilitySelection
-#' The S3 `summary` method for class `stab_sel`.
+#'   The S3 `summary` method for class `stab_sel`.
 #'
-#' @param object An object of class `stab_sel`.
+#' @param object An `stab_sel` class object.
 #' @param thresh A numeric minimum selection probability threshold.
-#' This value can also be a vector of values in \verb{[0, 1]},
-#' but ideally greater than 0.50.
+#'   This value can also be a vector of values in \verb{[0, 1]},
+#'   but ideally greater than 0.50.
+#'
 #' @note Additional features can be passed as strings to the summary method
-#' via the `add.features` argument.
+#'   via the `add_features` argument.
+#'
 #' @examples
 #' # S3 summary method
 #' summary(stab_sel, thresh = 0.6)
 #' summary(stab_sel, thresh = 0.8, add.features = "feat_c")   # force feat_c into table
 #' @importFrom dplyr select everything matches
+#'
 #' @export
 summary.stab_sel <- function(object, ..., thresh) {
   if ( missing(thresh) ) {
@@ -574,59 +590,62 @@ summary.stab_sel <- function(object, ..., thresh) {
 
 
 #' @describeIn stabilitySelection
-#' The S3 `plot` method plots the selection paths for the features. This
-#' plot closely resembles a lasso coefficient plot with the regularization
-#' parameter (lambda) plotted on x-axis and the feature selection probability
-#' (rather than the model coefficient) is plotted on the y-axis.
+#'   The S3 `plot` method plots the selection paths for the features. This
+#'   plot closely resembles a lasso coefficient plot with the regularization
+#'   parameter (lambda) plotted on x-axis and the feature selection probability
+#'   (rather than the model coefficient) is plotted on the y-axis.
 #'
 #' Plots the regularization parameter (lambda) on the x-axis and the selection
-#' probability on the y-axis. The regularization parameter is plotted as
-#' lambda/max(lambda) so that it is in the range from 1 to 0. The selection
-#' probability corresponds to the number of times a particular marker was
-#' chosen at a given value of lambda. Each line in the plot is a marker and
-#' represents the stability selection path over the range of regularization
-#' parameter. All features that have a maximum selection probability greater
-#' than `thresh` (shown as a dotted horizontal line) are colored and labeled
-#' and the remaining features are colored gray and unlabeled. Additionally, you
-#' can provide a set of custom labels that will be colored and labeled
-#' regardless of their max selection probability. Each feature is labeled with
-#' a capital letter and the full name of the feature is indicated in the legend
-#' along with the AUC for its curve in parentheses.
+#'   probability on the y-axis. The regularization parameter is plotted as
+#'   lambda/max(lambda) so that it is in the range from 1 to 0. The selection
+#'   probability corresponds to the number of times a particular marker was
+#'   chosen at a given value of lambda. Each line in the plot is a marker and
+#'   represents the stability selection path over the range of regularization
+#'   parameter. All features that have a maximum selection probability greater
+#'   than `thresh` (shown as a dotted horizontal line) are colored and labeled
+#'   and the remaining features are colored gray and unlabeled. Additionally, you
+#'   can provide a set of custom labels that will be colored and labeled
+#'   regardless of their max selection probability. Each feature is labeled with
+#'   a capital letter and the full name of the feature is indicated in the legend
+#'   along with the AUC for its curve in parentheses.
 #'
-#' @param custom.labels a character vector of additional features to label in
-#' the plot, see Details.
-#' @param main optional title for the plot (defaults depend on the kernel
-#' used)
-#' @param sort.by.AUC Logical. If `TRUE`, entries in the legend will be sorted by their
-#' curve AUC values which are in parentheses following the variable name in the
-#' legend.
-#' @param ln.cols A vector of colors to be used as line colors in plotting.
-#' Colors are recycled as necessary. See [SomaPlotr::soma_colors].
-#' @param add.perm Logical. Should empirical false discovery lines
-#' from the null permutation be added to the plot (if permutation was
-#' performed)? This can be time consuming depending on the number of
-#' permutations performed, so the default is `FALSE`.
-#' @param emp.thresh a vector describing the empirical threshold values
-#' to be used (`default = seq(1, 0.1, by = 0.01)`).
-#' @return The S3 `plot` method returns a data frame of all features
-#' labeled in the plot, either by having a maximum selection probability
-#' greater than `thresh` or because they were provided as
-#' `custom.labels`.
+#' @param custom_labels a character vector of additional
+#'   features to label in the plot, see Details.
+#' @param main optional title for the plot (defaults
+#'   depend on the kernel used)
+#' @param sort_by_AUC `logical(1)`. If `TRUE`, entries in
+#'   the legend will be sorted by their curve AUC values
+#'   which are in parentheses following the variable name
+#'   in the legend.
+#' @param ln_cols A vector of colors to be used as
+#'   line colors in plotting. Colors are recycled as necessary.
+#' @param add_perm Logical. Should empirical false discovery lines
+#'   from the null permutation be added to the plot
+#'  (if permutation was performed)? This can be time
+#'  consuming depending on the number of permutations performed,
+#'  so the default is `FALSE`.
+#' @param emp_thresh a vector describing the empirical
+#'   threshold values to be used (`default = seq(1, 0.1, by = 0.01)`).
+#'
+#' @return The `plot` method returns a data frame of
+#'   all features labeled in the plot, either by having
+#'   a maximum selection probability greater than `thresh`
+#'   or because they were provided as `custom_labels`.
+#'
 #' @examples
 #' # S3 plot method
 #' plot(stab_sel, thresh = 0.8)
 #'
 #' @importFrom utils head
 #' @importFrom dplyr case_when arrange select mutate desc left_join
-#' @importFrom SomaPlotr theme_soma
 #' @export
 plot.stab_sel <- function(x, thresh = 0.60,
-                          custom.labels = NULL,
+                          custom_labels = NULL,
                           main = NULL,
-                          sort.by.AUC = TRUE,
-                          ln.cols = unlist(SomaPlotr::soma_colors),
-                          add.perm = FALSE,
-                          emp.thresh = seq(1, 0.1, by = -0.01), ...) {
+                          sort_by_AUC = TRUE,
+                          ln_cols = unlist(col_palette),
+                          add_perm = FALSE,
+                          emp_thresh = seq(1, 0.1, by = -0.01), ...) {
 
   stopifnot(is_stabpath.matrix(x$stabpath.matrix))   # sanity catch
   lambda_norm <- x$lambda / max(x$lambda)
@@ -638,7 +657,7 @@ plot.stab_sel <- function(x, thresh = 0.60,
 
   custom_features <- intersect(custom.labels, rownames(x$stabpath.matrix))
   summary_df      <- summary(x, thresh    = thresh,
-                             add.features = custom_features,
+                             add_features = custom_features,
                              warn         = FALSE)
 
   if ( sort.by.AUC ) {
@@ -658,21 +677,20 @@ plot.stab_sel <- function(x, thresh = 0.60,
 
   auc_df <- dplyr::select(summary_df, feature, AUC)
 
-  # need to have special getSeqId version here so that non-seqId
-  # containing features (e.g. clinical variables) do not return NA
+  # internal helper
   .get_seq <- function(.x) sub("\\.", "-", sub("^seq\\.", "", .x))
 
   # get order of feature labels
   label_order <- sprintf("%s (%0.2f)", .get_seq(auc_df$feature), auc_df$AUC)
 
-  line_cols <- rep(unname(ln.cols), times = 5)[1:L]
+  line_cols <- rep(unname(ln_cols), times = 5L)[1:L]
   names(line_cols) <- label_order
 
-  if ( L < nrow(x$stabpath.matrix) ) {  # if un-selected features, append color map
+  if ( L < nrow(x$stabpath_matrix) ) {  # if un-selected features, append color map
     line_cols <- c(line_cols, "Unselected (NA)" = "grey80")
   }
 
-  data <- data.frame(x$stabpath.matrix) |>
+  data <- data.frame(x$stabpath_matrix) |>
     rn2col("feature") |>
     dplyr::left_join(auc_df, by = "feature") |>
     dplyr::mutate(
@@ -703,8 +721,8 @@ plot.stab_sel <- function(x, thresh = 0.60,
     theme_soma(legend.position = "right") +
     NULL
 
-  if ( add.perm ) {
-    if ( !x$perm.data ) {
+  if ( add_perm ) {
+    if ( !x$perm_data ) {
       warning(
         "No permutation data present in `stab_sel` object. ",
         "Skipping permutation cutoffs.", call. = FALSE
@@ -712,7 +730,7 @@ plot.stab_sel <- function(x, thresh = 0.60,
     } else {
       emp_breaks_list <- calcEmpFDRbreaks(x, emp.thresh)
       emp_breaks_list$breaks$line <- "dotted"
-      break_cols <- unlist(SomaPlotr::soma_colors, use.names = FALSE) |> head(5L)
+      break_cols <- unlist(col_palette, use.names = FALSE) |> head(5L)
       p <- p +
         ggplot2::geom_hline(
           data = emp_breaks_list$breaks,

@@ -18,9 +18,7 @@ print.pclust <- function(x, ...) {
     v
   }
 
-  writeLines(
-    signal_rule("Progeny Cluster Object", line_col = "blue", lty = "double")
-  )
+  signal_rule("Progeny Cluster Object", line_col = "blue", lty = "double")
   key <- c(
     "Call",
     "Progeny Size",
@@ -36,26 +34,18 @@ print.pclust <- function(x, ...) {
   writeLines(paste0("   ", key, value))
 
   cat("\n")
-  writeLines(
-    signal_rule(
-      "Mean & CI95 Stability Scores", line_col = "magenta", lty = "double"
-    )
+  signal_rule(
+    "Mean & CI95 Stability Scores", line_col = "magenta", lty = "double"
   )
   print(rbind(starMax(x$mean.scores), x$ci95.scores)[c(2, 1, 3), ])
 
   cat("\n")
-  writeLines(
-    signal_rule("Maximum Distance Scores", line_col = "magenta", lty = "double")
-  )
+  signal_rule("Maximum Distance Scores", line_col = "magenta", lty = "double")
   print(starMax(x$D.max))
 
   cat("\n")
-  writeLines(
-    signal_rule("Gap Distance Scores", line_col = "magenta", lty = "double")
-  )
+  signal_rule("Gap Distance Scores", line_col = "magenta", lty = "double")
   print(starMax(x$D.gap))
-  writeLines(
-    signal_rule(line_col = "green", lty = "double")
-  )
+  signal_rule(line_col = "green", lty = "double")
   invisible(x)
 }

@@ -13,19 +13,19 @@ stabilitySelection(
   y = NULL,
   kernel = c("l1-logistic", "lasso", "ridge", "Cox", "pca.sd", "pca.thresh",
     "multinomial"),
-  num.iter = 100,
+  num_iter = 100,
   parallel = FALSE,
   alpha = 0.8,
   Pw = 0.5,
   num.perms = 0,
   standardize = TRUE,
-  lambda.min.ratio = 0.1,
+  lambda_min_ratio = 0.1,
   beta.threshold = 0L,
-  elastic.alpha = 1,
-  lambda.pad = 20,
-  impute.outliers = FALSE,
-  impute.n.sigma = 3,
-  r.seed = sample(1000, 1),
+  elastic_alpha = 1,
+  lambda_pad = 20,
+  impute_outliers = FALSE,
+  impute_n_sigma = 3,
+  r_seed = sample(1000, 1),
   ...
 )
 
@@ -38,12 +38,12 @@ is.stab_sel(x)
 \method{plot}{stab_sel}(
   x,
   thresh = 0.6,
-  custom.labels = NULL,
+  custom_labels = NULL,
   main = NULL,
-  sort.by.AUC = TRUE,
-  ln.cols = unlist(SomaPlotr::soma_colors),
-  add.perm = FALSE,
-  emp.thresh = seq(1, 0.1, by = -0.01),
+  sort_by_AUC = TRUE,
+  ln_cols = unlist(col_palette),
+  add_perm = FALSE,
+  emp_thresh = seq(1, 0.1, by = -0.01),
   ...
 )
 }
@@ -69,55 +69,46 @@ used for selection. Options are:
 \item "pca.thresh"
 }}
 
-\item{num.iter}{Integer. Defining the number of sub-sampling iterations for
-the stability selection.}
+\item{num_iter}{\code{integer(1)}. Defining the number of
+sub-sampling iterations for the stability selection.}
 
-\item{parallel}{Logical. Should parallel processing via multiple cores be
-implemented? Must be on a Linux platform and have the \pkg{parallel}
+\item{parallel}{\code{logical(1)}. Should parallel processing
+via multiple cores be implemented? Must be on a Linux
+platform and have the \pkg{parallel}
 package installed. Otherwise defaults to 1 core.}
 
-\item{alpha}{Numeric. Value defining the weakness parameter for the
-randomized regularization. This is the minimum random weight applied to each
+\item{alpha}{\code{numeric(1)}. Value defining the weakness
+parameter for the randomized regularization.
+This is the minimum random weight applied to each
 beta coefficient in the regularization.}
 
-\item{Pw}{Numeric. Value defining probability of a weak weight, see
-\code{alpha}. If \code{Pw = NA} then the coefficient weights are sampled
-uniformly from \code{alpha} to 1.}
+\item{Pw}{\code{numeric(1)}. Value defining probability of
+a weak weight, see \code{alpha}. If \code{Pw = NA} then the
+coefficient weights are sampled uniformly from \code{alpha} to 1.}
 
-\item{num.perms}{Integer. The number of permutations to use
-in calculating the empirical false positive rate.}
+\item{standardize}{\code{logical(1)}. Whether the data should
+be centered and scaled.}
 
-\item{standardize}{Logical. Whether the data should be centered and scaled.}
+\item{elastic_alpha}{\code{numeric(1)}. Floating point value
+between 0 and 1. When 0, the results of \code{\link[=glmnet]{glmnet()}} are
+equivalent to Ridge regression.
+When 1, the results are equivalent to Lasso.
+Any value between 0 and 1 creates a compromise
+between L1 and L2 penalty.}
 
-\item{lambda.min.ratio}{The minimum value of lambda/max(lambda) to use during
-the selection procedure. See \code{\link[=glmnet]{glmnet()}}.}
+\item{lambda_pad}{The lambda path is padded with high
+values of lambda in order to produce a more appealing plot.
+Occasionally, the degree of padding needs to be
+adjusted in order to produce better resolution at low
+values of lambda. Typical values for this parameter
+are 20 (default), 15, 10, or 5.}
 
-\item{beta.threshold}{Numeric. Floating point value defining selection
-levels for \verb{ridge regression}. Since ridge regression will not zero out
-coefficients, selection of coefficient curves by selection probability
-is not effective. Any variable having a coefficient with absolute value
-greater than or equal to \code{beta.threshold} will be selected.}
+\item{impute_outliers}{\code{logical(1)}. Should statistical
+outliers (\eqn{3 * \sigma}) be imputed to approximate
+a Gaussian distribution during stability selection?}
 
-\item{elastic.alpha}{Numeric. Floating point value between 0 and 1. When 0,
-the results of \code{\link[=glmnet]{glmnet()}} are equivalent to Ridge regression.
-When 1, the results are equivalent to Lasso. Any value between 0 and 1
-creates a compromise between L1 and L2 penalty.}
-
-\item{lambda.pad}{The lambda path is padded with high values of lambda in
-order to produce a more appealing plot. Occasionally, the degree of
-padding needs to be adjusted in order to produce better resolution at low
-values of lambda. Typical values for this parameter are 20 (default), 15,
-10, or 5.}
-
-\item{impute.outliers}{Logical. Should statistical outliers
-(\eqn{3 * \sigma}) be imputed to approximate a Gaussian distribution
-during stability selection?}
-
-\item{impute.n.sigma}{Numeric. Standard deviation outlier threshold for
-imputing outliers if \code{impute.outliers = TRUE}, ignored otherwise.}
-
-\item{r.seed}{Seed for the random number generator, allowing for
-reproducibility of results.}
+\item{r_seed}{\code{integer(1)}. Seed for the random number
+generator, allowing for reproducibility of results.}
 
 \item{...}{Additional arguments passed to one of the S3 methods for
 objects of class \code{stab_sel}, generics include:
@@ -127,36 +118,57 @@ objects of class \code{stab_sel}, generics include:
 \item \code{\link[=summary.stab_sel]{summary.stab_sel()}}
 }}
 
-\item{object}{An object of class \code{stab_sel}.}
+\item{object}{An \code{stab_sel} class object.}
 
 \item{thresh}{A numeric minimum selection probability threshold.
 This value can also be a vector of values in \verb{[0, 1]},
 but ideally greater than 0.50.}
 
-\item{custom.labels}{a character vector of additional features to label in
-the plot, see Details.}
+\item{custom_labels}{a character vector of additional
+features to label in the plot, see Details.}
 
-\item{main}{optional title for the plot (defaults depend on the kernel
-used)}
+\item{main}{optional title for the plot (defaults
+depend on the kernel used)}
 
-\item{sort.by.AUC}{Logical. If \code{TRUE}, entries in the legend will be sorted by their
-curve AUC values which are in parentheses following the variable name in the
-legend.}
+\item{sort_by_AUC}{\code{logical(1)}. If \code{TRUE}, entries in
+the legend will be sorted by their curve AUC values
+which are in parentheses following the variable name
+in the legend.}
 
-\item{ln.cols}{A vector of colors to be used as line colors in plotting.
-Colors are recycled as necessary. See \link[SomaPlotr:objects]{SomaPlotr::soma_colors}.}
+\item{ln_cols}{A vector of colors to be used as
+line colors in plotting. Colors are recycled as necessary.}
 
-\item{add.perm}{Logical. Should empirical false discovery lines
-from the null permutation be added to the plot (if permutation was
-performed)? This can be time consuming depending on the number of
-permutations performed, so the default is \code{FALSE}.}
+\item{add_perm}{Logical. Should empirical false discovery lines
+from the null permutation be added to the plot
+(if permutation was performed)? This can be time
+consuming depending on the number of permutations performed,
+so the default is \code{FALSE}.}
 
-\item{emp.thresh}{a vector describing the empirical threshold values
-to be used (\code{default = seq(1, 0.1, by = 0.01)}).}
+\item{emp_thresh}{a vector describing the empirical
+threshold values to be used (\code{default = seq(1, 0.1, by = 0.01)}).}
+
+\item{lambda.min.ratio}{The minimum value of
+lambda/max(lambda) to use during
+the selection procedure. See \code{\link[=glmnet]{glmnet()}}.}
+
+\item{num_perms}{\code{integer(1)}. The number of permutations
+to use in calculating the empirical false positive rate.}
+
+\item{beta_threshold}{\code{numeric(1)}. Floating point value
+defining selection levels for \verb{ridge regression}.
+Since ridge regression will not zero out coefficients,
+selection of coefficient curves by selection probability
+is not effective. Any variable having a coefficient with
+absolute value greater than or equal to \code{beta_threshold}
+will be selected.}
+
+\item{impute.n.sigma}{\code{numeric(1)}. Standard deviation
+outlier threshold for imputing outliers if
+\code{impute_outliers = TRUE}, ignored otherwise.}
 }
 \value{
 An object of class \code{stab_sel}:
-\item{stabpath.matrix}{A matrix of \eqn{features x lambda.seq} containing
+\item{stabpath_matrix}{A matrix of \eqn{features x lambda.seq} containing
 stability selection probabilities. A row in this matrix corresponds to a
 stability selection path for a single feature.}
 \item{lambda}{the sequence of lambdas used for regularization. They
@@ -164,17 +176,17 @@ correspond to the columns of \code{stabpath.matrix}.}
 \item{alpha}{the weakness parameter provided in the call.}
 \item{Pw}{the weak weight probability provided in the call.}
 \item{kernel}{the kernel used (e.g. l1-logistic).}
-\item{num.iter}{Integer. The number of iterations used in computing
+\item{num_iter}{The number of iterations used in computing
 the stability paths.}
 \item{standardize}{should the data be standardized prior to analysis?}
 \item{lambda.min.ratio}{?}
-\item{perm.data}{Logical. Is there permuted data to perform empirical FDR?}
+\item{perm_data}{Logical. Is there permuted data to perform empirical FDR?}
 \item{permpath.list}{list containing information to calculated the
 permutation paths of the empirical false positive rate.}
-\item{perm.lambda}{The lambda used in the permuted lists.}
+\item{perm_lambda}{The lambda used in the permuted lists.}
 \item{permpath.max}{max lambda for the permuted lists (I think).}
 \item{beta}{A matrix of the betas calculated during the selection process.}
-\item{r.seed}{The random seed used.}
+\item{r_seed}{The random seed used.}
 
 The \code{is.stab_sel} function returns a logical boolean.
 
@@ -194,10 +206,10 @@ approximation prior to stability selection?}
 \item{Random Seed}{The seed passed to the random number generator
 for subset selection.}
 
-The S3 \code{plot} method returns a data frame of all features
-labeled in the plot, either by having a maximum selection probability
-greater than \code{thresh} or because they were provided as
-\code{custom.labels}.
+The \code{plot} method returns a data frame of
+all features labeled in the plot, either by having
+a maximum selection probability greater than \code{thresh}
+or because they were provided as \code{custom_labels}.
 }
 \description{
 Performs stability selection on a set of predictive features and a response
@@ -255,7 +267,7 @@ along with the AUC for its curve in parentheses.
 }}
 \note{
 Additional features can be passed as strings to the summary method
-via the \code{add.features} argument.
+via the \code{add_features} argument.
 }
 \examples{
 # l1-logistic
@@ -293,7 +305,7 @@ Journal of the Royal Statistical Society: Series B (Statistical
 Methodology), 72: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
 }
 \seealso{
-\code{\link[=glmnet]{glmnet()}}, \code{\link[=getStableFeatures]{getStableFeatures()}}
+\code{\link[=glmnet]{glmnet()}}, \code{\link[=get_stable_features]{get_stable_features()}}
 }
 \author{
 Michael R. Mehan, Stu Field, and Robert Kirk DeLisle
