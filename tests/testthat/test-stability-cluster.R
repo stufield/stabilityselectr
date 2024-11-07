@@ -1,7 +1,7 @@
 
-clust <- withr::with_seed(1, stabilityCluster(progeny_data, k = 3, iter = 250))
+clust <- withr::with_seed(1, stability_cluster(progeny_data, k = 3, iter = 250))
 
-test_that("stabilityCluster() generates the correct object and dimensions", {
+test_that("`stability_cluster()` generates the correct object and dimensions", {
   expect_s3_class(clust, "tbl_df")
   expect_equal(dim(clust), c(150, 4))
   expect_named(clust, c("k=1", "k=2", "k=3", "ProbK"))
@@ -9,7 +9,7 @@ test_that("stabilityCluster() generates the correct object and dimensions", {
   expect_true(all(dplyr::select(clust, -ProbK) >= 0))
 })
 
-test_that("stabilityCluster() generates the correct values", {
+test_that("`stability_cluster()` generates the correct values", {
   out <- tibble::tibble(
            `k=1` = c(0.644, 0.62, 0.664, 0.64, 0.688,
                      0.668, 0.608, 0.636, 0.708, 0.708, 0.636, 0.64, 0.612, 0.74,

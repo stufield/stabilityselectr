@@ -1,16 +1,16 @@
 
 # Testing ----
 # L1-logistic ----
-test_that("`calcStabilityPaths()` generates expected output for kernel = l1-logistic", {
+test_that("`calc_stability_paths()` generates expected output for kernel = l1-logistic", {
   withr::with_seed(101, {
     lambda_vec <- glmnet::glmnet(x, y, family = "binomial",
                                  standardize = TRUE, lambda.min.ratio = 0.1,
                                  penalty.factor = stats::runif(ncol(x)))$lambda
-    path_matrix <- calcStabilityPaths(x, y, kernel = "l1-logistic",
-                                      lambda.seq = lambda_vec,
-                                      alpha = 0.8, Pw = 0.5,
-                                      elastic.alpha = 1L,     # not used
-                                      standardize = TRUE)
+    path_matrix <- calc_stability_paths(x, y, kernel = "l1-logistic",
+                                        lambda_seq = lambda_vec,
+                                        alpha = 0.8, Pw = 0.5,
+                                        elastic_alpha = 1,     # not used
+                                        standardize = TRUE)
   })
   expect_true(is.matrix(path_matrix))
   expect_equal(dim(path_matrix), c(n_feat, length(lambda_vec)))
@@ -29,15 +29,16 @@ test_that("`calcStabilityPaths()` generates expected output for kernel = l1-logi
 })
 
 # Lasso ----
-test_that("`calcStabilityPaths()` generates expected output for kernel = lasso", {
+test_that("`calc_stability_paths()` generates expected output for kernel = lasso", {
   L <- 100 + 20
   withr::with_seed(1, {
     y <- rnorm(n_samples)
-    path_matrix <- calcStabilityPaths(x, y, kernel = "lasso",
-                                      lambda.seq = seq(0.25, 0.016, length.out = L),
-                                      alpha = 0.8, Pw = 0.5,
-                                      elastic.alpha = 1L,    # 1 is lasso
-                                      beta.threshold = 0L, standardize = TRUE)
+    path_matrix <- calc_stability_paths(x, y, kernel = "lasso",
+                                        lambda_seq = seq(0.25, 0.016, length.out = L),
+                                        alpha = 0.8, Pw = 0.5,
+                                        elastic_alpha = 1,    # 1 is lasso
+                                        beta_threshold = 0,
+                                        standardize = TRUE)
   })
   expect_true(is.matrix(path_matrix))
   expect_equal(dim(path_matrix), c(n_feat, L))
@@ -62,13 +63,13 @@ test_that("`calcStabilityPaths()` generates expected output for kernel = lasso",
 })
 
 # Cox ----
-test_that("`calcStabilityPaths()` generates expected output with kernel = 'Cox'", {
+test_that("`calc_stability_paths()` generates expected output with kernel = 'Cox'", {
   xcox <- strip_meta(log10(sim_adat))
   ycox <- select(sim_adat, time, status) |> as.matrix()
   cox_pm <- withr::with_seed(
     1234,
-    calcStabilityPaths(xcox, ycox, kernel = "Cox", standardize = TRUE,
-                       lambda.seq = c(0.01, 0.1), elastic.alpha = 1L,     # not used
+    calc_stability_paths(xcox, ycox, kernel = "Cox", standardize = TRUE,
+                       lambda_seq = c(0.01, 0.1), elastic_alpha = 1,     # not used
                        alpha = 0.8, Pw = 0.5)
   )
   expect_true(is.matrix(cox_pm))
@@ -91,15 +92,16 @@ test_that("`calcStabilityPaths()` generates expected output with kernel = 'Cox'"
 })
 
 # Ridge ----
-test_that("`calcStabilityPaths()` generates expected output for kernel = ridge", {
+test_that("`calc_stability_paths()` generates expected output for kernel = ridge", {
   L <- 100 + 20
   withr::with_seed(10, {
     y <- rnorm(n_samples)
-    path_matrix <- calcStabilityPaths(x, y, kernel = "ridge",
-                                      lambda.seq = seq(0.25, 0.016, length.out = L),
-                                      alpha = 0.8, Pw = 0.5,
-                                      elastic.alpha = 0L,   # 0 is ridge
-                                      beta.threshold = 0.1, standardize = TRUE)
+    path_matrix <- calc_stability_paths(x, y, kernel = "ridge",
+                                        lambda_seq = seq(0.25, 0.016, length.out = L),
+                                        alpha = 0.8, Pw = 0.5,
+                                        elastic_alpha = 0,   # 0 is ridge
+                                        beta_threshold = 0.1,
+                                        standardize = TRUE)
   })
   expect_true(is.matrix(path_matrix))
   expect_equal(dim(path_matrix), c(n_feat, L))
@@ -125,26 +127,26 @@ test_that("`calcStabilityPaths()` generates expected output for kernel = ridge",
                  146, 38, 166, 120, 0, 120, 131))
 
   expect_error(
-    calcStabilityPaths(x, y, kernel = "ridge",
-                       lambda.seq = seq(0.25, 0.016, length.out = L),
+    calc_stability_paths(x, y, kernel = "ridge",
+                       lambda_seq = seq(0.25, 0.016, length.out = L),
                        alpha = 0.8, Pw = 0.5,
-                       elastic.alpha = 0L,   # 0 is ridge
-                       beta.threshold = 0L,  # This must be > 0
+                       elastic_alpha = 0,   # 0 is ridge
+                       beta_threshold = 0,  # This must be > 0
                        standardize = TRUE),
-    paste("A `beta.threshold = 0` performs no feature selecting.",
-          "Please set a value of `beta.threshold > 0`.")
+    paste("A `beta_threshold = 0` performs no feature selecting.",
+          "Please set a value of `beta_threshold > 0`.")
     )
 })
 
 # Multinomial ----
-test_that("`calcStabilityPaths()` generates expected output for kernel = multinomial", {
+test_that("`calc_stability_paths()` generates expected output for kernel = multinomial", {
   L <- 100 + 20
   withr::with_seed(10, {
     y <- sample(1:2, n_samples, replace = TRUE)
-    path_matrix <- calcStabilityPaths(x, y, "multinomial",
-                                      lambda.seq = seq(0.25, 0.016, length.out = L),
+    path_matrix <- calc_stability_paths(x, y, "multinomial",
+                                      lambda_seq = seq(0.25, 0.016, length.out = L),
                                       alpha = 0.8, Pw = 0.5,
-                                      elastic.alpha = 1L,     # not used
+                                      elastic_alpha = 1,     # not used
                                       standardize = TRUE)
   })
   expect_true(is.matrix(path_matrix))
@@ -170,7 +172,7 @@ test_that("`calcStabilityPaths()` generates expected output for kernel = multino
 })
 
 # PCA thresh ----
-test_that("`calcStabilityPaths` generates expected output for kernel = pca.thresh", {
+test_that("`calc_stability_paths` generates expected output for kernel = pca.thresh", {
   max_lambda <- 0.5
   lambda_vec <- seq(log(max_lambda),
                     log(max_lambda * 0.1),
@@ -178,11 +180,11 @@ test_that("`calcStabilityPaths` generates expected output for kernel = pca.thres
 
   path_matrix <- withr::with_seed(
     1,
-    calcStabilityPaths(x, kernel = "pca.thresh",
-                       lambda.seq = lambda_vec,
+    calc_stability_paths(x, kernel = "pca.thresh",
+                       lambda_seq = lambda_vec,
                        alpha = 2, Pw = 0.5,
-                       beta.threshold = 0L,
-                       elastic.alpha = 1L,     # not used
+                       beta_threshold = 0,
+                       elastic_alpha = 1,     # not used
                        standardize = TRUE)
   )
   expect_true(is.matrix(path_matrix))
@@ -208,7 +210,7 @@ test_that("`calcStabilityPaths` generates expected output for kernel = pca.thres
 })
 
 # PCA SD ----
-test_that("`calcStabilityPaths` generates expected output for kernel = pca.sd", {
+test_that("`calc_stability_paths` generates expected output for kernel = pca.sd", {
   max_lambda <- 10
   lambda_vec <- seq(log(max_lambda),
                     log(max_lambda * 0.1),
@@ -216,11 +218,11 @@ test_that("`calcStabilityPaths` generates expected output for kernel = pca.sd", 
 
   path_matrix <- withr::with_seed(
     1,
-    calcStabilityPaths(x, y, "pca.sd",
-                       lambda.seq = lambda_vec,
+    calc_stability_paths(x, y, "pca.sd",
+                       lambda_seq = lambda_vec,
                        alpha = 3, Pw = 0.5,
-                       beta.threshold = 0L,
-                       elastic.alpha = 1L,     # not used
+                       beta_threshold = 0,
+                       elastic_alpha = 1,     # not used
                        standardize = TRUE)
   )
   expect_true(is.matrix(path_matrix))

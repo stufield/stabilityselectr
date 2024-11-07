@@ -9,7 +9,7 @@
 The Stability Selection package performs stability selection with a variety of kernels provided by the 'glmnet' package, and provides simple tools for plotting and extracting selected features. There is additional functionality designed to facilitate various forms of permutation clustering analyses.
 }
 \details{
-Stability selection is performed using \code{\link[=stabilitySelection]{stabilitySelection()}},
+Stability selection is performed using \code{\link[=stability_selection]{stability_selection()}},
 which returns a \code{stab_sel} class object. The stability path can be
 plotted using \code{\link[graphics:plot.default]{graphics::plot()}}. A \code{tibble} with the highest
 selection probability can be created using \code{\link[=getStableFeatures]{getStableFeatures()}}.

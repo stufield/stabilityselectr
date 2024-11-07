@@ -3,8 +3,8 @@
 
 # Testing ----
 # No permutation ----
-test_that("`getStableFeatures()` without permutation check shape & dims", {
-  s_feat <- getStableFeatures(ss, 0.55)
+test_that("`get_stable_features()` without permutation check shape & dims", {
+  s_feat <- get_stable_features(ss, 0.55)
   expect_s3_class(s_feat, "data.frame")
   expect_equal(dim(s_feat), c(n_feat, 2))       # all feats included
   expect_named(s_feat, c("MaxSelectProb", "FDRbound"))
@@ -12,20 +12,20 @@ test_that("`getStableFeatures()` without permutation check shape & dims", {
 })
 
 # S3 method ----
-test_that("the S3 methods work for `getStableFeatures()`", {
+test_that("the S3 methods work for `get_stable_features()`", {
   expect_equal(
-    getStableFeatures(ss, 0.55),
-    getStableFeatures(ss$stabpath.matrix, 0.55)
+    get_stable_features(ss, 0.55),
+    get_stable_features(ss$stabpath_matrix, 0.55)
   )
   # default method; nothing for integer
   expect_error(
-    getStableFeatures(1:5L, 0.55),
+    get_stable_features(1:5L, 0.55),
     "Couldn't find a S3 method for this class object: 'integer'"
   )
 })
 
-test_that("`getStableFeatures()` returns correct values at thresh = 0.55", {
-  s_feat <- getStableFeatures(ss, 0.55)
+test_that("`get_stable_features()` returns correct values at thresh = 0.55", {
+  s_feat <- get_stable_features(ss, 0.55)
   expect_equal(
     s_feat,
     data.frame(
@@ -49,9 +49,9 @@ test_that("`getStableFeatures()` returns correct values at thresh = 0.55", {
   expect_setequal(colnames(x), rownames(s_feat))
 })
 
-test_that("`getStableFeatures()` returns correct values at thresh <= 0.5", {
+test_that("`get_stable_features()` returns correct values at thresh <= 0.5", {
   expect_warning(
-    s_feat <- getStableFeatures(ss, 0.49, warn = TRUE),
+    s_feat <- get_stable_features(ss, 0.49, warn = TRUE),
     "FDR upper bound not defined for `thresh <= 0.5`"
   )
   expect_equal(
@@ -69,8 +69,8 @@ test_that("`getStableFeatures()` returns correct values at thresh <= 0.5", {
   )
 })
 
-test_that("`getStableFeatures` returns correct values at thresh = 0.90", {
-  s_feat <- getStableFeatures(ss, 0.90)
+test_that("`get_stable_features` returns correct values at thresh = 0.90", {
+  s_feat <- get_stable_features(ss, 0.90)
   expect_equal(
     s_feat,
     data.frame(
@@ -88,33 +88,33 @@ test_that("`getStableFeatures` returns correct values at thresh = 0.90", {
 })
 
 # Trips warnings ----
-test_that("the `getStableFeatures()` trips proper warnings", {
+test_that("the `get_stable_features()` trips proper warnings", {
   expect_warning(
-    getStableFeatures(ss, thresh = 0.49, warn = TRUE),   # thresh < 0.5 warning
+    get_stable_features(ss, thresh = 0.49, warn = TRUE),   # thresh < 0.5 warning
     "FDR upper bound not defined for `thresh <= 0.5`"
   )
   expect_warning(
-    getStableFeatures(ss, thresh = 0.25, warn = TRUE),   # thresh < 0.5 warning
+    get_stable_features(ss, thresh = 0.25, warn = TRUE),   # thresh < 0.5 warning
     "FDR upper bound not defined for `thresh <= 0.5`"
   )
   expect_warning(
-    getStableFeatures(ss, thresh = 0.97, warn = TRUE),   # no stable features
+    get_stable_features(ss, thresh = 0.97, warn = TRUE),   # no stable features
     "No stable features at `thresh = 0.97`"
   )
   expect_warning(
-    getStableFeatures(ss, thresh = 0.98, warn = TRUE),   # no stable features
+    get_stable_features(ss, thresh = 0.98, warn = TRUE),   # no stable features
     "No stable features at `thresh = 0.98`"
   )
   expect_warning(
-    getStableFeatures(ss, thresh = 0.99, warn = TRUE),   # no stable features
+    get_stable_features(ss, thresh = 0.99, warn = TRUE),   # no stable features
     "No stable features at `thresh = 0.99`"
   )
 })
 
 # Empty when thresh high ----
-test_that("`getStableFeatures()` returns empty data frame when thresh too high", {
+test_that("`get_stable_features()` returns empty data frame when thresh too high", {
   expect_warning(
-    s_feat <- getStableFeatures(ss, 0.99, warn = TRUE),
+    s_feat <- get_stable_features(ss, 0.99, warn = TRUE),
     "No stable features at `thresh = 0.99`"
   )
   expect_equal(dim(s_feat), c(0, 2))
@@ -122,8 +122,8 @@ test_that("`getStableFeatures()` returns empty data frame when thresh too high",
 })
 
 # with permutation ----
-test_that("`getStableFeatures()` with permutation adds `EmpFDR` column", {
-  s_feat_perm <- getStableFeatures(ss_perm10, 0.85)
+test_that("`get_stable_features()` with permutation adds `EmpFDR` column", {
+  s_feat_perm <- get_stable_features(ss_perm10, 0.85)
   expect_s3_class(s_feat_perm, "data.frame")
   expect_false(all(colnames(x) %in% rownames(s_feat_perm)))
   expect_true(all(rownames(s_feat_perm) %in% colnames(x)))

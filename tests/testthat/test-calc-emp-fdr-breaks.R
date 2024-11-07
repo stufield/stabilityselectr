@@ -1,17 +1,17 @@
 
 # Setup ----
-empFDR <- calcEmpFDRbreaks(ss_perm10, thresh.seq = seq(1, 0.1, -0.1))
+empFDR <- calc_emp_fdr_breaks(ss_perm10, thresh_seq = seq(1, 0.1, -0.1))
 
 
 # Testing ----
-test_that("the `calcEmpFDRbreaks()` function generates correct output", {
+test_that("the `calc_emp_fdr_breaks()` function generates correct output", {
   expect_type(empFDR, "list")
   expect_length(empFDR, 2L)
   expect_named(empFDR, c("fdr_data", "breaks"))
   lapply(empFDR, expect_type, "list")
 })
 
-test_that("`calcEmpFDRbreaks()` function generates `fdr_data` entry", {
+test_that("`calc_emp_fdr_breaks()` function generates `fdr_data` entry", {
   expect_s3_class(empFDR$fdr_data, "tbl_df")
   expect_named(empFDR$fdr_data, c("MeanFPs", "n_selected", "piThresh"))
   expect_equal(vapply(empFDR$fdr_data, typeof, ""),
@@ -23,8 +23,8 @@ test_that("`calcEmpFDRbreaks()` function generates `fdr_data` entry", {
   expect_equal(empFDR$fdr_data$piThresh, seq(1, 0.1, -0.1))
 })
 
-test_that("`calcEmpFDRbreaks()` function generates `breaks` entry", {
-  breaks <- tibble::tibble(FdrBreaks = c(0.5, 1, 2, 3, 5),
+test_that("`calc_emp_fdr_breaks()` function generates `breaks` entry", {
+  breaks <- tibble::tibble(FDR_breaks = c(0.5, 1, 2, 3, 5),
                              MeanFPs = c(3.9, 3.9, 3.9, 3.9, 18.7),
                           n_selected = c(4L, 4L, 4L, 4L, 19L),
                             piThresh = c(0.9, 0.9, 0.9, 0.9, 0.8))

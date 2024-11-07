@@ -1,27 +1,31 @@
 #' Perform Stability Clustering
 #'
 #' Partitioning Around Medoids (PAM) is used both because
-#' is uses a more robust measurement of the cluster centers (medoids) and
-#' because this implementation keeps the cluster labels consistent across
-#' runs, a key feature in calculating the across run stability. This does
-#' not occur using [kmeans()] where the initial cluster
-#' labels are arbitrarily assigned.
+#'   is uses a more robust measurement of the cluster centers (medoids) and
+#'   because this implementation keeps the cluster labels consistent across
+#'   runs, a key feature in calculating the across run stability. This does
+#'   not occur using [kmeans()] where the initial cluster
+#'   labels are arbitrarily assigned.
 #'
-#' @family Clustering
-#' @inheritParams progenyCluster
-#' @param k Integer. The number of clusters.
-#' @param iter Integer. The number of random subset iterations to perform.
+#' @family cluster
+#'
+#' @inheritParams progeny_cluster
+#' @param k `integer(1)`. The number of clusters.
+#' @param iter `integer(1)`. The number of random subset iterations to perform.
 #' @return A n x (k + 1) dimensional `tibble` of clustering probabilities for
 #'   each `k`, plus a final column named `"ProbK"`, which indicates
 #'   the "most probable" cluster membership for that sample.
+#'
 #' @note How do we make sure clusters are indexed the same as what
 #'   comes out of k-means? Worried about index errors (but seems ok for now).
 #' @author Stu Field
 #' @seealso [pam()]
+#'
 #' @references Hastie, et al. 2009.
+#'
 #' @examples
-#' stab_clust <- withr::with_seed(999, stabilityCluster(progeny_data, k = 3, iter = 500))
-#' table(actual = rep(1:3, each = 50), predicted = stab_clust$ProbK)
+#' stab_clust <- withr::with_seed(999, stability_cluster(progeny_data, k = 3, iter = 500))
+#' table(actual = rep(1:3, each = 50L), predicted = stab_clust$ProbK)
 #'
 #' stab_clust <- stab_clust |>
 #' dplyr::mutate(
@@ -51,7 +55,7 @@
 #' @importFrom cluster pam
 #' @importFrom tibble as_tibble
 #' @export
-stabilityCluster <- function(data, k, iter = 100) {
+stability_cluster <- function(data, k, iter = 100) {
 
   data <- data.matrix(data, rownames.force = FALSE)
   n    <- nrow(data)

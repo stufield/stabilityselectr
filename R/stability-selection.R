@@ -58,7 +58,7 @@
 #'   coefficient weights are sampled uniformly from `alpha` to 1.
 #' @param standardize `logical(1)`. Whether the data should
 #'   be centered and scaled.
-#' @param lambda.min.ratio The minimum value of
+#' @param lambda_min_ratio The minimum value of
 #'   lambda/max(lambda) to use during
 #'   the selection procedure. See [glmnet()].
 #' @param num_perms `integer(1)`. The number of permutations
@@ -85,7 +85,8 @@
 #' @param impute_outliers `logical(1)`. Should statistical
 #'   outliers (\eqn{3 * \sigma}) be imputed to approximate
 #'   a Gaussian distribution during stability selection?
-#' @param impute.n.sigma `numeric(1)`. Standard deviation
+#'   See [splyr::impute_outliers()].
+#' @param impute_n_sigma `numeric(1)`. Standard deviation
 #'   outlier threshold for imputing outliers if
 #'   `impute_outliers = TRUE`, ignored otherwise.
 #' @param r_seed `integer(1)`. Seed for the random number
@@ -97,18 +98,18 @@
 #'   * [summary.stab_sel()]
 #'
 #' @return An object of class `stab_sel`:
-#'   \item{stabpath_matrix}{A matrix of \eqn{features x lambda.seq} containing
+#'   \item{stabpath_matrix}{A matrix of \eqn{features x lambda_seq} containing
 #'     stability selection probabilities. A row in this matrix corresponds to a
 #'     stability selection path for a single feature.}
 #'   \item{lambda}{the sequence of lambdas used for regularization. They
-#'     correspond to the columns of `stabpath.matrix`.}
+#'     correspond to the columns of `stabpath_matrix`.}
 #'   \item{alpha}{the weakness parameter provided in the call.}
 #'   \item{Pw}{the weak weight probability provided in the call.}
 #'   \item{kernel}{the kernel used (e.g. l1-logistic).}
 #'   \item{num_iter}{The number of iterations used in computing
 #'     the stability paths.}
 #'   \item{standardize}{should the data be standardized prior to analysis?}
-#'   \item{lambda.min.ratio}{?}
+#'   \item{lambda_min_ratio}{?}
 #'   \item{perm_data}{Logical. Is there permuted data to perform empirical FDR?}
 #'   \item{permpath.list}{list containing information to calculated the
 #'     permutation paths of the empirical false positive rate.}
@@ -119,6 +120,7 @@
 #'
 #' @author Michael R. Mehan, Stu Field, and Robert Kirk DeLisle
 #' @seealso [glmnet()], [get_stable_features()]
+#'
 #' @references Meinshausen, N. and Buhlmann, P. (2010), Stability selection.
 #'   Journal of the Royal Statistical Society: Series B (Statistical
 #'   Methodology), 72: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
@@ -131,7 +133,7 @@
 #'   x           <- matrix(rnorm(n_samp * n_feat), n_samp, n_feat)
 #'   colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 #'   y           <- sample(1:2, n_samp, replace = TRUE)
-#'   stab_sel    <- stabilitySelection(x, y, kernel = "l1-logistic", r.seed = 101)
+#'   stab_sel    <- stability_selection(x, y, kernel = "l1-logistic", r_seed = 101)
 #' })
 #'
 #' # Cox
@@ -139,26 +141,27 @@
 #' # Note this works because colnames are already "time" and "status". In real
 #' # datasets, need to rename the final matrix as "time" and "status".
 #' ycox <- select(sim_adat, time, status) |> as.matrix()
-#' stab_sel_cox <- stabilitySelection(xcox, ycox, kernel = "Cox", r.seed = 101)
+#' stab_sel_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 101)
 #' @importFrom glmnet glmnet
 #' @importFrom stats runif setNames
 #' @importFrom tibble tibble as_tibble
 #' @export
-stabilitySelection <- function(x, y = NULL,
-                               kernel = c("l1-logistic", "lasso", "ridge",
-                                          "Cox", "pca.sd", "pca.thresh",
-                                          "multinomial"),
-                               num_iter = 100,
-                               parallel = FALSE,
-                               alpha = 0.8, Pw = 0.5, num.perms = 0,
-                               standardize = TRUE,
-                               lambda_min_ratio = 0.1,
-                               beta.threshold = 0L,
-                               elastic_alpha = 1.0,
-                               lambda_pad = 20,
-                               impute_outliers = FALSE,
-                               impute_n_sigma = 3,
-                               r_seed = sample(1000, 1), ...) {
+stability_selection <- function(x, y = NULL,
+                                kernel = c("l1-logistic", "lasso", "ridge",
+                                           "Cox", "pca.sd", "pca.thresh",
+                                           "multinomial"),
+                                num_iter = 100,
+                                parallel = FALSE,
+                                alpha = 0.8, Pw = 0.5,
+                                num_perms = 0,
+                                standardize = TRUE,
+                                lambda_min_ratio = 0.1,
+                                beta_threshold = 0L,
+                                elastic_alpha = 1.0,
+                                lambda_pad = 20,
+                                impute_outliers = FALSE,
+                                impute_n_sigma = 3,
+                                r_seed = sample(1000, 1), ...) {
 
   x <- data.matrix(x)      # turn into data matrix
 
@@ -173,8 +176,8 @@ stabilitySelection <- function(x, y = NULL,
 
   kernel <- match.arg(kernel)
 
-  if ( impute.outliers ) {
-    x <- apply(x, 2, impute_outliers, n.sigma = impute.n.sigma)
+  if ( impute_outliers ) {
+    x <- apply(x, 2, impute_outliers, n.sigma = impute_n_sigma)
   }
 
   # Checks for parallel processing
@@ -209,12 +212,12 @@ stabilitySelection <- function(x, y = NULL,
   )
 
   # set random seed here to ensure reproducibility of stability paths
-  set.seed(r.seed,                    # parallel reproducibility; RNGkind()
+  set.seed(r_seed,                    # parallel reproducibility; RNGkind()
            kind = ifelse(n_cores > 1, "L'Ecuyer", "default"))
 
 
-  if ( num.perms > 0 ) {
-    perm_seq <- seq_len(num.perms)
+  if ( num_perms > 0 ) {
+    perm_seq <- seq_len(num_perms)
     perm.y   <- # assigned by if statement
       if ( inherits(y, "matrix") ) {
         lapply(perm_seq,
@@ -241,7 +244,7 @@ stabilitySelection <- function(x, y = NULL,
     }
     glmnet::glmnet(x, y, family = "binomial",
                    standardize = standardize,
-                   lambda.min.ratio = lambda.min.ratio,
+                   lambda.min.ratio = lambda_min_ratio,
                    penalty.factor = W)$lambda
 
   } else if ( kernel == "multinomial") {
@@ -255,7 +258,7 @@ stabilitySelection <- function(x, y = NULL,
       W[draw < Pw] <- alpha
     }
     glmnet::glmnet(x, y, family = "multinomial", standardize = standardize,
-                   lambda.min.ratio = lambda.min.ratio, penalty.factor = W)$lambda
+                   lambda.min.ratio = lambda_min_ratio, penalty.factor = W)$lambda
 
   } else if ( kernel == "pca.sd" ) {
     if ( floor(alpha) != alpha ) {
@@ -265,10 +268,10 @@ stabilitySelection <- function(x, y = NULL,
         call. = FALSE
       )
     }
-    max.lambda <- 10
+    max_lambda <- 10
     exp(
-      seq(log(max.lambda),                      # log-space
-          log(max.lambda * lambda.min.ratio),   # hi resolution at low values
+      seq(log(max_lambda),                      # log-space
+          log(max_lambda * lambda_min_ratio),   # hi resolution at low values
           length.out = 100)
       )                                         # back to linear space
 
@@ -280,10 +283,10 @@ stabilitySelection <- function(x, y = NULL,
         call. = FALSE
       )
     }
-    max.lambda <- 0.5
+    max_lambda <- 0.5
     exp(
-      seq(log(max.lambda),
-        log(max.lambda * lambda.min.ratio),
+      seq(log(max_lambda),
+        log(max_lambda * lambda_min_ratio),
         length.out = 100)
       )
 
@@ -298,15 +301,15 @@ stabilitySelection <- function(x, y = NULL,
     }
     glmnet::glmnet(x, y, family = "gaussian",
                    standardize = standardize,
-                   lambda.min.ratio = lambda.min.ratio,
+                   lambda.min.ratio = lambda_min_ratio,
                    penalty.factor = W,
-                   alpha = elastic.alpha)$lambda
+                   alpha = elastic_alpha)$lambda
 
   } else if ( kernel == "ridge" ) {
-    if ( elastic.alpha != 0 ) {
+    if ( elastic_alpha != 0 ) {
       stop(
-        "Invalid `elastic.alpha =` argument for 'ridge' kernels (",
-        elastic.alpha, "). Please set `elastic.alpha = 0`.", call. = FALSE
+        "Invalid `elastic_alpha =` argument for 'ridge' kernels (",
+        elastic_alpha, "). Please set `elastic_alpha = 0`.", call. = FALSE
       )
     }
     p <- ncol(x)
@@ -327,14 +330,14 @@ stabilitySelection <- function(x, y = NULL,
     y <- cbind(time = S[, 1L], status = S[, 2L])
     glmnet::glmnet(x, y, nlambda = nsteps, family = "cox",
                    standardize = standardize,
-                   lambda.min.ratio = lambda.min.ratio)$lambda
+                   lambda.min.ratio = lambda_min_ratio)$lambda
   }
 
 
   if ( !kernel %in% c("pca.thresh", "pca.sd") ) {
     # pad lambda at the upper end
     seq_shift <- lambda_seq[1L] / lambda_seq[2L]
-    pad <- rev(seq_len(lambda.pad)) |>  # default 1:20 & invert 20:1
+    pad <- rev(seq_len(lambda_pad)) |>  # default 1:20 & invert 20:1
       vapply(function(.x) lambda_seq[1L] * seq_shift^.x, 0.1)
     lambda_seq <- c(pad, lambda_seq)
   }
@@ -353,33 +356,33 @@ stabilitySelection <- function(x, y = NULL,
   # THE ACTION!
   if ( n_cores > 1 ) {        # if parallel processing
     stab_time <- system.time(
-      stabpath_mat <- parallel::mclapply(1:num.iter, function(i) {
-             calcStabilityPaths(x, y,
-                                kernel         = kernel,
-                                lambda.seq     = lambda_seq,
-                                alpha          = alpha,
-                                Pw             = Pw,
-                                beta.threshold = beta.threshold,
-                                elastic.alpha  = elastic.alpha,
-                                standardize    = standardize)
+      stabpath_mat <- parallel::mclapply(1:num_iter, function(i) {
+             calc_stability_paths(x, y,
+                                  kernel         = kernel,
+                                  lambda_seq     = lambda_seq,
+                                  alpha          = alpha,
+                                  Pw             = Pw,
+                                  beta_threshold = beta_threshold,
+                                  elastic_alpha  = elastic_alpha,
+                                  standardize    = standardize)
         }, mc.cores = n_cores) |> Reduce(f = "+") # add them all up
     )
     signal_done(
       "Stablity path run time:", value(round(stab_time["elapsed"], 4))
     )
 
-    if ( num.perms > 0 ) {
+    if ( num_perms > 0L ) {
       perm_time <- system.time(
         permpath_list <- lapply(perm_seq, function(.j) {
-            parallel::mclapply(1:num.iter, function(i) {
-                calcStabilityPaths(x, perm.y[[.j]],
-                                   kernel         = kernel,
-                                   lambda.seq     = perm_lambda,
-                                   alpha          = alpha,
-                                   Pw             = Pw,
-                                   beta.threshold = beta.threshold,
-                                   standardize    = standardize,
-                                   elastic.alpha  = elastic.alpha)
+            parallel::mclapply(1:num_iter, function(i) {
+                calc_stability_paths(x, perm.y[[.j]],
+                                     kernel         = kernel,
+                                     lambda_seq     = perm_lambda,
+                                     alpha          = alpha,
+                                     Pw             = Pw,
+                                     beta_threshold = beta_threshold,
+                                     standardize    = standardize,
+                                     elastic_alpha  = elastic_alpha)
               }, mc.cores = n_cores) |> Reduce(f = "+")
           }) |> setNames(sprintf("Perm_%03i", perm_seq))
       )
@@ -389,37 +392,37 @@ stabilitySelection <- function(x, y = NULL,
     }
 
   } else {
-    stabpath_mat <- replicate(num.iter, simplify = FALSE,
-                      calcStabilityPaths(x, y,
+    stabpath_mat <- replicate(num_iter, simplify = FALSE,
+                      calc_stability_paths(x, y,
                         kernel         = kernel,
-                        lambda.seq     = lambda_seq,
+                        lambda_seq     = lambda_seq,
                         alpha          = alpha,
                         Pw             = Pw,
                         standardize    = standardize,
-                        beta.threshold = beta.threshold,
-                        elastic.alpha  = elastic.alpha)) |> Reduce(f = "+")
-    if ( num.perms > 0 ) {
+                        beta_threshold = beta_threshold,
+                        elastic_alpha  = elastic_alpha)) |> Reduce(f = "+")
+    if ( num_perms > 0L ) {
       permpath_list <- lapply(perm_seq, function(.x) {
-          replicate(num.iter, simplify = FALSE,
-            calcStabilityPaths(x, perm.y[[.x]],
-                               kernel         = kernel,
-                               lambda.seq     = perm_lambda,
-                               alpha          = alpha,
-                               Pw             = Pw,
-                               standardize    = standardize,
-                               beta.threshold = beta.threshold,
-                               elastic.alpha  = elastic.alpha)) |> Reduce(f = "+")
+          replicate(num_iter, simplify = FALSE,
+            calc_stability_paths(x, perm.y[[.x]],
+                                 kernel         = kernel,
+                                 lambda_seq     = perm_lambda,
+                                 alpha          = alpha,
+                                 Pw             = Pw,
+                                 standardize    = standardize,
+                                 beta_threshold = beta_threshold,
+                                 elastic_alpha  = elastic_alpha)) |> Reduce(f = "+")
         }) |>
         setNames(sprintf("Perm_%03i", perm_seq))
     }
   }
 
-  stabpath_mat <- stabpath_mat / num.iter / 2
+  stabpath_mat <- stabpath_mat / num_iter / 2
   rownames(stabpath_mat) <- colnames(x)
 
-  if ( num.perms > 0 ) {
+  if ( num_perms > 0L ) {
     permpath_list <- lapply(permpath_list, function(.mat) {
-      structure(.mat / num.iter / 2, dimnames = list(colnames(x), NULL))
+      structure(.mat / num_iter / 2, dimnames = list(colnames(x), NULL))
     })
   }
 
@@ -446,7 +449,7 @@ stabilitySelection <- function(x, y = NULL,
                                         standardize = standardize,
                                         lambda = lambda_seq,
                                         penalty.factor = W,
-                                        alpha = elastic.alpha)$beta,
+                                        alpha = elastic_alpha)$beta,
          "ridge"       = glmnet::glmnet(x, y, family = "gaussian",
                                         standardize = standardize,
                                         penalty.factor = W, alpha = 0)$beta,
@@ -457,40 +460,42 @@ stabilitySelection <- function(x, y = NULL,
          "pca.sd"      = NULL,
          "pca.thresh"  = NULL)
 
-  list(stabpath.matrix  = stabpath_mat,
+  list(stabpath_matrix  = stabpath_mat,
        lambda           = lambda_seq,
        alpha            = alpha,
        Pw               = Pw,
        kernel           = kernel,
-       num.iter         = num.iter,
+       num_iter         = num_iter,
        standardize      = standardize,
-       impute.outliers  = impute.outliers,
-       lambda.min.ratio = lambda.min.ratio,
-       perm.data        = length(permpath_list) > 0L & num.perms > 0,
-       permpath.list    = permpath_list,
-       perm.lambda      = perm_lambda,
-       permpath.max     = perm_max_mat,
+       impute_outliers  = impute_outliers,
+       lambda_min_ratio = lambda_min_ratio,
+       perm_data        = length(permpath_list) > 0L & num_perms > 0L,
+       permpath_list    = permpath_list,
+       perm_lambda      = perm_lambda,
+       permpath_max     = perm_max_mat,
        beta             = beta,
-       r.seed           = r.seed) |> add_class("stab_sel")
+       r_seed           = r_seed) |> add_class("stab_sel")
 }
 
 
 #' Test for object type "stab_sel"
 #'
-#' The [is.stab_sel()] function checks whether
+#' The [is_stab_sel()] function checks whether
 #' an object is of class `stab_sel`. See [inherits()].
-#' @rdname stabilitySelection
-#' @return The `is.stab_sel` function returns a logical boolean.
+#'
+#' @rdname stability_selection
+#' @return The `is_stab_sel` function returns a logical boolean.
+#'
 #' @examples
 #' # Test for class `stab_sel`
-#' is.stab_sel(stab_sel)
+#' is_stab_sel(stab_sel)
 #'
 #' @export
-is.stab_sel <- function(x) inherits(x, "stab_sel")
+is_stab_sel <- function(x) inherits(x, "stab_sel")
 
 
-#' @describeIn stabilitySelection
-#' The S3 `print` method for class `stab_sel`.
+#' @describeIn stability_selection
+#'   S3 `print` method for class `stab_sel`.
 #'
 #' @return The S3 print method returns:
 #' \item{Stability Selection Kernel}{The kernel used in the stability selection
@@ -499,7 +504,7 @@ is.stab_sel <- function(x) inherits(x, "stab_sel")
 #' \item{Weakness Probability}{The probability of the weakness being applied
 #'       (`Pw =` argument).}
 #' \item{Number of Iterations}{Number of iterations in the selection
-#'       (`num.iter =` argument).}
+#'       (`num_iter =` argument).}
 #' \item{Standardized}{Was the data standardized prior to stability selection?}
 #' \item{Imputed Outliers}{Were statistical outliers imputed to the Gaussian
 #'       approximation prior to stability selection?}
@@ -549,7 +554,7 @@ print.stab_sel <- function(x, ...) {
 }
 
 
-#' @describeIn stabilitySelection
+#' @describeIn stability_selection
 #'   The S3 `summary` method for class `stab_sel`.
 #'
 #' @param object An `stab_sel` class object.
@@ -576,10 +581,10 @@ summary.stab_sel <- function(object, ..., thresh) {
   }
 
   lambda_norm <- object$lambda / max(object$lambda)
-  df          <- getStableFeatures(object, thresh = thresh, ...)
+  df          <- get_stable_features(object, thresh = thresh, ...)
 
   if ( nrow(df) > 0 ) {
-    df$AUC <- object$stabpath.matrix[rownames(df), ] |>  # reordering features
+    df$AUC <- object$stabpath_matrix[rownames(df), ] |>  # reordering features
       calc_path_auc(values = lambda_norm)
   }
 
@@ -589,7 +594,7 @@ summary.stab_sel <- function(object, ..., thresh) {
 }
 
 
-#' @describeIn stabilitySelection
+#' @describeIn stability_selection
 #'   The S3 `plot` method plots the selection paths for the features. This
 #'   plot closely resembles a lasso coefficient plot with the regularization
 #'   parameter (lambda) plotted on x-axis and the feature selection probability
@@ -627,10 +632,7 @@ summary.stab_sel <- function(object, ..., thresh) {
 #' @param emp_thresh a vector describing the empirical
 #'   threshold values to be used (`default = seq(1, 0.1, by = 0.01)`).
 #'
-#' @return The `plot` method returns a data frame of
-#'   all features labeled in the plot, either by having
-#'   a maximum selection probability greater than `thresh`
-#'   or because they were provided as `custom_labels`.
+#' @return A `ggplot`.
 #'
 #' @examples
 #' # S3 plot method
@@ -647,7 +649,7 @@ plot.stab_sel <- function(x, thresh = 0.60,
                           add_perm = FALSE,
                           emp_thresh = seq(1, 0.1, by = -0.01), ...) {
 
-  stopifnot(is_stabpath.matrix(x$stabpath.matrix))   # sanity catch
+  stopifnot(is_stabpath_matrix(x$stabpath_matrix))   # sanity catch
   lambda_norm <- x$lambda / max(x$lambda)
 
   if ( is.null(main) ) {
@@ -655,12 +657,12 @@ plot.stab_sel <- function(x, thresh = 0.60,
                     x$alpha, x$Pw)
   }
 
-  custom_features <- intersect(custom.labels, rownames(x$stabpath.matrix))
+  custom_features <- intersect(custom_labels, rownames(x$stabpath_matrix))
   summary_df      <- summary(x, thresh    = thresh,
                              add_features = custom_features,
                              warn         = FALSE)
 
-  if ( sort.by.AUC ) {
+  if ( sort_by_AUC ) {
     summary_df <- dplyr::arrange(summary_df, dplyr::desc(AUC))
   }
 
@@ -672,7 +674,7 @@ plot.stab_sel <- function(x, thresh = 0.60,
 
   # pre-process the x-axis values for dplyr::left_join to the prob. paths
   # The names will be X1 ... Xn; following conversion to tbl_df
-  x_df <- data.frame(column      = paste0("X", seq_len(ncol(x$stabpath.matrix))),
+  x_df <- data.frame(column      = paste0("X", seq_len(ncol(x$stabpath_matrix))),
                      lambda_norm = lambda_norm)
 
   auc_df <- dplyr::select(summary_df, feature, AUC)
@@ -692,16 +694,16 @@ plot.stab_sel <- function(x, thresh = 0.60,
 
   data <- data.frame(x$stabpath_matrix) |>
     rn2col("feature") |>
-    dplyr::left_join(auc_df, by = "feature") |>
+    left_join(auc_df, by = "feature") |>
     dplyr::mutate(
-      feat_sel = dplyr::case_when(
+      feat_sel = case_when(
         feature %in% summary_df$feature ~ .get_seq(feature),
         TRUE ~ "Unselected"),
       label = factor(sprintf("%s (%0.2f)", feat_sel, AUC), levels = names(line_cols))
     ) |>
     tidyr::pivot_longer(c(-feature, -feat_sel, -AUC, -label),
                         names_to = "column", values_to = "prob") |>
-    dplyr::left_join(x_df, by = "column")
+    left_join(x_df, by = "column")
 
   # sanity check for safety
   stopifnot(all(names(line_cols) %in% unique(data$label)))
@@ -728,7 +730,7 @@ plot.stab_sel <- function(x, thresh = 0.60,
         "Skipping permutation cutoffs.", call. = FALSE
       )
     } else {
-      emp_breaks_list <- calcEmpFDRbreaks(x, emp.thresh)
+      emp_breaks_list <- calc_emp_fdr_breaks(x, emp_thresh)
       emp_breaks_list$breaks$line <- "dotted"
       break_cols <- unlist(col_palette, use.names = FALSE) |> head(5L)
       p <- p +
@@ -743,9 +745,8 @@ plot.stab_sel <- function(x, thresh = 0.60,
           values = rep("dashed", length(break_cols))
           ) +
         ggplot2::guides(linetype = ggplot2::guide_legend(
-          override.aes = list(colour = break_cols)
-            )
-          )
+          override.aes = list(colour = break_cols))
+        )
     }
   }
   return(p)

@@ -1,7 +1,8 @@
 #' S3 Print Method for Class `pclust`
 #'
-#' @rdname progenyCluster
-#' @param x An object of class `pclust`.
+#' @rdname progeny_cluster
+#' @param x A `pclust` object.
+#'
 #' @examples
 #' # S3 print method
 #' pclust
@@ -29,7 +30,7 @@ print.pclust <- function(x, ...) {
     gsub(" {2,}", " ", paste(deparse(x$call), collapse = "")),
     x$size,
     x$iter,
-    paste0(x$clust.iter, collapse = " ")
+    paste0(x$clust_iter, collapse = " ")
   )
   writeLines(paste0("   ", key, value))
 
@@ -37,15 +38,15 @@ print.pclust <- function(x, ...) {
   signal_rule(
     "Mean & CI95 Stability Scores", line_col = "magenta", lty = "double"
   )
-  print(rbind(starMax(x$mean.scores), x$ci95.scores)[c(2, 1, 3), ])
+  print(rbind(starMax(x$mean_scores), x$ci95_scores)[c(2, 1, 3), ])
 
   cat("\n")
   signal_rule("Maximum Distance Scores", line_col = "magenta", lty = "double")
-  print(starMax(x$D.max))
+  print(starMax(x$D_max))
 
   cat("\n")
   signal_rule("Gap Distance Scores", line_col = "magenta", lty = "double")
-  print(starMax(x$D.gap))
+  print(starMax(x$D_gap))
   signal_rule(line_col = "green", lty = "double")
   invisible(x)
 }

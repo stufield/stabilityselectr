@@ -8,17 +8,17 @@
 if ( getRversion() >= "2.15.1" ) {
   utils::globalVariables(
     c(".",
-      "FdrBreaks",     # calcEmpFDRbreaks in `dplyr::mutate()`
-      "MaxSelectProb", # in `getStableFeatures()`
+      "FDR_breaks",    # calc_emp_fdr_breaks() in `dplyr::mutate()`
+      "MaxSelectProb", # in `get_stable_features()`
       "AUC",           # in `plot.stab_sel()`
       "feature",       # in `plot.stab_sel()`
       "feat_sel",      # in `plot.stab_sel()`
       "prob",          # in `plot.stab_sel()`
       "label",         # in `plot.stab_sel()`
-      "thresh_mean",   # in `plotEmpFDR()`
-      "MeanFPs",       # in `plotEmpFDR()`
-      "piThresh",      # in `plotEmpFDR()`
-      "n_selected"     # in `plotEmpFDR()`
+      "thresh_mean",   # in `plot_emp_fdr()`
+      "MeanFPs",       # in `plot_emp_fdr()`
+      "piThresh",      # in `plot_emp_fdr()`
+      "n_selected"     # in `plot_emp_fdr()`
     )
   )
 }

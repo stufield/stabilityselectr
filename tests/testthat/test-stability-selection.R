@@ -1,54 +1,55 @@
 
 # Setup ----
-withr::local_options(list(signal.quiet = TRUE)) # silence signalling from `signal_done()`
+# silence signalling from `signal_done()`
+withr::local_options(list(signal.quiet = TRUE))
 
 # Testing ----
-# stabilitySelection ----
-test_that("`stabilitySelection()` generates correct object", {
+# stability_selection ----
+test_that("`stability_selection()` generates correct object", {
   expect_s3_class(ss, "stab_sel")
   expect_type(ss, "list")
-  expect_true(is_stabpath.matrix(ss$stabpath.matrix))
+  expect_true(is_stabpath_matrix(ss$stabpath_matrix))
   expect_length(ss, 15L)
-  expect_true(is.matrix(ss$stabpath.matrix))
-  expect_named(ss, c("stabpath.matrix", "lambda",
+  expect_true(is.matrix(ss$stabpath_matrix))
+  expect_named(ss, c("stabpath_matrix", "lambda",
                      "alpha", "Pw",
-                     "kernel", "num.iter",
-                     "standardize", "impute.outliers",
-                     "lambda.min.ratio", "perm.data",
-                     "permpath.list", "perm.lambda",
-                     "permpath.max", "beta", "r.seed")
+                     "kernel", "num_iter",
+                     "standardize", "impute_outliers",
+                     "lambda_min_ratio", "perm_data",
+                     "permpath_list", "perm_lambda",
+                     "permpath_max", "beta", "r_seed")
     )
   expect_equal(ss$alpha, 0.8)
   expect_equal(ss$Pw, 0.5)
-  expect_equal(ss$num.iter, 100)
+  expect_equal(ss$num_iter, 100L)
   expect_true(ss$standardize)
-  expect_equal(ss$lambda.min.ratio, 0.1)
+  expect_equal(ss$lambda_min_ratio, 0.1)
   expect_length(ss$lambda, 120L)
-  expect_equal(ss$r.seed, 101)
+  expect_equal(ss$r_seed, 101)
   expect_equal(ss$alpha, 0.8)
   expect_equal(ss$kernel, "l1-logistic")
-  expect_false(ss$perm.data)
-  expect_null(ss$permpath.list)
-  expect_s3_class(ss$permpath.max, "tbl_df")
-  expect_equal(dim(ss$permpath.max), c(0, 1))   # empty tibble; no perm
-  expect_named(ss$permpath.max, "Feature")
-  expect_false(ss$impute.outliers)
+  expect_false(ss$perm_data)
+  expect_null(ss$permpath_list)
+  expect_s3_class(ss$permpath_max, "tbl_df")
+  expect_equal(dim(ss$permpath_max), 0:1L)   # empty tibble; no perm
+  expect_named(ss$permpath_max, "Feature")
+  expect_false(ss$impute_outliers)
 })
 
 # Testing values ----
-test_that("`stabilitySelection()` generates the correct values", {
+test_that("`stability_selection()` generates the correct values", {
   expect_equal(sum(ss$lambda), 5.87757157290224)
-  expect_equal(sum(ss$perm.lambda), 1.00365738006801)
-  expect_length(ss$perm.lambda, 20L)
-  expect_equal(dim(ss$stabpath.matrix), c(20, 120))
-  expect_equal(rownames(ss$stabpath.matrix),
-               paste0("feat_", letters[1:20]))
-  expect_equal(diag(ss$stabpath.matrix),
+  expect_equal(sum(ss$perm_lambda), 1.00365738006801)
+  expect_length(ss$perm_lambda, 20L)
+  expect_equal(dim(ss$stabpath_matrix), c(20L, 120L))
+  expect_equal(rownames(ss$stabpath_matrix),
+               paste0("feat_", letters[1:20L]))
+  expect_equal(diag(ss$stabpath_matrix),
                c(0.035, 0.015, 0.03, 0.08, 0.02, 0.04, 0.005, 0.005, 0.03,
                  0.17, 0.055, 0.105, 0.395, 0.015, 0.045, 0.035, 0.05, 0.25,
                  0.14, 0.375))
-  expect_equal(sum(ss$stabpath.matrix), 1216.42)
-  expect_equal(rowSums(ss$stabpath.matrix),
+  expect_equal(sum(ss$stabpath_matrix), 1216.42)
+  expect_equal(rowSums(ss$stabpath_matrix),
                c(64.96, 52.73, 60.875, 77.055, 54.44, 59.56, 53.285,
                  53.49, 49.225, 75.985, 55.3, 63.265, 86.24, 46.3,
                  47.75, 47.83, 56.51, 65.8, 66.645, 79.175),
@@ -58,13 +59,13 @@ test_that("`stabilitySelection()` generates the correct values", {
 
 # Testing outlier imputation ----
 test_that("the `stab_select` object is created correctly when imputing outliers", {
-  ss1 <- stabilitySelection(x, y, kernel = "l1-logistic",
-                            impute.outliers = TRUE, r.seed = 101)
+  ss1 <- stability_selection(x, y, kernel = "l1-logistic",
+                            impute_outliers = TRUE, r_seed = 101)
   expect_s3_class(ss1, "stab_sel")
-  expect_equal(dim(ss1$stabpath.matrix), dim(ss$stabpath.matrix))
-  expect_true(ss1$impute.outliers)
-  expect_equal(sum(ss1$stabpath.matrix), 1216.755)
-  expect_equal(rownames(ss1$stabpath.matrix), rownames(ss$stabpath.matrix))
+  expect_equal(dim(ss1$stabpath_matrix), dim(ss$stabpath_matrix))
+  expect_true(ss1$impute_outliers)
+  expect_equal(sum(ss1$stabpath_matrix), 1216.755)
+  expect_equal(rownames(ss1$stabpath_matrix), rownames(ss$stabpath_matrix))
 })
 
 # S3 summary method ----
@@ -97,10 +98,10 @@ test_that("`stab_sel` S3 print method returns expected known output", {
 })
 
 # NAs throw errors ----
-test_that("`stabilitySelection()` with NAs throws an error", {
+test_that("`stability_selection()` with NAs throws an error", {
   x[sample(length(x), 50)] <- NA       # random NAs spread in data matrix
   expect_error(
-    stabilitySelection(x, y),
+    stability_selection(x, y),
     paste0("There are NAs detected in the data matrix ...\n",
            "This will cause `glmnet()` to fail ...\n",
            "Please remove the feature or use `splyr::imputeNAs()`"),
@@ -109,31 +110,31 @@ test_that("`stabilitySelection()` with NAs throws an error", {
 })
 
 # Trips correct errors ----
-test_that("`stabilitySelection()` trips the correct errors if kernel = ridge", {
+test_that("`stability_selection()` trips the correct errors if kernel = ridge", {
   expect_error(
-    stabilitySelection(x, y, kernel = "ridge",
-                       lambda.seq = lambda_vec,
-                       elastic.alpha = 1L,     # ridge is alpha = 0!
+    stability_selection(x, y, kernel = "ridge",
+                       lambda_seq = lambda_vec,
+                       elastic_alpha = 1L,     # ridge is alpha = 0!
                        standardize = TRUE),
-    paste("Invalid `elastic.alpha =` argument for 'ridge' kernels (1).",
-          "Please set `elastic.alpha = 0`."), fixed = TRUE
+    paste("Invalid `elastic_alpha =` argument for 'ridge' kernels (1).",
+          "Please set `elastic_alpha = 0`."), fixed = TRUE
   )
 })
 
-test_that("`stabilitySelection()` trips the correct errors if kernel = pca.thresh", {
+test_that("`stability_selection()` trips the correct errors if kernel = pca.thresh", {
   expect_error(
-    stabilitySelection(x, y, kernel = "pca.thresh",
-                       lambda.seq = lambda_vec,
+    stability_selection(x, y, kernel = "pca.thresh",
+                       lambda_seq = lambda_vec,
                        alpha = 0.8, Pw = 0.5,   # alpha must be PC dim
                        standardize = TRUE),
     "Bad alpha: 0.8\nPlease set to number of principal components to consider\\."
   )
 })
 
-test_that("`stabilitySelection()` trips the correct errors if kernel = pca.sd", {
+test_that("`stability_selection()` trips the correct errors if kernel = pca.sd", {
   expect_error(
-    stabilitySelection(x, y, kernel = "pca.sd",
-                       lambda.seq = lambda_vec,
+    stability_selection(x, y, kernel = "pca.sd",
+                       lambda_seq = lambda_vec,
                        alpha = 0.8, Pw = 0.5,   # alpha must be PC dim
                        standardize = TRUE),
     "Bad alpha: 0.8\nPlease set to number of principal components to consider\\.",
@@ -141,16 +142,16 @@ test_that("`stabilitySelection()` trips the correct errors if kernel = pca.sd", 
 })
 
 # Cox kernel ----
-test_that("`stabilitySelection()` generates expected values for the Cox kernel", {
+test_that("`stability_selection()` generates expected values for the Cox kernel", {
   xcox <- strip_meta(log10(sim_adat))
   ycox <- survival::Surv(sim_adat$time, sim_adat$status)
-  ss_cox <- stabilitySelection(xcox, ycox, kernel = "Cox", r.seed = 101)
+  ss_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 101)
 
   expect_equal(sum(ss_cox$lambda), 13.533816327717)
-  expect_equal(sum(ss_cox$perm.lambda), 2.3110419787012)
-  expect_length(ss_cox$perm.lambda, 20L)
-  expect_equal(dim(ss_cox$stabpath.matrix), c(40, 120))
-  expect_equal(rownames(ss_cox$stabpath.matrix),
+  expect_equal(sum(ss_cox$perm_lambda), 2.3110419787012)
+  expect_length(ss_cox$perm_lambda, 20L)
+  expect_equal(dim(ss_cox$stabpath_matrix), c(40, 120))
+  expect_equal(rownames(ss_cox$stabpath_matrix),
                c("seq.2802.68", "seq.9251.29", "seq.1942.70", "seq.5751.80",
                  "seq.9608.12", "seq.3459.49", "seq.3865.56", "seq.3363.21",
                  "seq.4487.88", "seq.5994.84", "seq.9011.72", "seq.2902.23",
@@ -162,9 +163,9 @@ test_that("`stabilitySelection()` generates expected values for the Cox kernel",
                  "seq.9396.38", "seq.3300.26", "seq.2772.14", "seq.6615.18",
                  "seq.8797.98", "seq.9879.88", "seq.8993.16", "seq.9373.82")
   )
-  expect_equal(diag(ss_cox$stabpath.matrix), rep(0, 40))
-  expect_equal(sum(ss_cox$stabpath.matrix), 29.285)
-  expect_equal(rowSums(ss_cox$stabpath.matrix),
+  expect_equal(diag(ss_cox$stabpath_matrix), rep(0, 40))
+  expect_equal(sum(ss_cox$stabpath_matrix), 29.285)
+  expect_equal(rowSums(ss_cox$stabpath_matrix),
                c(0.1, 0.325, 0.275, 0.61, 0.11, 3.195, 0.035, 0.12,
                  0.155, 0, 0.355, 7.37, 2.925, 1.7, 0.645, 0.015,
                  3.95, 0, 0.12, 1.815, 0.19, 0.005, 0.065, 0, 0.185,

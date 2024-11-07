@@ -1,7 +1,7 @@
 # `pclust` S3 print method returns expected known output
 
     == Progeny Cluster Object ======================================================
-       Call                     progenyCluster(data = progeny_data, clust.iter = 2:6, reps = 5, iter = 10, size = 6)
+       Call                     progeny_cluster(data = progeny_data, clust_iter = 2:6L, reps = 5L, iter = 10L, size = 6)
        Progeny Size             6
        No. of Iterations        10
        K Iterations             2 3 4 5 6

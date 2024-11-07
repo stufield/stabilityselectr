@@ -10,13 +10,14 @@ suppressPackageStartupMessages(devtools::load_all(quiet = TRUE))
 # Progeny Clustering ----
 # This can take a while!
 pclust <- withr::with_seed(101,
-  progenyCluster(progeny_data, clust.iter = 2:9,
-                 reps = 50, iter = 100, size = 8, verbose = TRUE)
+  progeny_cluster(progeny_data, clust_iter = 2:9L,
+                  reps = 50L, iter = 100L, size = 8, verbose = TRUE)
 )
-plot(pclust, filename = "inst/progeny_plots/progeny_data_output.pdf")
+plot(pclust, file = "inst/progeny_plots/progeny_data_output.pdf")
 
 # Stability Clustering ----
-stab_clust <- withr::with_seed(101, stabilityCluster(progeny_data, k = 3, iter = 1000))
+stab_clust <- withr::with_seed(101, stability_cluster(progeny_data,
+                                                      k = 3L, iter = 1000L))
 stab_clust <- dplyr::mutate(
   stab_clust,
   sample = dplyr::row_number(),
@@ -29,7 +30,7 @@ stab_clust <- dplyr::mutate(
   )
 )
 
-cols <- unlist(SomaPlotr::soma_colors[c("purple", "lightgreen", "magenta")])
+cols <- unlist(col_palette[c("purple", "lightgreen", "magenta")])
 
 withr::with_par(list(mgp = c(2.00, 0.75, 0.00), mar = c(3, 4, 3, 1), mfrow = 1:2L), {
   figure("inst/progeny_plots/progeny_data_stability_scatter.pdf",

@@ -4,8 +4,8 @@ pi_vec <- seq(0.6, 0.9, 0.1)
 
 
 # Testing ----
-test_that("`getThresholdFeatures()` returns the correct shape & dimensions", {
-  feat <- getThresholdFeatures(ss$stabpath.matrix, thresh.vec = pi_vec)
+test_that("`get_threshold_features()` returns the correct shape & dimensions", {
+  feat <- get_threshold_features(ss$stabpath_matrix, thresh_vec = pi_vec)
   expect_type(feat, "list")
   expect_named(feat, paste0("thresh_", pi_vec))
   lapply(feat, expect_s3_class, "data.frame")
@@ -17,8 +17,8 @@ test_that("`getThresholdFeatures()` returns the correct shape & dimensions", {
                     thresh_0.9 = c(6, 2)))
 })
 
-test_that("`getThresholdFeatures()` returns the correct values", {
-  feat <- getThresholdFeatures(ss$stabpath.matrix, thresh.vec = pi_vec)
+test_that("`get_threshold_features()` returns the correct values", {
+  feat <- get_threshold_features(ss$stabpath_matrix, thresh_vec = pi_vec)
   expect_equal(lapply(feat, colSums),
                list(thresh_0.6 = c(MaxSelectProb = 17.460, FDRbound = 2.62500),
                     thresh_0.7 = c(MaxSelectProb = 17.460, FDRbound = 1.3125),
@@ -52,10 +52,10 @@ test_that("`getThresholdFeatures()` returns the correct values", {
    )
 })
 
-test_that("`getThresholdFeatures()` returns NAs and trips warning when FDR <= 0.5", {
+test_that("`get_threshold_features()` returns NAs and trips warning when FDR <= 0.5", {
   expect_warning(
-    feat <- getThresholdFeatures(ss$stabpath.matrix, warn = TRUE,
-                                  thresh.vec = c(0.49, 0.51)),
+    feat <- get_threshold_features(ss$stabpath_matrix, warn = TRUE,
+                                  thresh_vec = c(0.49, 0.51)),
     "FDR upper bound not defined for `thresh <= 0.5`"
   )
   expect_type(feat, "list")
@@ -65,10 +65,10 @@ test_that("`getThresholdFeatures()` returns NAs and trips warning when FDR <= 0.
   expect_equal(feat$thresh_0.51$FDRbound, seq(0.125, 2.5, by = 0.125))
 })
 
-test_that("`getThresholdFeatures()` trips warning when no stable features found", {
+test_that("`get_threshold_features()` trips warning when no stable features found", {
   expect_warning(
-    feat <- getThresholdFeatures(ss$stabpath.matrix, warn = TRUE,
-                                  thresh.vec = c(0.93, 0.95)),
+    feat <- get_threshold_features(ss$stabpath_matrix, warn = TRUE,
+                                  thresh_vec = c(0.93, 0.95)),
     "No stable features at `thresh = 0.95`"
   )
   expect_type(feat, "list")
@@ -85,9 +85,9 @@ test_that("`getThresholdFeatures()` trips warning when no stable features found"
                           row.names     = character(0)))
 })
 
-test_that("`getThresholdFeatures()` returns same if only 1 threshold passed", {
-  a <- getThresholdFeatures(ss$stabpath.matrix, 0.9)
-  b <- getThresholdFeatures(ss$stabpath.matrix, 0.91)
+test_that("`get_threshold_features()` returns same if only 1 threshold passed", {
+  a <- get_threshold_features(ss$stabpath_matrix, 0.9)
+  b <- get_threshold_features(ss$stabpath_matrix, 0.91)
   expect_type(a, "list")
   expect_type(b, "list")
   expect_equal(a$thresh_0.9,
