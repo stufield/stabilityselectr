@@ -13,11 +13,12 @@
 #' @importFrom graphics par legend lines axis plot segments
 #' @importFrom withr local_par defer
 #' @importFrom SomaPlotr figure close_figure
+#'
 #' @export
 plot.pclust <- function(x, ..., file = NULL) {
 
-  figure(file, width = 10, height = 5)
   local_par(list(mgp = c(2, 0.75, 0), mar = c(3, 4, 3, 1), mfrow = 1:2L))
+  figure(file, width = 10, height = 5)
   defer(close_figure(file))
   labels <- colnames(x$scores)
   ci95   <- data.matrix(x$ci95)
