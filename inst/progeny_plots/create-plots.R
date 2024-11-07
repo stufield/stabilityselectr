@@ -34,13 +34,14 @@ stab_clust <- dplyr::mutate(
 )
 
 cols <- unlist(col_palette[c("purple", "lightgreen", "magenta")])
+file <- "inst/progeny_plots/progeny_data_stability_scatter.pdf"
 
-withr::with_par(list(mgp = c(2.00, 0.75, 0.00), mar = c(3, 4, 3, 1), mfrow = 1:2L), {
-  file <- "inst/progeny_plots/progeny_data_stability_scatter.pdf"
-  withr::with_pdf(file, title = basename(file), width = 12, height = 6, {
-    plot(progeny_data, col = rep(cols, each = 50), pch = rep(16:18, each = 50),
-         cex = 1.75, main = "Simulated 3 Cluster Data")
-    plot(progeny_data, col = rep(cols, each = 50), pch = stab_clust$pch, cex = 1.75,
-         main = "Stability Clustering")
+withr::with_pdf(file, title = basename(file), width = 12, height = 6, {
+  withr::with_par(list(mgp = c(2.00, 0.75, 0.00), mar = c(3, 4, 3, 1),
+                       mfrow = 1:2L), {
+    plot(progeny_data, col = rep(cols, each = 50), cex = 1.75,
+         pch = rep(16:18, each = 50), main = "Simulated 3 Cluster Data")
+    plot(progeny_data, col = rep(cols, each = 50), pch = stab_clust$pch,
+         cex = 1.75, main = "Stability Clustering")
   })
 })
