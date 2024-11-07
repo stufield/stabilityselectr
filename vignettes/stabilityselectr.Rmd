@@ -13,14 +13,13 @@ library(ggplot2)
 knitr::opts_chunk$set(
   collapse = TRUE, comment = "#>"
 )
-set.seed(101)
 ```
 
 
-
-The `stabilityselectr` package performs stability selection with a 
-variety of kernels provided by the `glmnet` package, and provides 
-simple tools for plotting and extracting selected features.
+The `stabilityselectr` package performs stability
+selection with a variety of kernels provided by
+the `glmnet` package, and provides simple tools
+for plotting and extracting selected features.
 There is additional functionality designed to facilitate
 various forms of permutation clustering analyses.
 
@@ -30,16 +29,16 @@ various forms of permutation clustering analyses.
 
 ## Useful functions in `stabilityselectr`
 
-* `stabilitySelection()`
-* `is.stab_sel()`
-* `getStableFeatures()`
-* `getThresholdFeatures()`
-* `calcEmpFDR()`
-* `calcEmpFDRbreaks()`
-* `plotEmpFDR()`
-* `plotPermutedData()`
-* `progenyCluster()`
-* `stabilityCluster()`
+* `stability_selection()`
+* `is_stab_sel()`
+* `get_stable_features()`
+* `get_threshold_features()`
+* `calc_emp_fdr()`
+* `calc_emp_fdr_breaks()`
+* `plot_emp_fdr()`
+* `plot_permuted_data()`
+* `progeny_cluster()`
+* `stability_cluster()`
 
 
 ---------------
@@ -48,39 +47,41 @@ various forms of permutation clustering analyses.
 
 A typical stability selection analysis might be similar to the one below.
 
-#### Run `stabilitySelection()`
-```{r stab_sel}
+#### Run `stability_selection()`
+```{r stab-sel}
 set.seed(101)
-n_feat      <- 20
-n_samples   <- 100
+n_feat      <- 20L
+n_samples   <- 100L
 x           <- matrix(rnorm(n_feat * n_samples), n_samples, n_feat)
 colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 y           <- sample(1:2, n_samples, replace = TRUE)
-stab_sel    <- stabilitySelection(x, y, kernel = "l1-logistic", num.iter = 500)
-is.stab_sel(stab_sel)
+stab_sel    <- stability_selection(x, y, kernel = "l1-logistic", num_iter = 500L)
+is_stab_sel(stab_sel)
 stab_sel
 ```
 
 #### Plot stability paths
-```{r plot_stab_sel, fig.width = 8, fig.height = 6}
+
+```{r plot-stab-sel, fig.width = 8, fig.height = 6}
 plot(stab_sel, thresh = 0.85)
 ```
 
 
-#### Stable Features at threshold
-```{r get_features}
-getStableFeatures(stab_sel, thresh = 0.85)
+#### Stable Features at a threshold
+
+```{r get-features}
+get_stable_features(stab_sel, thresh = 0.85)
 ```
 
 #### Stable Features at multiple thresholds
-```{r get_threshold}
-getThresholdFeatures(stab_sel, thresh.vec = seq(0.7, 0.9, 0.05))
+
+```{r get-threshold}
+get_threshold_features(stab_sel, thresh_vec = seq(0.7, 0.9, 0.05))
 ```
 
-
 ---------------
-
 
 ## Progeny and Stability Clustering
 
 See separate vignette on clustering: `vignette("progeny-clustering")`.
+
