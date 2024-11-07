@@ -2,8 +2,8 @@
 # saving cluster data plots from progeny clustering
 # from the Progeny Clustering paper data set:
 # Hu, C.W., Kornblau, S.M., Slater, J.H. and A.A. Qutub (2015).
-# Progeny Clustering: A Method to Identify Biological Phenotypes. Scientific Reports,
-# 5:12894. http://www.nature.com/articles/srep12894
+#   Progeny Clustering: A Method to Identify Biological Phenotypes.
+#   Scientific Reports, **5**:12894. http://www.nature.com/articles/srep12894
 # ---------------------------------------------------
 suppressPackageStartupMessages(devtools::load_all(quiet = TRUE))
 
@@ -13,7 +13,10 @@ pclust <- withr::with_seed(101,
   progeny_cluster(progeny_data, clust_iter = 2:9L,
                   reps = 50L, iter = 100L, size = 8, verbose = TRUE)
 )
-plot(pclust, file = "inst/progeny_plots/progeny_data_output.pdf")
+
+plot(pclust,
+     file = "inst/progeny_plots/progeny_data_output.pdf",
+     height = 5, width = 10)
 
 # Stability Clustering ----
 stab_clust <- withr::with_seed(101, stability_cluster(progeny_data,
@@ -33,11 +36,11 @@ stab_clust <- dplyr::mutate(
 cols <- unlist(col_palette[c("purple", "lightgreen", "magenta")])
 
 withr::with_par(list(mgp = c(2.00, 0.75, 0.00), mar = c(3, 4, 3, 1), mfrow = 1:2L), {
-  figure("inst/progeny_plots/progeny_data_stability_scatter.pdf",
-         width = 12, height = 6)
-  plot(progeny_data, col = rep(cols, each = 50), pch = rep(16:18, each = 50),
-       cex = 1.75, main = "Simulated 3 Cluster Data")
-  plot(progeny_data, col = rep(cols, each = 50), pch = stab_clust$pch, cex = 1.75,
-       main = "Stability Clustering")
-close_figure("inst/progeny_plots/progeny_data_stability_scatter.pdf")
+  file <- "inst/progeny_plots/progeny_data_stability_scatter.pdf"
+  withr::with_pdf(file, title = basename(file), width = 12, height = 6, {
+    plot(progeny_data, col = rep(cols, each = 50), pch = rep(16:18, each = 50),
+         cex = 1.75, main = "Simulated 3 Cluster Data")
+    plot(progeny_data, col = rep(cols, each = 50), pch = stab_clust$pch, cex = 1.75,
+         main = "Stability Clustering")
+  })
 })

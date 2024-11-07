@@ -2,24 +2,48 @@
 #'
 #' @rdname progeny_cluster
 #'
-#' @param file `character(1)`. A file name and
-#'   path to save the plot to an external file.
+#' @param file `character(1)`. A file path to
+#'   save the plot to an external file. The extenstion
+#'   is used to determine the appropriate graphics device.
+#'   Note: be careful of the `...` dimension units differ
+#'   among devices!
 #'
 #' @examples
 #' # S3 plot method
 #' plot(pclust)
-#' plot(clustIris)
+#' plot(clust_iris)
+#'
+#' # save to file
+#' plot(pclust, "cluster.pdf", height = 5, width = 10)
+#' plot(pclust, "cluster.png", height = 480, width = 960)
 #'
 #' @importFrom graphics par legend lines axis plot segments
-#' @importFrom withr local_par defer
-#' @importFrom SomaPlotr figure close_figure
+#' @importFrom withr local_par local_pdf local_png
+#' @importFrom withr local_tiff local_bmp local_jpeg local_svg
 #'
 #' @export
-plot.pclust <- function(x, ..., file = NULL) {
+plot.pclust <- function(x, file = NULL, ...) {
 
-  local_par(list(mgp = c(2, 0.75, 0), mar = c(3, 4, 3, 1), mfrow = 1:2L))
-  figure(file, width = 10, height = 5)
-  defer(close_figure(file))
+  if ( length(ext <- file_ext(file)) > 0L ) {
+    local_device <- switch(ext,
+                           pdf  = local_pdf,
+                           png  = local_png,
+                           tiff = local_tiff,
+                           bmp  = local_bmp,
+                           svg  = local_svg,
+                           jpeg = local_jpeg,
+                           stop("Invalid file extension: ", value(ext),
+                                call. = FALSE))
+
+    local_device(file, ...)
+  }
+
+  local_par(
+    list(mgp = c(2, 0.75, 0),
+         mar = c(3, 4, 3, 1),
+         mfrow = 1:2L)
+  )
+
   labels <- colnames(x$scores)
   ci95   <- data.matrix(x$ci95)
   ylims  <- range(ci95, x$mean_random_scores)

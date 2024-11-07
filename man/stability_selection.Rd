@@ -49,8 +49,8 @@ is_stab_sel(x)
 }
 \arguments{
 \item{x}{A numeric \eqn{n x p} matrix of predictive features containing \code{n}
-observation rows and \code{p} feature columns. Alternatively, an object of class
-\code{stab_sel} if passing to one of the S3 generic methods.}
+observation rows and \code{p} feature columns. Alternatively, a \code{stab_sel} class
+object if passing to one of the S3 generic methods.}
 
 \item{y}{The response variable. If kernel is "l1-logistic" then a
 vector of binary class labels. If kernel is "Cox" then it is a two column
@@ -131,7 +131,7 @@ outlier threshold for imputing outliers if
 generator, allowing for reproducibility of results.}
 
 \item{...}{Additional arguments passed to one of the S3 methods for
-objects of class \code{stab_sel}, generics include:
+\code{stab_sel} class objects, generics include:
 \itemize{
 \item \code{\link[=plot.stab_sel]{plot.stab_sel()}}
 \item \code{\link[=print.stab_sel]{print.stab_sel()}}
@@ -228,7 +228,7 @@ probability \code{Pw} and 1 otherwise. The latter choice is used in Theorem
 \code{Pw} are \verb{[0.5, 0.2]}.
 
 The \code{\link[=is_stab_sel]{is_stab_sel()}} function checks whether
-an object is of class \code{stab_sel}. See \code{\link[=inherits]{inherits()}}.
+an object is class \code{stab_sel}. See \code{\link[=inherits]{inherits()}}.
 }
 \details{
 Stability selection can be performed on multiple cores by setting

@@ -25,8 +25,8 @@
 #'   This is *not* available for Windows based OS.
 #'
 #' @param x A numeric \eqn{n x p} matrix of predictive features containing `n`
-#'   observation rows and `p` feature columns. Alternatively, an object of class
-#'   `stab_sel` if passing to one of the S3 generic methods.
+#'   observation rows and `p` feature columns. Alternatively, a `stab_sel` class
+#'    object if passing to one of the S3 generic methods.
 #' @param y The response variable. If kernel is "l1-logistic" then a
 #'   vector of binary class labels. If kernel is "Cox" then it is a two column
 #'   matrix with the event time in the first column and the censoring
@@ -92,7 +92,7 @@
 #' @param r_seed `integer(1)`. Seed for the random number
 #'   generator, allowing for reproducibility of results.
 #' @param ... Additional arguments passed to one of the S3 methods for
-#'   objects of class `stab_sel`, generics include:
+#'   `stab_sel` class objects, generics include:
 #'   * [plot.stab_sel()]
 #'   * [print.stab_sel()]
 #'   * [summary.stab_sel()]
@@ -484,7 +484,7 @@ stability_selection <- function(x, y = NULL,
 #' Test for object type "stab_sel"
 #'
 #' The [is_stab_sel()] function checks whether
-#' an object is of class `stab_sel`. See [inherits()].
+#' an object is class `stab_sel`. See [inherits()].
 #'
 #' @rdname stability_selection
 #' @return The `is_stab_sel` function returns a logical boolean.

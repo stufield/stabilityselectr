@@ -13,26 +13,28 @@
 #'   Particularly useful if error bars during plotting are desired.
 #' @param verbose `logical(1)`. Print the progress of the clustering repeats
 #'   to the console. Defaults to [interactive()].
-#' @param ... Additional parameters passed to the internal `progenyK()`,
-#'   typically `iter =` and `size =`.
-#' @return An object of class `pclust`, a list containing:
-#'   \item{scores:}{A matrix of stability scores for each iteration in a matrix,
+#' @param ... Additional parameters passed to the internal `progeny_k()`,
+#'   typically `iter =` and `size =`. For the [plot()] method,
+#'   arguments passed to the corresponding graphics device.
+#'
+#' @return A `pclust` class object, a list containing:
+#'   \item{scores}{A matrix of stability scores for each iteration in a matrix,
 #'      with `k` columns}
-#'   \item{mean_scores:}{The mean stability scores for each cluster `k`}
-#'   \item{ci95_scores:}{95% confidence interval scores}
-#'   \item{random_scores:}{The reference (random) scores for each iteration
+#'   \item{mean_scores}{The mean stability scores for each cluster `k`}
+#'   \item{ci95_scores}{95% confidence interval scores}
+#'   \item{random_scores}{The reference (random) scores for each iteration
 #'     at each clustering level (`k`)}
-#'   \item{mean_random_scores:}{The mean of the reference (random) data set, i.e.
-#'     column means of `random.scores`}
-#'   \item{D_max:}{The distance between the mean stability scores and the mean
+#'   \item{mean_random_scores}{The mean of the reference (random) data set, i.e.
+#'     column means of `random_scores`}
+#'   \item{D_max}{The distance between the mean stability scores and the mean
 #'     reference scores for each cluster `k`}
-#'   \item{D_gap:}{The "gap" distance metric for neighboring cluster k differences.
+#'   \item{D_gap}{The "gap" distance metric for neighboring cluster k differences.
 #'     See original paper for reference.}
-#'   \item{clust_iter:}{Integer Sequence of `k` clusters interrogated}
-#'   \item{repeats:}{The number of repeat iterations to performed}
-#'   \item{iter:}{The number of progeny iterations to performed}
-#'   \item{size:}{The progeny size used in each iteration}
-#'   \item{call:}{The call made to [progeny_cluster()]}
+#'   \item{clust_iter}{Integer Sequence of `k` clusters interrogated}
+#'   \item{repeats}{The number of repeat iterations to performed}
+#'   \item{iter}{The number of progeny iterations to performed}
+#'   \item{size}{The progeny size used in each iteration}
+#'   \item{call}{The call made to [progeny_cluster()]}
 #'
 #' @author Stu Field
 #' @references Hu, C.W., Kornblau, S.M., Slater, J.H. and A.A. Qutub (2015).
@@ -45,13 +47,14 @@
 #' pclust <- withr::with_seed(1234,
 #'   progeny_cluster(progeny_data, clust_iter = 2:9L, iter = 20L, size = 6)
 #' )
+#' pclust
 #'
-#' # Test progeny clustering on Iris data set
+#' # Test progeny clustering on iris data set
 #' # Doesn't work quite as well as the simulated data set
-#' clustIris <- withr::with_seed(99,
+#' clust_iris <- withr::with_seed(99,
 #'   progeny_cluster(iris[, -5L], clust_iter = 2:5L, size = 6L, iter = 50)
 #' )
-#' clustIris    # true n clusters = 3
+#' clust_iris    # true n clusters = 3
 #'
 #' @importFrom stats quantile runif sd
 #' @export
@@ -134,7 +137,7 @@ progeny_cluster <- function(data, clust_iter = 2:10L, reps = 10L,
 #' Test for object type "pclust"
 #'
 #' The [is_pclust()] function checks whether
-#' an object is of class `pclust`. See [inherits()].
+#' an object is class `pclust`. See [inherits()].
 #'
 #' @rdname progeny_cluster
 #' @return [is_pclust()] returns a logical boolean.
