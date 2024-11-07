@@ -1,11 +1,11 @@
 linters: linters_with_defaults(
-  defaults           = somaverse::soma_linters(),
+  defaults           = megaverse::full_linters(),
   indentation_linter = NULL,
   object_name_linter = NULL
   )
 exclusions: list(
-  "R/stabilitySelection.R"  = list(cyclocomp_linter = Inf),
-  "R/calcStabilityPaths.R"  = list(undesirable_linter = c(185, 190)),
+  "R/stability-selection.R"   = list(cyclocomp_linter = Inf),
+  "R/calc-stability-paths.R"  = list(undesirable_linter = c(185, 190)),
   "tests/testthat/helper.R",
   "tests/testthat.R"
   )
