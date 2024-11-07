@@ -5,7 +5,6 @@ linters: linters_with_defaults(
   )
 exclusions: list(
   "R/stability-selection.R"   = list(cyclocomp_linter = Inf),
-  "R/calc-stability-paths.R"  = list(undesirable_linter = c(185, 190)),
   "tests/testthat/helper.R",
   "tests/testthat.R"
   )

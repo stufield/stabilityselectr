@@ -12,7 +12,7 @@ The Stability Selection package performs stability selection with a variety of k
 Stability selection is performed using \code{\link[=stability_selection]{stability_selection()}},
 which returns a \code{stab_sel} class object. The stability path can be
 plotted using \code{\link[graphics:plot.default]{graphics::plot()}}. A \code{tibble} with the highest
-selection probability can be created using \code{\link[=getStableFeatures]{getStableFeatures()}}.
+selection probability can be created using \code{\link[=get_stable_features]{get_stable_features()}}.
 See vignettes.
 }
 \references{

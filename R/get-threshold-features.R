@@ -28,7 +28,7 @@
 #' get_threshold_features(stab_sel, seq(0.6, 0.9, 0.1))
 #' @importFrom stats setNames
 #' @export
-get_threshold_features<- function(x, thresh_vec, ...) {
+get_threshold_features <- function(x, thresh_vec, ...) {
   # use this construction for the '...' to pass thru properly ...
   lapply(
     setNames(thresh_vec, paste0("thresh_", thresh_vec)),

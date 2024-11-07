@@ -97,7 +97,7 @@
 #'   * [print.stab_sel()]
 #'   * [summary.stab_sel()]
 #'
-#' @return An object of class `stab_sel`:
+#' @return A `stab_sel` class object:
 #'   \item{stabpath_matrix}{A matrix of \eqn{features x lambda_seq} containing
 #'     stability selection probabilities. A row in this matrix corresponds to a
 #'     stability selection path for a single feature.}
@@ -111,10 +111,10 @@
 #'   \item{standardize}{should the data be standardized prior to analysis?}
 #'   \item{lambda_min_ratio}{?}
 #'   \item{perm_data}{Logical. Is there permuted data to perform empirical FDR?}
-#'   \item{permpath.list}{list containing information to calculated the
+#'   \item{permpath_list}{list containing information to calculated the
 #'     permutation paths of the empirical false positive rate.}
 #'   \item{perm_lambda}{The lambda used in the permuted lists.}
-#'   \item{permpath.max}{max lambda for the permuted lists (I think).}
+#'   \item{permpath_max}{max lambda for the permuted lists (I think).}
 #'   \item{beta}{A matrix of the betas calculated during the selection process.}
 #'   \item{r_seed}{The random seed used.}
 #'
@@ -137,11 +137,14 @@
 #' })
 #'
 #' # Cox
-#' xcox <- strip_meta(log10(sim_adat))
-#' # Note this works because colnames are already "time" and "status". In real
-#' # datasets, need to rename the final matrix as "time" and "status".
+#' xcox <- strip_meta(log_rfu(sim_adat))
+#'
+#' # Note this works because colnames are already "time" and "status".
+#' In 'real' datasets, you may need to rename the final matrix as
+#' "time" and "status".
+#'
 #' ycox <- select(sim_adat, time, status) |> as.matrix()
-#' stab_sel_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 101)
+#' stab_sel_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 3)
 #' @importFrom glmnet glmnet
 #' @importFrom stats runif setNames
 #' @importFrom tibble tibble as_tibble
@@ -640,6 +643,9 @@ summary.stab_sel <- function(object, ..., thresh) {
 #'
 #' @importFrom utils head
 #' @importFrom dplyr case_when arrange select mutate desc left_join
+#' @importFrom ggplot2 theme geom_line scale_colour_manual aes
+#' @importFrom ggplot2 scale_x_reverse geom_hline guides guide_legend
+#' @importFrom ggplot2 scale_linetype_manual
 #' @export
 plot.stab_sel <- function(x, thresh = 0.60,
                           custom_labels = NULL,
@@ -709,18 +715,16 @@ plot.stab_sel <- function(x, thresh = 0.60,
   stopifnot(all(names(line_cols) %in% unique(data$label)))
 
   p <- data |>
-    ggplot2::ggplot(ggplot2::aes(x = lambda_norm, y = prob)) +
-    ggplot2::geom_line(ggplot2::aes(group = feature, colour = label)) +
-    ggplot2::scale_colour_manual(values = line_cols) +
-    ggplot2::scale_x_reverse(expand = c(0, 0)) +
-    ggplot2::geom_hline(yintercept = thresh, colour = "black",
-                        linetype = "solid") +
-    ggplot2::guides(colour = ggplot2::guide_legend(title = "Feature",
-                                                   ncol = legend_cols)) +
-    ggplot2::labs(x = "lambda / max(lambda)",
-                  y = "Selection Probability",
-                  title = main) +
-    theme_soma(legend.position = "right") +
+    ggplot(aes(x = lambda_norm, y = prob)) +
+    geom_line(aes(group = feature, colour = label)) +
+    scale_colour_manual(values = line_cols) +
+    scale_x_reverse(expand = c(0, 0)) +
+    geom_hline(yintercept = thresh, colour = "black", linetype = "solid") +
+    guides(colour = guide_legend(title = "Feature", ncol = legend_cols)) +
+    labs(x = "lambda / max(lambda)",
+         y = "Selection Probability",
+         title = main) +
+    theme(legend.position = "right") +
     NULL
 
   if ( add_perm ) {
@@ -734,17 +738,16 @@ plot.stab_sel <- function(x, thresh = 0.60,
       emp_breaks_list$breaks$line <- "dotted"
       break_cols <- unlist(col_palette, use.names = FALSE) |> head(5L)
       p <- p +
-        ggplot2::geom_hline(
+        geom_hline(
           data = emp_breaks_list$breaks,
-          mapping = ggplot2::aes(yintercept = piThresh,
-                                 linetype = factor(MeanFPs)),
+          mapping = aes(yintercept = piThresh, linetype = factor(MeanFPs)),
           colour = break_cols
           ) +
-        ggplot2::scale_linetype_manual(
+        scale_linetype_manual(
           name = "MeanFPs",
           values = rep("dashed", length(break_cols))
-          ) +
-        ggplot2::guides(linetype = ggplot2::guide_legend(
+        ) +
+        guides(linetype = guide_legend(
           override.aes = list(colour = break_cols))
         )
     }

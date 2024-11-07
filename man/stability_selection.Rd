@@ -168,12 +168,12 @@ so the default is \code{FALSE}.}
 threshold values to be used (\code{default = seq(1, 0.1, by = 0.01)}).}
 }
 \value{
-An object of class \code{stab_sel}:
+A \code{stab_sel} class object:
 \item{stabpath_matrix}{A matrix of \eqn{features x lambda_seq} containing
 stability selection probabilities. A row in this matrix corresponds to a
 stability selection path for a single feature.}
 \item{lambda}{the sequence of lambdas used for regularization. They
-correspond to the columns of \code{stabpath.matrix}.}
+correspond to the columns of \code{stabpath_matrix}.}
 \item{alpha}{the weakness parameter provided in the call.}
 \item{Pw}{the weak weight probability provided in the call.}
 \item{kernel}{the kernel used (e.g. l1-logistic).}
@@ -182,10 +182,10 @@ the stability paths.}
 \item{standardize}{should the data be standardized prior to analysis?}
 \item{lambda_min_ratio}{?}
 \item{perm_data}{Logical. Is there permuted data to perform empirical FDR?}
-\item{permpath.list}{list containing information to calculated the
+\item{permpath_list}{list containing information to calculated the
 permutation paths of the empirical false positive rate.}
 \item{perm_lambda}{The lambda used in the permuted lists.}
-\item{permpath.max}{max lambda for the permuted lists (I think).}
+\item{permpath_max}{max lambda for the permuted lists (I think).}
 \item{beta}{A matrix of the betas calculated during the selection process.}
 \item{r_seed}{The random seed used.}
 
@@ -279,11 +279,14 @@ withr::with_seed(101, {
 })
 
 # Cox
-xcox <- strip_meta(log10(sim_adat))
-# Note this works because colnames are already "time" and "status". In real
-# datasets, need to rename the final matrix as "time" and "status".
+xcox <- strip_meta(log_rfu(sim_adat))
+
+# Note this works because colnames are already "time" and "status".
+In 'real' datasets, you may need to rename the final matrix as
+"time" and "status".
+
 ycox <- select(sim_adat, time, status) |> as.matrix()
-stab_sel_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 101)
+stab_sel_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 3)
 # Test for class `stab_sel`
 is_stab_sel(stab_sel)
 

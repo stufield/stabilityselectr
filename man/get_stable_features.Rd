@@ -12,7 +12,7 @@ get_threshold_features(x, thresh_vec, ...)
 }
 \arguments{
 \item{x}{An object of class \code{stab_sel} OR a matrix containing
-selection probabilities, i.e. the \code{stabpath.matrix} entry
+selection probabilities, i.e. the \code{stabpath_matrix} entry
 of a \code{stab_sel} class object.}
 
 \item{thresh}{Numeric in \verb{[0, 1]}. Minimum selection
