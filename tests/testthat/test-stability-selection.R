@@ -104,7 +104,7 @@ test_that("`stability_selection()` with NAs throws an error", {
     stability_selection(x, y),
     paste0("There are NAs detected in the data matrix ...\n",
            "This will cause `glmnet()` to fail ...\n",
-           "Please remove the feature or use `splyr::imputeNAs()`"),
+           "Please remove the feature or use `wranglr::imputeNAs()`"),
     fixed = TRUE
   )
 })
@@ -143,8 +143,8 @@ test_that("`stability_selection()` trips the correct errors if kernel = pca.sd",
 
 # Cox kernel ----
 test_that("`stability_selection()` generates expected values for the Cox kernel", {
-  xcox <- strip_meta(log_rfu(sim_adat))
-  ycox <- survival::Surv(sim_adat$time, sim_adat$status)
+  xcox <- feature_matrix(log_rfu(simdata))
+  ycox <- survival::Surv(simdata$time, simdata$status)
   ss_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 101)
 
   expect_equal(sum(ss_cox$lambda), 13.533816327717)

@@ -121,7 +121,7 @@ are 20 (default), 15, 10, or 5.}
 \item{impute_outliers}{\code{logical(1)}. Should statistical
 outliers (\eqn{3 * \sigma}) be imputed to approximate
 a Gaussian distribution during stability selection?
-See \code{\link[splyr:impute_outliers]{splyr::impute_outliers()}}.}
+See \code{\link[wranglr:impute_outliers]{wranglr::impute_outliers()}}.}
 
 \item{impute_n_sigma}{\code{numeric(1)}. Standard deviation
 outlier threshold for imputing outliers if
@@ -278,13 +278,13 @@ withr::with_seed(101, {
 })
 
 # Cox
-xcox <- strip_meta(stabilityselectr:::log_rfu(sim_adat))
+xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
 
 # Note: this works because colnames are already "time" and "status".
 #   In 'real' datasets, you may need to rename the final matrix as
 #   "time" and "status".
 
-ycox <- select(sim_adat, time, status) |> as.matrix()
+ycox <- select(simdata, time, status) |> as.matrix()
 stab_sel_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 3)
 # Test for class `stab_sel`
 is_stab_sel(stab_sel)

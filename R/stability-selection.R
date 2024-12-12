@@ -85,7 +85,7 @@
 #' @param impute_outliers `logical(1)`. Should statistical
 #'   outliers (\eqn{3 * \sigma}) be imputed to approximate
 #'   a Gaussian distribution during stability selection?
-#'   See [splyr::impute_outliers()].
+#'   See [wranglr::impute_outliers()].
 #' @param impute_n_sigma `numeric(1)`. Standard deviation
 #'   outlier threshold for imputing outliers if
 #'   `impute_outliers = TRUE`, ignored otherwise.
@@ -137,13 +137,13 @@
 #' })
 #'
 #' # Cox
-#' xcox <- strip_meta(stabilityselectr:::log_rfu(sim_adat))
+#' xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
 #'
 #' # Note: this works because colnames are already "time" and "status".
 #' #   In 'real' datasets, you may need to rename the final matrix as
 #' #   "time" and "status".
 #'
-#' ycox <- select(sim_adat, time, status) |> as.matrix()
+#' ycox <- select(simdata, time, status) |> as.matrix()
 #' stab_sel_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 3)
 #' @importFrom glmnet glmnet
 #' @importFrom stats runif setNames
@@ -172,7 +172,7 @@ stability_selection <- function(x, y = NULL,
     stop(
       "There are NAs detected in the data matrix ...\n",
       "This will cause `glmnet()` to fail ...\n",
-      "Please remove the feature or use `splyr::imputeNAs()`",
+      "Please remove the feature or use `wranglr::imputeNAs()`",
       call. = FALSE
     )
   }
@@ -180,7 +180,7 @@ stability_selection <- function(x, y = NULL,
   kernel <- match.arg(kernel)
 
   if ( impute_outliers ) {
-    x <- apply(x, 2, impute_outliers, n.sigma = impute_n_sigma)
+    x <- apply(x, 2, impute_outliers, n_sigma = impute_n_sigma)
   }
 
   # Checks for parallel processing

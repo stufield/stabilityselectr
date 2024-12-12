@@ -67,11 +67,11 @@
 #'                        alpha = 0.8, Pw = 0.5))
 #'
 #' # Cox kernel example
-#' xcox <- strip_meta(stabilityselectr:::log_rfu(sim_adat))
+#' xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
 #'
 #' # Note this works because colnames are already "time" and "status". In real
 #' # datasets, need to rename the final matrix as "time" and "status".
-#' ycox <- select(sim_adat, time, status) |> as.matrix()
+#' ycox <- select(simdata, time, status) |> as.matrix()
 #' cox_pm <- calc_stability_paths(xcox, ycox, "Cox", standardize = TRUE,
 #'                                lambda_seq = c(0, 1, 100), alpha = 0.8, Pw = 0.5)
 #' @importFrom stats prcomp runif

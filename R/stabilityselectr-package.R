@@ -10,7 +10,7 @@
 #'   selection probability can be created using [get_stable_features()].
 #'   See vignettes.
 #'
-#' @import helpr splyr
+#' @import helpr wranglr
 #' @seealso [glmnet::glmnet()], [kmeans()]
 #'
 #' @references **Meinshausen, N. and Buhlmann, P.** (*2010*).
