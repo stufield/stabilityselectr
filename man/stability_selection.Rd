@@ -57,7 +57,7 @@ vector of binary class labels. If kernel is "Cox" then it is a two column
 matrix with the event time in the first column and the censoring
 indicator (1 = event, 0 = censored) in the second column.}
 
-\item{kernel}{Character. A string describing the underlying model
+\item{kernel}{\code{character(1)}. A string describing the underlying model
 used for selection. Options are:
 \itemize{
 \item "l1-logistic" (default)
@@ -215,8 +215,7 @@ For classification problems the \code{l1-logistic} kernel should be used and the
 response should be a vector or factor of with two class labels. For lasso
 the response column should be a numeric vector. For "Cox" the response is a
 \emph{two column matrix} containing the event time in the first column and the
-censoring indicator in the second column. Lastly, "ridge" regression was
-implemented as of Jan 21, 2014.
+censoring indicator in the second column.
 The randomized lasso is used if the \code{alpha} parameter is set to a value
 less than 1. In a randomized Lasso the model coefficients are randomly
 re-weighted when calculating the regularization term. This weighting can be

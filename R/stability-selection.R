@@ -6,8 +6,7 @@
 #'   response should be a vector or factor of with two class labels. For lasso
 #'   the response column should be a numeric vector. For "Cox" the response is a
 #'   *two column matrix* containing the event time in the first column and the
-#'   censoring indicator in the second column. Lastly, "ridge" regression was
-#'   implemented as of Jan 21, 2014.
+#'   censoring indicator in the second column.
 #
 #' The randomized lasso is used if the `alpha` parameter is set to a value
 #'   less than 1. In a randomized Lasso the model coefficients are randomly
@@ -31,7 +30,7 @@
 #'   vector of binary class labels. If kernel is "Cox" then it is a two column
 #'   matrix with the event time in the first column and the censoring
 #'   indicator (1 = event, 0 = censored) in the second column.
-#' @param kernel Character. A string describing the underlying model
+#' @param kernel `character(1)`. A string describing the underlying model
 #'   used for selection. Options are:
 #'   \itemize{
 #'     \item "l1-logistic" (default)
@@ -233,7 +232,6 @@ stability_selection <- function(x, y = NULL,
       }
   }
 
-
   # assigned by if/else
   lambda_seq <- if ( kernel == "l1-logistic" ) {
     y <- factor(y)
@@ -260,8 +258,10 @@ stability_selection <- function(x, y = NULL,
       draw <- stats::runif(p, 0, 1)
       W[draw < Pw] <- alpha
     }
-    glmnet::glmnet(x, y, family = "multinomial", standardize = standardize,
-                   lambda.min.ratio = lambda_min_ratio, penalty.factor = W)$lambda
+    glmnet::glmnet(x, y, family = "multinomial",
+                   standardize = standardize,
+                   lambda.min.ratio = lambda_min_ratio,
+                   penalty.factor = W)$lambda
 
   } else if ( kernel == "pca.sd" ) {
     if ( floor(alpha) != alpha ) {
@@ -273,10 +273,10 @@ stability_selection <- function(x, y = NULL,
     }
     max_lambda <- 10
     exp(
-      seq(log(max_lambda),                      # log-space
-          log(max_lambda * lambda_min_ratio),   # hi resolution at low values
+      seq(log(max_lambda),                   # log-space
+          log(max_lambda * lambda_min_ratio),# hi resolution at low values
           length.out = 100)
-      )                                         # back to linear space
+      )                                      # back to linear space
 
   } else if ( kernel == "pca.thresh" ) {
     if ( floor(alpha) != alpha ) {
@@ -312,7 +312,8 @@ stability_selection <- function(x, y = NULL,
     if ( elastic_alpha != 0 ) {
       stop(
         "Invalid `elastic_alpha =` argument for 'ridge' kernels (",
-        elastic_alpha, "). Please set `elastic_alpha = 0`.", call. = FALSE
+        value(elastic_alpha), "). Please set `elastic_alpha = 0`.",
+        call. = FALSE
       )
     }
     p <- ncol(x)
@@ -357,7 +358,7 @@ stability_selection <- function(x, y = NULL,
   permpath_list <- NULL
 
   # THE ACTION!
-  if ( n_cores > 1 ) {        # if parallel processing
+  if ( n_cores > 1L ) {        # if parallel processing
     stab_time <- system.time(
       stabpath_mat <- parallel::mclapply(1:num_iter, function(i) {
              calc_stability_paths(x, y,
