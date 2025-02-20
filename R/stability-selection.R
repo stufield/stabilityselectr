@@ -584,10 +584,10 @@ summary.stab_sel <- function(object, ..., thresh) {
   }
 
   lambda_norm <- object$lambda / max(object$lambda)
-  df          <- get_stable_features(object, thresh = thresh, ...)
+  df <- get_stable_features(object, thresh = thresh, ...)
 
-  if ( nrow(df) > 0 ) {
-    df$AUC <- object$stabpath_matrix[rownames(df), ] |>  # reordering features
+  if ( nrow(df) > 0L ) {
+    df$AUC <- object$stabpath_matrix[rownames(df), , drop = FALSE] |> # reordr feats
       calc_path_auc(values = lambda_norm)
   }
 
@@ -663,15 +663,18 @@ plot.stab_sel <- function(x, thresh = 0.60,
   }
 
   custom_features <- intersect(custom_labels, rownames(x$stabpath_matrix))
-  summary_df      <- summary(x, thresh    = thresh,
-                             add_features = custom_features,
-                             warn         = FALSE)
+  summary_df      <- summary(x, thresh = thresh, warn = TRUE,
+                             add_features = custom_features)
+  L <- nrow(summary_df)
+
+  if ( L == 0L ) {
+    summary_df$AUC <- NA_real_
+  }
 
   if ( sort_by_AUC ) {
     summary_df <- dplyr::arrange(summary_df, dplyr::desc(AUC))
   }
 
-  L           <- nrow(summary_df)
   legend_cols <- dplyr::case_when(L > 12 & L < 24 ~ 2,
                                   L > 24 & L < 36 ~ 3,
                                   L > 36 ~ 4,
@@ -690,7 +693,7 @@ plot.stab_sel <- function(x, thresh = 0.60,
   # get order of feature labels
   label_order <- sprintf("%s (%0.2f)", .get_seq(auc_df$feature), auc_df$AUC)
 
-  line_cols <- rep(unname(ln_cols), times = 5L)[1:L]
+  line_cols <- head(rep(unname(ln_cols), times = 5L), L)
   names(line_cols) <- label_order
 
   if ( L < nrow(x$stabpath_matrix) ) {  # if un-selected features, append color map
@@ -704,7 +707,8 @@ plot.stab_sel <- function(x, thresh = 0.60,
       feat_sel = case_when(
         feature %in% summary_df$feature ~ .get_seq(feature),
         TRUE ~ "Unselected"),
-      label = factor(sprintf("%s (%0.2f)", feat_sel, AUC), levels = names(line_cols))
+      label = factor(sprintf("%s (%0.2f)", feat_sel, AUC),
+                     levels = names(line_cols))
     ) |>
     tidyr::pivot_longer(c(-feature, -feat_sel, -AUC, -label),
                         names_to = "column", values_to = "prob") |>
@@ -723,8 +727,7 @@ plot.stab_sel <- function(x, thresh = 0.60,
     labs(x = "lambda / max(lambda)",
          y = "Selection Probability",
          title = main) +
-    theme(legend.position = "right") +
-    NULL
+    theme(legend.position = "right")
 
   if ( add_perm ) {
     if ( !x$perm_data ) {
