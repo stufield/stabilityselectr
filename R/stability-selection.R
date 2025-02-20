@@ -694,7 +694,7 @@ plot.stab_sel <- function(x, thresh = 0.60,
   # get order of feature labels
   label_order <- sprintf("%s (%0.2f)", .get_seq(auc_df$feature), auc_df$AUC)
 
-  line_cols <- head(rep(unname(ln_cols), times = 5L), L)
+  line_cols <- rep(unname(ln_cols), length.out = L)
   names(line_cols) <- label_order
 
   if ( L < nrow(x$stabpath_matrix) ) {  # if un-selected features, append color map
