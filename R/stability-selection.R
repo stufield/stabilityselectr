@@ -273,10 +273,10 @@ stability_selection <- function(x, y = NULL,
     }
     max_lambda <- 10
     exp(
-      seq(log(max_lambda),                   # log-space
-          log(max_lambda * lambda_min_ratio),# hi resolution at low values
-          length.out = 100)
-      )                                      # back to linear space
+      seq(log(max_lambda),                    # log-space
+          log(max_lambda * lambda_min_ratio), # hi resolution at low values
+          length.out = 100L)
+      )                                       # back to linear space
 
   } else if ( kernel == "pca.thresh" ) {
     if ( floor(alpha) != alpha ) {
