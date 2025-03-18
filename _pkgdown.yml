@@ -1,76 +1,85 @@
-url: https://confluence.sladmin.com/display/BITOOLS/somaverse
+url: https://stufield.github.io/stabilityselectr/
 
-home:
-  strip_header: true
-  links:
-  - text: Bitbucket
-    href: http://bitbucket.sladmin.com/projects/SV/repos/somastabilityselection/browse
-  - text: Report a bug
-    href: bitools@somalogic.com
-  - text: The tidyverse
-    href: https://www.tidyverse.org
-
-template:
-  bootstrap: 5
-  bslib:
-    #bg: "#202123"      # dark theme
-    #fg: "#B8BCC2"      # dark theme
-    primary: "#0054AD"
-    border-radius: 0.5rem
-    btn-border-radius: 0.25rem
-    base_font: {google: "Roboto"}
+development:
+  mode: auto
 
 authors:
   Stu Field:
     href: https://github.com/stufield
 
-development:
-  mode: auto
+home:
+  links:
+  - text: Learn more about me
+    href: https://github.com/stufield
+
+template:
+  bootstrap: 5
+  package: tidytemplate
+  bslib:
+    bg: "#202123"      # dark theme
+    fg: "#B8BCC2"      # dark theme
+    primary: "#0054AD"
+    border-radius: 0.5rem
+    btn-border-radius: 0.25rem
+    base_font: {google: "Roboto"}
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github]
+  components:
+    intro:
+      text: Get Started
+      href: articles/stabilityselectr.html
 
 articles:
-- title: Getting Started
-  navbar: ~
-  contents:
-  - stabilityselectr
+  - title: Getting Started
+    navbar: ~
+    contents:
+    - stabilityselectr
 
-- title: Permutation Clustering
-  navbar: ~
-  desc: >
-    Perform both progeny and stability clustering.
-  contents:
-  - progeny-clustering
+  - title: Permutation Clustering
+    navbar: ~
+    desc: >
+      Perform both progeny and stability clustering.
+    contents:
+    - progeny-clustering
 
 reference:
   - title: Stability Selection
-    desc:  Preform stability selection.
+    desc: >
+      Preform stability selection.
     contents:
-    - stabilitySelection
-
-  - title: Stable Features
-    desc:  Return the stable features at various probability thresholds.
-    contents:
-    - starts_with("get[A-Z]")
-
-  - title: Plotting
-    desc:  Plot traces of stability paths
-    contents:
-    - starts_with("plot[A-Z]")
+    - stability_selection
 
   - title: Calculating FDR
     desc: >
-      Calculate the empirical false discovery rates via permutations
-      of the `NULL` model (randomized endpoint permutations).
+      Calculate the empirical false discovery rates (FDR) via
+      permutations of the `NULL` model (randomized permutations).
     contents:
-    - starts_with("calc[A-Z]")
+    - starts_with("calc_[a-z]")
+
+  - title: Stable Features
+    desc: >
+      Return the stable features at various probability thresholds.
+    contents:
+    - starts_with("get_[a-z]")
+
+  - title: Plotting Routines
+    desc: >
+      Various plot traces of stability paths or cluster plots.
+    contents:
+    - starts_with("plot")
 
   - title: Progeny and Stability Clustering
-    desc:  Preform progeny clustering and stability clustering.
+    desc: >
+      Preform progeny clustering and stability clustering.
     contents:
-    - progenyCluster
-    - stabilityCluster
+    - ends_with("_cluster")
 
-  - title: Package Data
-    desc:  Two data sets with clustering structure.
+  - title: Data
+    desc: >
+      Two data sets with clustering structure.
     contents:
     - clust_data
     - progeny_data
