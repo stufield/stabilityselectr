@@ -1,16 +1,24 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+    ## [1] "en_US.UTF-8"
+
 # The `stabilityselectr` package
 
 <!-- badges: start -->
 
-[![build](https://img.shields.io/badge/build-passing-success.svg?logo=travis)](http://bitbucket.sladmin.com/projects/SV/repos/somastabilityselection/commits)
-![coverage](https://img.shields.io/badge/coverage-68.4%25-yellow.svg?style=flat&logo=codecov)
-![lint](https://img.shields.io/badge/lints-0-success.svg?style=flat&logo=gitlab)
-[![pkgdown](https://img.shields.io/badge/pkgdown-_-critical.svg?logo=semantic-web&logoColor=red)](https://bitbucket.sladmin.com/pages/SV/somastabilityselection/bb-pkgdown/browse/index.html)
+![GitHub
+version](https://img.shields.io/badge/Version-0.0.1.9000-success.svg?style=flat&logo=github)
+[![CRAN
+status](http://www.r-pkg.org/badges/version/stabilityselectr)](https://cran.r-project.org/package=stabilityselectr)
+[![R-CMD-check](https://github.com/stufield/stabilityselectr/workflows/R-CMD-check/badge.svg)](https://github.com/stufield/stabilityselectr/actions)
+[![](https://cranlogs.r-pkg.org/badges/grand-total/stabilityselectr)](https://cran.r-project.org/package=stabilityselectr)
+[![Codecov test
+coverage](https://codecov.io/gh/stufield/stabilityselectr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/stufield/stabilityselectr?branch=main)
+[![Lifecycle:
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![License:
-GPL-3](https://img.shields.io/badge/License-GPL3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit/)
 <!-- badges: end -->
 
 ## Overview
@@ -21,26 +29,19 @@ tools for plotting and extracting selected features. There is additional
 functionality designed to facilitate various forms of permutation
 clustering analyses.
 
-For cross-referenced help, running examples, and vignettes, please visit
-the
-[pkgdown](https://bitbucket.sladmin.com/pages/SV/somastabilityselection/bb-pkgdown/browse/index.html)
-website.
+------------------------------------------------------------------------
 
------
-
-## Custom Installation
-
-It is possible to install a specific version of `stabilityselectr`
-(i.e. one differing from your current installation of
-[SLIDE](http://bitbucket.sladmin.com/projects/BFX/repos/slide/browse)),
-but it comes with a possible trade-off in the reproducibility of your
-work\!
+## Installation
 
 ``` r
-remotes::install_github("stabilityselectr")
+# current dev version
+remotes::install_github("stufield/stabilityselectr")
+
+# or a specific version
+remotes::install_github("stufield/stabilityselectr@v0.0.1")
 ```
 
------
+------------------------------------------------------------------------
 
 ## Usage
 
@@ -50,17 +51,14 @@ To load `stabilityselectr` simply make a call to `library()` as usual:
 library(stabilityselectr)
 ```
 
-## Help summary of the package
+## Help
 
 ``` r
 library(help = stabilityselectr)
 ```
 
-## Notes about the package
+## Package Notes
 
-  - The `stabilityselectr` package is easy to use.
-  - There is some cool stuff we can do.
-
------
-
-#### LICENSE
+- The `stabilityselectr` package is easy to use.
+- It is my first go-to when looking at dimensionality reduction and
+  upstream feature selection.

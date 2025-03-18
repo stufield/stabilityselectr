@@ -7,33 +7,30 @@ output: github_document
 
 
 ```{r setup, echo = FALSE, message = FALSE}
+options(width = 100)
+Sys.setlocale("LC_COLLATE", "en_US.UTF-8") # ensure common sorting envir
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-"
+  fig.path = "man/figures/README-",
+  out.width = "100%"
 )
-cvr <- covr::percent_coverage(covr::package_coverage())
-coverage <- sprintf(
-  "https://img.shields.io/badge/coverage-%0.1f%%25-%s.svg?style=flat&logo=codecov",
-  cvr, ifelse(cvr > 75, "success", ifelse(cvr > 50, "yellow", "critical"))
-)
-#lints <- length(lintr::lint_dir("R", show_progress = FALSE))
-lints <- 0
-lintage <- sprintf(
-  "https://img.shields.io/badge/lints-%s-%s.svg?style=flat&logo=gitlab",
-  lints, ifelse(lints < 25, "success", ifelse(lints < 50, "yellow", "critical"))
-)
+ver <- desc::desc_get_version(".")
+ver <- paste0("https://img.shields.io/badge/Version-", ver,
+              "-success.svg?style=flat&logo=github")
 ```
 
 
 # The `stabilityselectr` package
 
 <!-- badges: start -->
-[![build](https://img.shields.io/badge/build-passing-success.svg?logo=travis)](http://bitbucket.sladmin.com/projects/SV/repos/somastabilityselection/commits)
-![coverage](`r coverage`)
-![lint](`r lintage`)
-[![pkgdown](https://img.shields.io/badge/pkgdown-_-critical.svg?logo=semantic-web&logoColor=red)](https://bitbucket.sladmin.com/pages/SV/somastabilityselection/bb-pkgdown/browse/index.html)
-[![License: GPL-3](https://img.shields.io/badge/License-GPL3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+![GitHub version](`r ver`)
+[![CRAN status](http://www.r-pkg.org/badges/version/stabilityselectr)](https://cran.r-project.org/package=stabilityselectr)
+[![R-CMD-check](https://github.com/stufield/stabilityselectr/workflows/R-CMD-check/badge.svg)](https://github.com/stufield/stabilityselectr/actions)
+[![](https://cranlogs.r-pkg.org/badges/grand-total/stabilityselectr)](https://cran.r-project.org/package=stabilityselectr)
+[![Codecov test coverage](https://codecov.io/gh/stufield/stabilityselectr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/stufield/stabilityselectr?branch=main)
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit/)
 <!-- badges: end -->
 
 
@@ -48,26 +45,18 @@ There is additional functionality designed to facilitate
 various forms of permutation clustering analyses.
 
 
-For cross-referenced help, running examples, and vignettes, please visit the 
-[pkgdown](https://bitbucket.sladmin.com/pages/SV/somastabilityselection/bb-pkgdown/browse/index.html)
-website.
-
-
 ----------------
 
 
-## Custom Installation
-
-It is possible to install a specific version of `stabilityselectr` 
-(i.e. one differing from your current installation of 
-[SLIDE](http://bitbucket.sladmin.com/projects/BFX/repos/slide/browse)),
-but it comes with a possible trade-off in the reproducibility of your work! 
-
+## Installation
 
 ```{r install-git, eval = FALSE}
-remotes::install_github("stabilityselectr")
-```
+# current dev version
+remotes::install_github("stufield/stabilityselectr")
 
+# or a specific version
+remotes::install_github("stufield/stabilityselectr@v0.0.1")
+```
 
 ----------------
 
@@ -81,22 +70,16 @@ library(stabilityselectr)
 ```
 
 
-## Help summary of the package
+## Help
 
 ```{r help, eval = FALSE}
 library(help = stabilityselectr)
 ```
 
 
-## Notes about the package
+## Package Notes
 
 * The `stabilityselectr` package is easy to use.
-* There is some cool stuff we can do.
-
-
-
------------------
-
-
-#### LICENSE
+* It is my first go-to when looking at dimensionality reduction
+  and upstream feature selection.
 
