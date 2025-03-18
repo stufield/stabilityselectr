@@ -18,7 +18,7 @@ progeny_cluster(
 
 is_pclust(x)
 
-\method{plot}{pclust}(x, file = NULL, ...)
+\method{plot}{pclust}(x, ...)
 
 \method{print}{pclust}(x, ...)
 }
@@ -40,12 +40,6 @@ typically \verb{iter =} and \verb{size =}. For the \code{\link[=plot]{plot()}} m
 arguments passed to the corresponding graphics device.}
 
 \item{x}{A \code{pclust} class object (or an object to be tested for one).}
-
-\item{file}{\code{character(1)}. A file path to
-save the plot to an external file. The extension
-is used to determine the appropriate graphics device.
-Note: be careful of the \code{...} dimension units differ
-among devices!}
 }
 \value{
 A \code{pclust} class object, a list containing:

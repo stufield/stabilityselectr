@@ -4,7 +4,7 @@
 
 # stabilityselectr 0.0.1.9000
 
-* Structural pacakge devlopment ...
+* Structural package development ...
 
 # stabilityselectr 0.0.1 :tada:
 

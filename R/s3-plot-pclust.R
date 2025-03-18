@@ -2,73 +2,54 @@
 #'
 #' @rdname progeny_cluster
 #'
-#' @param file `character(1)`. A file path to
-#'   save the plot to an external file. The extension
-#'   is used to determine the appropriate graphics device.
-#'   Note: be careful of the `...` dimension units differ
-#'   among devices!
-#'
 #' @examples
 #' # S3 plot method
 #' plot(pclust)
 #'
 #' plot(clust_iris)
 #' @importFrom graphics par legend lines axis plot segments
-#' @importFrom withr local_par local_pdf local_png
-#' @importFrom withr local_tiff local_bmp local_jpeg local_svg
+#' @importFrom ggplot2 aes ggplot geom_point geom_line theme
+#' @importFrom ggplot2 geom_errorbar scale_color_manual element_text
+#' @importFrom withr with_namespace
 #'
 #' @export
-plot.pclust <- function(x, file = NULL, ...) {
+plot.pclust <- function(x, ...) {
 
-  if ( length(ext <- file_ext(file)) > 0L ) {
-    local_device <- switch(ext,
-                           pdf  = local_pdf,
-                           png  = local_png,
-                           tiff = local_tiff,
-                           bmp  = local_bmp,
-                           svg  = local_svg,
-                           jpeg = local_jpeg,
-                           stop("Invalid file extension: ", value(ext),
-                                call. = FALSE))
+  ci95 <- as.data.frame(t(x$ci95_scores))
+  pdf <- cbind(progeny_score = x$mean_scores,
+               null_score = x$mean_random_scores, ci95) |>
+    rn2col("cluster")
+  pdf <- pdf |>
+    tidyr::pivot_longer(cols = c(null_score, progeny_score),
+                        values_to = "score", names_to = "type")
+  pdf$type <- factor(pdf$type, levels = c("progeny_score", "null_score"))
+  p1 <- pdf |>
+    ggplot(aes(x = cluster, y = score, color = type, group = type)) +
+    geom_point(size = 3, alpha = 0.75) +
+    scale_color_manual(values = unlist(col_palette[1:2L], use.names = FALSE),
+                       labels = function(x) gsub("_", " ", x)) +
+    geom_line() +
+    labs(y = "Stability Score", x = "Clusters (k)",
+         color = NULL, title = "Stability Scores") +
+    geom_errorbar(aes(ymin = `2.5%`, ymax = `97.5%`), width = 0.1) +
+    theme(plot.title = ggplot2::element_text(hjust = 0.5))
 
-    local_device(file, ...)
-  }
-
-  local_par(
-    list(mgp = c(2, 0.75, 0),
-         mar = c(3, 4, 3, 1),
-         mfrow = 1:2L)
-  )
-
-  labels <- colnames(x$scores)
-  ci95   <- data.matrix(x$ci95)
-  ylims  <- range(ci95, x$mean_random_scores)
-  lw     <- 2
-  plot(x$mean_scores, lwd = lw, type = "o",
-       col = col_palette[[1L]], pch = 1,
-       xaxt = "n", ylim = ylims, ylab = "Stability Score",
-       main = "Stability Scores", xlab = "Clusters (k)")
-  # bars
-  segments(x0 = seq_along(x$mean_scores), y0 = ci95[1L, ],
-           x1 = seq_along(x$mean_scores), y1 = ci95[2L, ], lwd = 1.5, col = 1)
-  # hats
-  segments(x0 = rep(seq_along(x$mean_scores) - 0.05, each = 2),
-           y0 = as.numeric(ci95),   # recast
-           x1 = rep(seq_along(x$mean_scores) + 0.05, each = 2),
-           y1 = as.numeric(ci95),   # recast
-           lwd = 1.5, col = 1)
-  axis(1, at = seq_len(ncol(x$scores)), labels = labels)
-  lines(x$mean_random_scores, type = "o", lwd = lw,
-        col = col_palette[[2L]])
-  legend("bottomright", legend = c("Progeny Scores", "Null Scores"),
-         col = unlist(col_palette[1:2L]), pch = 1, lty = 1)
   ylims <- c(min(x$D_max, x$D_gap), max(x$D_max, x$D_gap))
-  plot(x$D_max, type = "o", col = col_palette[[4L]], pch = 1,
-       main = "Difference Scores", lwd = lw,
-       xlab = "Clusters (k)", ylim = ylims, xaxt = "n",
-       ylab = "Stability Score")
-  axis(1, at = seq_len(ncol(x$scores)), labels = labels)
-  lines(x$D_gap, type = "o", lwd = lw, col = col_palette[[5L]], xaxt = "n")
-  legend("bottomright", legend = c("Max Dist.", "Gap Dist."),
-         col = unlist(col_palette[4:5L]), pch = 1, lty = 1)
+
+  pdf2 <- cbind(max_dist = x$D_max, gap_dist = x$D_gap) |>
+    as.data.frame() |> rn2col("cluster") |>
+    tidyr::pivot_longer(cols = c(max_dist, gap_dist),
+                        names_to = "type", values_to = "score")
+
+  p2 <- pdf2 |>
+    ggplot(aes(x = cluster, y = score, color = type, group = type)) +
+    geom_point(size = 3, alpha = 0.75) +
+    scale_color_manual(values = unlist(col_palette[4:5L], use.names = FALSE),
+                       labels = function(x) gsub("_", " ", x)) +
+    geom_line() +
+    labs(y = "Stability Score", x = "Clusters (k)",
+         color = NULL, title = "Difference Scores") +
+    theme(plot.title = ggplot2::element_text(hjust = 0.5))
+
+  withr::with_namespace("patchwork", p1 + p2)
 }
