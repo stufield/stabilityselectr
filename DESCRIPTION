@@ -14,7 +14,7 @@ Description: The Stability Selection package performs stability
     and provides simple tools for plotting and extracting selected
     features. There is additional functionality designed to facilitate 
     various forms of permutation clustering analyses.
-License: GPL-3 | file LICENSE
+License: MIT + file LICENSE
 Depends:
     R (>= 4.1.0),
     helpr,
