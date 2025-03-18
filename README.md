@@ -13,9 +13,9 @@ version](https://img.shields.io/badge/Version-0.0.1.9000-success.svg?style=flat&
 status](http://www.r-pkg.org/badges/version/stabilityselectr)](https://cran.r-project.org/package=stabilityselectr)
 [![R-CMD-check](https://github.com/stufield/stabilityselectr/workflows/R-CMD-check/badge.svg)](https://github.com/stufield/stabilityselectr/actions)
 [![](https://cranlogs.r-pkg.org/badges/grand-total/stabilityselectr)](https://cran.r-project.org/package=stabilityselectr)
-[![Codecov test
+[![test
 coverage](https://codecov.io/gh/stufield/stabilityselectr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/stufield/stabilityselectr?branch=main)
-[![Lifecycle:
+[![lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit/)

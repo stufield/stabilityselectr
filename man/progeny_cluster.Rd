@@ -42,7 +42,7 @@ arguments passed to the corresponding graphics device.}
 \item{x}{A \code{pclust} class object (or an object to be tested for one).}
 
 \item{file}{\code{character(1)}. A file path to
-save the plot to an external file. The extenstion
+save the plot to an external file. The extension
 is used to determine the appropriate graphics device.
 Note: be careful of the \code{...} dimension units differ
 among devices!}

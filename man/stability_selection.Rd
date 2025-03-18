@@ -144,26 +144,25 @@ generator, allowing for reproducibility of results.}
 This value can also be a vector of values in \verb{[0, 1]},
 but ideally greater than 0.50.}
 
-\item{custom_labels}{a character vector of additional
+\item{custom_labels}{\code{character(n)}. Character vector of additional
 features to label in the plot, see \code{Details}.}
 
-\item{main}{optional title for the plot (defaultsdepend on the kernel used)}
+\item{main}{\code{character(1)}. Optional plot title (default depends on kernel).}
 
 \item{sort_by_AUC}{\code{logical(1)}. If \code{TRUE}, entries in
 the legend will be sorted by their curve AUC values
 which are in parentheses following the variable name
 in the legend.}
 
-\item{ln_cols}{A vector of colors to be used as
-line colors in plotting. Colors are recycled as necessary.}
+\item{ln_cols}{\code{character(n)}. A vector of colors to be used as
+line colors in plotting. Recycled as necessary.}
 
-\item{add_perm}{Logical. Should empirical false discovery lines
+\item{add_perm}{\code{logical(1)}. Should empirical false discovery lines
 from the null permutation be added to the plot
-(if permutation was performed)? This can be time
-consuming depending on the number of permutations performed,
-so the default is \code{FALSE}.}
+(only if permutation was performed)? This can be time
+consuming depending on the number of permutations.}
 
-\item{emp_thresh}{a vector describing the empirical
+\item{emp_thresh}{\code{numeric(n)}. A vector describing the empirical
 threshold values to be used (\code{default = seq(1, 0.1, by = 0.01)}).}
 }
 \value{

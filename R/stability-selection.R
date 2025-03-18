@@ -618,21 +618,20 @@ summary.stab_sel <- function(object, ..., thresh) {
 #'   a capital letter and the full name of the feature is indicated in the legend
 #'   along with the AUC for its curve in parentheses.
 #'
-#' @param custom_labels a character vector of additional
+#' @param custom_labels `character(n)`. Character vector of additional
 #'   features to label in the plot, see `Details`.
-#' @param main optional title for the plot (defaultsdepend on the kernel used)
+#' @param main `character(1)`. Optional plot title (default depends on kernel).
 #' @param sort_by_AUC `logical(1)`. If `TRUE`, entries in
 #'   the legend will be sorted by their curve AUC values
 #'   which are in parentheses following the variable name
 #'   in the legend.
-#' @param ln_cols A vector of colors to be used as
-#'   line colors in plotting. Colors are recycled as necessary.
-#' @param add_perm Logical. Should empirical false discovery lines
+#' @param ln_cols `character(n)`. A vector of colors to be used as
+#'   line colors in plotting. Recycled as necessary.
+#' @param add_perm `logical(1)`. Should empirical false discovery lines
 #'   from the null permutation be added to the plot
-#'  (if permutation was performed)? This can be time
-#'  consuming depending on the number of permutations performed,
-#'  so the default is `FALSE`.
-#' @param emp_thresh a vector describing the empirical
+#'  (only if permutation was performed)? This can be time
+#'  consuming depending on the number of permutations.
+#' @param emp_thresh `numeric(n)`. A vector describing the empirical
 #'   threshold values to be used (`default = seq(1, 0.1, by = 0.01)`).
 #'
 #' @return A `ggplot`.

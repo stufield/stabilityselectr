@@ -3,7 +3,7 @@
 #' @rdname progeny_cluster
 #'
 #' @param file `character(1)`. A file path to
-#'   save the plot to an external file. The extenstion
+#'   save the plot to an external file. The extension
 #'   is used to determine the appropriate graphics device.
 #'   Note: be careful of the `...` dimension units differ
 #'   among devices!
