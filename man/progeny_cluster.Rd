@@ -95,12 +95,8 @@ is_pclust(pclust)
 
 # S3 plot method
 plot(pclust)
+
 plot(clust_iris)
-
-# save to file
-plot(pclust, "cluster.pdf", height = 5, width = 10)
-plot(pclust, "cluster.png", height = 480, width = 960)
-
 }
 \references{
 Hu, C.W., Kornblau, S.M., Slater, J.H. and A.A. Qutub (2015).

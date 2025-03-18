@@ -11,12 +11,8 @@
 #' @examples
 #' # S3 plot method
 #' plot(pclust)
+#'
 #' plot(clust_iris)
-#'
-#' # save to file
-#' plot(pclust, "cluster.pdf", height = 5, width = 10)
-#' plot(pclust, "cluster.png", height = 480, width = 960)
-#'
 #' @importFrom graphics par legend lines axis plot segments
 #' @importFrom withr local_par local_pdf local_png
 #' @importFrom withr local_tiff local_bmp local_jpeg local_svg

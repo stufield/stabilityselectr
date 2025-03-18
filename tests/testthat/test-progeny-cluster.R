@@ -19,7 +19,7 @@ test_that("the object returned by `progeny_cluster()` is correct", {
 
 test_that("the individual outputs are currect for each element of pclust", {
   expect_true(is.matrix(pclust$scores))
-  expect_equal(dim(pclust$scores), c(5, 5))
+  expect_equal(dim(pclust$scores), c(5L, 5L))
   expect_equal(sum(pclust$scores), 393.9343373)
   expect_equal(pclust$mean_scores, apply(pclust$scores, 2, mean))
 
