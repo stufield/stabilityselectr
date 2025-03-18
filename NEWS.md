@@ -1,4 +1,7 @@
-# stabilityselectr 0.0.1
+# stabilityselectr 0.0.1.9000 (devel)
 
-## Initial Release!
+* new dev here ...
 
+# stabilityselectr 0.0.1 :tada:
+
+* Initial release! :partying_face:
