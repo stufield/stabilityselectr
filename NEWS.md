@@ -1,6 +1,10 @@
-# stabilityselectr 0.0.1.9000 (devel)
+# stabilityselectr 0.0.2
 
-* new dev here ...
+* Release to public GitHub
+
+# stabilityselectr 0.0.1.9000
+
+* Structural pacakge devlopment ...
 
 # stabilityselectr 0.0.1 :tada:
 

@@ -6,7 +6,7 @@
 \alias{stabilityselectr-package}
 \title{stabilityselectr: R Package to Perform Stability and Cluster Selection}
 \description{
-The Stability Selection package performs stability selection with a variety of kernels provided by the 'glmnet' package, and provides simple tools for plotting and extracting selected features. There is additional functionality designed to facilitate various forms of permutation clustering analyses.
+The stabilityselectr package performs stability selection with a variety of kernels provided by the 'glmnet' package, and provides simple tools for plotting and extracting selected features. There is additional functionality designed to facilitate various forms of permutation clustering analyses.
 }
 \details{
 Stability selection is performed using \code{\link[=stability_selection]{stability_selection()}},

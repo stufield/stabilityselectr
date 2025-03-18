@@ -1,7 +1,7 @@
 Type: Package
 Package: stabilityselectr
 Title: R Package to Perform Stability and Cluster Selection
-Version: 0.0.1.9000
+Version: 0.0.2
 Authors@R: c(
     person(given = "Stu",
            family = "Field",
@@ -9,7 +9,7 @@ Authors@R: c(
            email = "stu.g.field@gmail.com",
            comment = c(ORCID = "0000-0002-1024-5859"))
     )
-Description: The Stability Selection package performs stability
+Description: The stabilityselectr package performs stability
     selection with a variety of kernels provided by the 'glmnet' package,
     and provides simple tools for plotting and extracting selected
     features. There is additional functionality designed to facilitate 
