@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   progeny-clustering: progeny-clustering.html
   stabilityselectr: stabilityselectr.html
-last_built: 2025-03-18T20:50Z
+last_built: 2025-03-19T02:20Z
 urls:
   reference: https://stufield.github.io/stabilityselectr/reference
   article: https://stufield.github.io/stabilityselectr/articles
