@@ -15,6 +15,7 @@ Description: The stabilityselectr package performs stability
     features. There is additional functionality designed to facilitate 
     various forms of permutation clustering analyses.
 License: MIT + file LICENSE
+URL: https://stufield.github.io/stabilityselectr
 Depends:
     R (>= 4.1.0),
     helpr,
