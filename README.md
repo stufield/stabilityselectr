@@ -1,14 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-    ## [1] "en_US.UTF-8"
-
 # The `stabilityselectr` package
 
 <!-- badges: start -->
 
 ![GitHub
-version](https://img.shields.io/badge/Version-0.0.1.9000-success.svg?style=flat&logo=github)
+version](https://img.shields.io/badge/Version-0.0.2-success.svg?style=flat&logo=github)
 [![CRAN
 status](http://www.r-pkg.org/badges/version/stabilityselectr)](https://cran.r-project.org/package=stabilityselectr)
 [![R-CMD-check](https://github.com/stufield/stabilityselectr/workflows/R-CMD-check/badge.svg)](https://github.com/stufield/stabilityselectr/actions)
@@ -38,7 +36,7 @@ clustering analyses.
 remotes::install_github("stufield/stabilityselectr")
 
 # or a specific version
-remotes::install_github("stufield/stabilityselectr@v0.0.1")
+remotes::install_github("stufield/stabilityselectr@v0.0.2")
 ```
 
 ------------------------------------------------------------------------
