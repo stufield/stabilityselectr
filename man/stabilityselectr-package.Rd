@@ -26,6 +26,12 @@ Progeny Clustering: A Method to Identify Biological Phenotypes.
 Scientific Reports, \strong{5}:12894. \url{http://www.nature.com/articles/srep12894}
 }
 \seealso{
+Useful links:
+\itemize{
+  \item \url{https://stufield.github.io/stabilityselectr}
+}
+
+
 \code{\link[glmnet:glmnet]{glmnet::glmnet()}}, \code{\link[=kmeans]{kmeans()}}
 }
 \author{
