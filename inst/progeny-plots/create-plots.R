@@ -19,7 +19,7 @@ pclust <- withr::with_seed(101,
 p <- plot(pclust)
 
 ggplot2::ggsave(
-  filename = "inst/progeny_plots/progeny_data_output.pdf",
+  filename = "inst/progeny-plots/progeny_data_output.pdf",
   plot = p, height = 5, width = 10
 )
 
@@ -30,7 +30,7 @@ stab_clust <- withr::with_seed(101, stability_cluster(progeny_data,
 stab_clust$true_cluster <- rep(1:3L, each = 50L)
 
 cols <- c("#24135F", "#00A499", "#840B55")
-file <- "inst/progeny_plots/progeny_data_stability_scatter.pdf"
+file <- "inst/progeny-plots/progeny_data_stability_scatter.pdf"
 
 withr::with_pdf(file, title = basename(file), width = 12, height = 6, {
   withr::with_par(list(mgp = c(2.00, 0.75, 0.00), mar = c(3, 4, 3, 1),
