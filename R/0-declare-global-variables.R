@@ -9,7 +9,9 @@ if ( getRversion() >= "2.15.1" ) {
   utils::globalVariables(
     c(".",
       "FDR_breaks",    # calc_emp_fdr_breaks() in `dplyr::mutate()`
-      "null_score", "progeny_score",   # `plot.pclust()`
+      "null_score", "score", "progeny_score",         # `plot.pclust()`
+      "2.5%", "97.5%", "cluster", "type", "gap_dist", # `plot.pclust()`
+      "max_dist", "score type",        # `plot.pclust()`
       "MaxSelectProb", # in `get_stable_features()`
       "AUC",           # in `plot.stab_sel()`
       "feature",       # in `plot.stab_sel()`
