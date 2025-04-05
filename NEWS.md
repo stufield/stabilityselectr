@@ -1,3 +1,7 @@
+# stabilityselectr 0.0.2.9000 (devel)
+
+* Ongoing development ...
+
 # stabilityselectr 0.0.2
 
 * Release to public GitHub
