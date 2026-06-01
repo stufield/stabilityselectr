@@ -1,0 +1,131 @@
+# The `stabilityselectr` package
+
+## Overview
+
+The `stabilityselectr` package performs stability selection with a
+variety of kernels provided by the `glmnet` package, and provides simple
+tools for plotting and extracting selected features. There is additional
+functionality designed to facilitate various forms of permutation
+clustering analyses.
+
+------------------------------------------------------------------------
+
+## Installation
+
+``` r
+
+# current dev version
+remotes::install_github("stufield/stabilityselectr")
+
+# or a specific version
+remotes::install_github("stufield/stabilityselectr@v0.0.2")
+```
+
+------------------------------------------------------------------------
+
+## Usage
+
+To load `stabilityselectr` simply make a call to
+[`library()`](https://rdrr.io/r/base/library.html) as usual:
+
+``` r
+
+library(stabilityselectr)
+```
+
+## Help
+
+``` r
+
+library(help = stabilityselectr)
+```
+
+## Package Notes
+
+- The `stabilityselectr` package is easy to use.
+- It is my first go-to when looking at dimensionality reduction and
+  upstream feature selection.
+
+# Package index
+
+## Stability Selection
+
+Preform stability selection.
+
+- [`stability_selection()`](https://stufield.github.io/stabilityselectr/dev/reference/stability_selection.md)
+  [`is_stab_sel()`](https://stufield.github.io/stabilityselectr/dev/reference/stability_selection.md)
+  [`print(`*`<stab_sel>`*`)`](https://stufield.github.io/stabilityselectr/dev/reference/stability_selection.md)
+  [`summary(`*`<stab_sel>`*`)`](https://stufield.github.io/stabilityselectr/dev/reference/stability_selection.md)
+  [`plot(`*`<stab_sel>`*`)`](https://stufield.github.io/stabilityselectr/dev/reference/stability_selection.md)
+  : Stability Selection
+
+## Calculating FDR
+
+Calculate the empirical false discovery rates (FDR) via permutations of
+the `NULL` model (randomized permutations).
+
+- [`calc_emp_fdr()`](https://stufield.github.io/stabilityselectr/dev/reference/calc_emp_fdr.md)
+  : Calculate Empirical Number of False Positives
+- [`calc_emp_fdr_breaks()`](https://stufield.github.io/stabilityselectr/dev/reference/calc_emp_fdr_breaks.md)
+  : Calculate Empirical FDR Break Points
+
+## Stable Features
+
+Return the stable features at various probability thresholds.
+
+- [`get_stable_features()`](https://stufield.github.io/stabilityselectr/dev/reference/get_stable_features.md)
+  [`get_threshold_features()`](https://stufield.github.io/stabilityselectr/dev/reference/get_stable_features.md)
+  : Calculate Stable Features
+
+## Plotting Routines
+
+Various plot traces of stability paths or cluster plots.
+
+- [`plot_emp_fdr()`](https://stufield.github.io/stabilityselectr/dev/reference/plot_emp_fdr.md)
+  [`plot_permuted_data()`](https://stufield.github.io/stabilityselectr/dev/reference/plot_emp_fdr.md)
+  : Plot Empirical FDR
+- [`progeny_cluster()`](https://stufield.github.io/stabilityselectr/dev/reference/progeny_cluster.md)
+  [`is_pclust()`](https://stufield.github.io/stabilityselectr/dev/reference/progeny_cluster.md)
+  [`plot(`*`<pclust>`*`)`](https://stufield.github.io/stabilityselectr/dev/reference/progeny_cluster.md)
+  [`print(`*`<pclust>`*`)`](https://stufield.github.io/stabilityselectr/dev/reference/progeny_cluster.md)
+  : Perform Progeny Clustering
+- [`stability_selection()`](https://stufield.github.io/stabilityselectr/dev/reference/stability_selection.md)
+  [`is_stab_sel()`](https://stufield.github.io/stabilityselectr/dev/reference/stability_selection.md)
+  [`print(`*`<stab_sel>`*`)`](https://stufield.github.io/stabilityselectr/dev/reference/stability_selection.md)
+  [`summary(`*`<stab_sel>`*`)`](https://stufield.github.io/stabilityselectr/dev/reference/stability_selection.md)
+  [`plot(`*`<stab_sel>`*`)`](https://stufield.github.io/stabilityselectr/dev/reference/stability_selection.md)
+  : Stability Selection
+
+## Progeny and Stability Clustering
+
+Preform progeny clustering and stability clustering.
+
+- [`progeny_cluster()`](https://stufield.github.io/stabilityselectr/dev/reference/progeny_cluster.md)
+  [`is_pclust()`](https://stufield.github.io/stabilityselectr/dev/reference/progeny_cluster.md)
+  [`plot(`*`<pclust>`*`)`](https://stufield.github.io/stabilityselectr/dev/reference/progeny_cluster.md)
+  [`print(`*`<pclust>`*`)`](https://stufield.github.io/stabilityselectr/dev/reference/progeny_cluster.md)
+  : Perform Progeny Clustering
+- [`stability_cluster()`](https://stufield.github.io/stabilityselectr/dev/reference/stability_cluster.md)
+  : Perform Stability Clustering
+
+## Data
+
+Two data sets with clustering structure.
+
+- [`clust_data`](https://stufield.github.io/stabilityselectr/dev/reference/objects.md)
+  [`progeny_data`](https://stufield.github.io/stabilityselectr/dev/reference/objects.md)
+  : Package Objects
+
+# Articles
+
+### Getting Started
+
+- [Introduction to Stability
+  Selection](https://stufield.github.io/stabilityselectr/dev/articles/stabilityselectr.md):
+
+### Permutation Clustering
+
+Perform both progeny and stability clustering.
+
+- [Progeny and Stability
+  Clustering](https://stufield.github.io/stabilityselectr/dev/articles/progeny-clustering.md):
