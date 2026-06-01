@@ -97,18 +97,14 @@ progeny_cluster <- function(data, clust_iter = 2:10L, reps = 10L,
     calc_stability(progeny_k(.data, k = .i, ...))
   }
 
-  scores <- lapply(1:reps, function(.r) {
-       if ( verbose ) {
-         signal_done("Performing iteration repeat ...", value(.r))
-       }
+  scores <- replicate(reps, {
        vapply(clust_iter, .calc_k, .data = data, FUN.VALUE = 0.1)
-    }) |> do.call(what = rbind)
+    }, simplify = FALSE) |> do.call(what = rbind)
 
   rdata <- scramble_data(data)   # scrambled runif data
-  random_scores <- lapply(1:reps, function(.r) {
+  random_scores <- replicate(reps, {
       vapply(clust_iter, .calc_k, .data = rdata, FUN.VALUE = 0.1)
-    }) |>
-    do.call(what = rbind)
+    }, simplify = FALSE) |> do.call(what = rbind)
 
   stopifnot(identical(dim(scores), dim(random_scores)))   # check
   colnames(scores)        <- sprintf("k=%i", clust_iter)
