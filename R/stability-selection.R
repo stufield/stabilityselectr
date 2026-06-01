@@ -127,8 +127,8 @@
 #' @examples
 #' # l1-logistic
 #' withr::with_seed(101, {
-#'   n_feat      <- 20
-#'   n_samp      <- 100
+#'   n_feat      <- 10
+#'   n_samp      <- 25
 #'   x           <- matrix(rnorm(n_samp * n_feat), n_samp, n_feat)
 #'   colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 #'   y           <- sample(1:2, n_samp, replace = TRUE)
@@ -168,9 +168,10 @@ stability_selection <- function(x, y = NULL,
   x <- data.matrix(x)      # turn into data matrix
 
   if ( any(is.na(x)) ) {
+    ft_na <- names(which(apply(x, 2, function(.x) any(is.na(.x)))))
     stop(
-      "There are NAs detected in the data matrix ...\n",
-      "This will cause `glmnet()` to fail ...\n",
+      "NAs detected in `x`, this will cause `glmnet()` to fail\n",
+      "Please check: ", value(ft_na), "\n",
       "Please remove the feature or use `wranglr::imputeNAs()`",
       call. = FALSE
     )

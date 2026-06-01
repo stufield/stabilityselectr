@@ -63,7 +63,7 @@ withr::with_par(list(mgp = c(2.00, 0.75, 0.0), mar = c(3, 4, 3, 1), mfrow = 1:2L
 Hastie, et al. 2009.
 }
 \seealso{
-\code{\link[=pam]{pam()}}
+\code{\link[cluster:pam]{cluster::pam()}}
 
 Other cluster: 
 \code{\link{progeny_cluster}()}

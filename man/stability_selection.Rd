@@ -94,7 +94,7 @@ be centered and scaled.}
 
 \item{lambda_min_ratio}{The minimum value of
 lambda/max(lambda) to use during
-the selection procedure. See \code{\link[=glmnet]{glmnet()}}.}
+the selection procedure. See \code{\link[glmnet:glmnet]{glmnet::glmnet()}}.}
 
 \item{beta_threshold}{\code{numeric(1)}. Floating point value
 defining selection levels for \verb{ridge regression}.
@@ -105,7 +105,7 @@ absolute value greater than or equal to \code{beta_threshold}
 will be selected.}
 
 \item{elastic_alpha}{\code{numeric(1)}. Floating point value
-between 0 and 1. When 0, the results of \code{\link[=glmnet]{glmnet()}} are
+between 0 and 1. When 0, the results of \code{\link[glmnet:glmnet]{glmnet::glmnet()}} are
 equivalent to Ridge regression.
 When 1, the results are equivalent to Lasso.
 Any value between 0 and 1 creates a compromise
@@ -267,8 +267,8 @@ via the \code{add_features} argument.
 \examples{
 # l1-logistic
 withr::with_seed(101, {
-  n_feat      <- 20
-  n_samp      <- 100
+  n_feat      <- 10
+  n_samp      <- 25
   x           <- matrix(rnorm(n_samp * n_feat), n_samp, n_feat)
   colnames(x) <- paste0("feat", "_", head(letters, n_feat))
   y           <- sample(1:2, n_samp, replace = TRUE)
@@ -303,7 +303,7 @@ Journal of the Royal Statistical Society: Series B (Statistical
 Methodology), 72: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
 }
 \seealso{
-\code{\link[=glmnet]{glmnet()}}, \code{\link[=get_stable_features]{get_stable_features()}}
+\code{\link[glmnet:glmnet]{glmnet::glmnet()}}, \code{\link[=get_stable_features]{get_stable_features()}}
 }
 \author{
 Michael R. Mehan, Stu Field, and Robert Kirk DeLisle

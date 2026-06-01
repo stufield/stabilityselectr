@@ -102,9 +102,7 @@ test_that("`stability_selection()` with NAs throws an error", {
   x[sample(length(x), 50)] <- NA       # random NAs spread in data matrix
   expect_error(
     stability_selection(x, y),
-    paste0("There are NAs detected in the data matrix ...\n",
-           "This will cause `glmnet()` to fail ...\n",
-           "Please remove the feature or use `wranglr::imputeNAs()`"),
+    "NAs detected in `x`, this will cause `glmnet()` to fail\nPlease check: ",
     fixed = TRUE
   )
 })
