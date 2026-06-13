@@ -235,7 +235,6 @@ stability_selection <- function(x, y = NULL,
 
   # assigned by if/else
   lambda_seq <- if ( kernel == "l1-logistic" ) {
-    y <- factor(y)
     p <- ncol(x)
     if ( is.na(Pw) ) {
       W <- stats::runif(p, alpha, 1)
