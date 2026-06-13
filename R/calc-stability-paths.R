@@ -97,19 +97,21 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq, alpha, Pw,
   x1    <- x[half1, ]
   x2    <- x[-half1, ]
 
-  if ( kernel == "Cox" ) {
-    y1 <- y[half1, ]
-    y2 <- y[-half1, ]
-  } else if ( kernel %in% c("pca.sd", "pca.thresh") ) {
+  if ( kernel %in% c("pca.sd", "pca.thresh") ) {
     # else is for unsupervised methods (PCA) which have no y
     NULL
   } else {
-    y1 <- y[half1]
-    y2 <- y[-half1]
+    if (is.null(dim(y))) {  # response a vector
+      y1 <- y[half1]
+      y2 <- y[-half1]
+    } else {                # response not a vector
+      y1 <- y[half1, ]
+      y2 <- y[-half1, ]
+    }
   }
   # nolint end
 
-  .stabPathFun <- switch(kernel,
+  .stab_path_type <- switch(kernel,
     "l1-logistic" = .calc_l1,
     "lasso"       = .calc_lasso,
     "multinomial" = .calc_multinomial,
@@ -119,7 +121,7 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq, alpha, Pw,
     "Cox"         = .calc_Cox
   )
 
-  .stabPathFun()
+  .stab_path_type()
 }
 
 
