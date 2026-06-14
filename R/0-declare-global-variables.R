@@ -8,6 +8,9 @@
 if ( getRversion() >= "2.15.1" ) {
   utils::globalVariables(
     c(".",
+      "Pw", "alpha", "beta_threshold", "elastic_alpha",# `calc_stability_paths()`
+      "kernel", "lambda_seq",                     # `calc_stability_paths()`,
+      "p", "standardize", "x1", "x2", "y1", "y2", # `calc_stability_paths()`,
       "FDR_breaks",    # calc_emp_fdr_breaks() in `dplyr::mutate()`
       "null_score", "score", "progeny_score",         # `plot.pclust()`
       "2.5%", "97.5%", "cluster", "type", "gap_dist", # `plot.pclust()`

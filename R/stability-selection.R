@@ -4,7 +4,7 @@
 #'   variable. Stability selection is performed using a user-specified kernel.
 #'   For classification problems the `l1-logistic` kernel should be used and the
 #'   response should be a vector or factor of with two class labels. For lasso
-#'   the response column should be a numeric vector. For "Cox" the response is a
+#'   the response column should be a numeric vector. For "cox" the response is a
 #'   *two column matrix* containing the event time in the first column and the
 #'   censoring indicator in the second column.
 #
@@ -27,7 +27,7 @@
 #'   observation rows and `p` feature columns. Alternatively, a `stab_sel` class
 #'    object if passing to one of the S3 generic methods.
 #' @param y The response variable. If kernel is "l1-logistic" then a
-#'   vector of binary class labels. If kernel is "Cox" then it is a two column
+#'   vector of binary class labels. If kernel is "cox" then it is a two column
 #'   matrix with the event time in the first column and the censoring
 #'   indicator (1 = event, 0 = censored) in the second column.
 #' @param kernel `character(1)`. A string describing the underlying model
@@ -35,7 +35,7 @@
 #'   \itemize{
 #'     \item "l1-logistic" (default)
 #'     \item "lasso"
-#'     \item "Cox"
+#'     \item "cox"
 #'     \item "ridge"
 #'     \item "multinomial"
 #'     \item "pca.sd"
@@ -128,7 +128,7 @@
 #' # l1-logistic
 #' withr::with_seed(101, {
 #'   n_feat      <- 10
-#'   n_samp      <- 25
+#'   n_samp      <- 250
 #'   x           <- matrix(rnorm(n_samp * n_feat), n_samp, n_feat)
 #'   colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 #'   y           <- sample(1:2, n_samp, replace = TRUE)
@@ -143,14 +143,14 @@
 #' #   "time" and "status".
 #'
 #' ycox <- select(simdata, time, status) |> as.matrix()
-#' stab_sel_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 3)
+#' stab_sel_cox <- stability_selection(xcox, ycox, kernel = "cox", r_seed = 3)
 #' @importFrom glmnet glmnet
 #' @importFrom stats runif setNames
 #' @importFrom tibble tibble as_tibble
 #' @export
 stability_selection <- function(x, y = NULL,
                                 kernel = c("l1-logistic", "lasso", "ridge",
-                                           "Cox", "pca.sd", "pca.thresh",
+                                           "cox", "pca.sd", "pca.thresh",
                                            "multinomial"),
                                 num_iter = 100,
                                 parallel = FALSE,
@@ -328,7 +328,7 @@ stability_selection <- function(x, y = NULL,
                    standardize = standardize,
                    penalty.factor = W, alpha = 0)$lambda
 
-  } else if ( kernel == "Cox" ) {
+  } else if ( kernel == "cox" ) {
     nsteps <- 100
     S <- survival::Surv(y[, 1L], y[, 2L])
     y <- cbind(time = S[, 1L], status = S[, 2L])
@@ -457,7 +457,7 @@ stability_selection <- function(x, y = NULL,
          "ridge"       = glmnet::glmnet(x, y, family = "gaussian",
                                         standardize = standardize,
                                         penalty.factor = W, alpha = 0)$beta,
-         "Cox"         = glmnet::glmnet(x, y, nlambda = nsteps,
+         "cox"         = glmnet::glmnet(x, y, nlambda = nsteps,
                                         family = "cox",
                                         standardize = standardize,
                                         lambda = lambda_seq)$beta,

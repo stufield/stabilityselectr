@@ -11,7 +11,7 @@
 stability_selection(
   x,
   y = NULL,
-  kernel = c("l1-logistic", "lasso", "ridge", "Cox", "pca.sd", "pca.thresh",
+  kernel = c("l1-logistic", "lasso", "ridge", "cox", "pca.sd", "pca.thresh",
     "multinomial"),
   num_iter = 100,
   parallel = FALSE,
@@ -53,7 +53,7 @@ observation rows and \code{p} feature columns. Alternatively, a \code{stab_sel} 
 object if passing to one of the S3 generic methods.}
 
 \item{y}{The response variable. If kernel is "l1-logistic" then a
-vector of binary class labels. If kernel is "Cox" then it is a two column
+vector of binary class labels. If kernel is "cox" then it is a two column
 matrix with the event time in the first column and the censoring
 indicator (1 = event, 0 = censored) in the second column.}
 
@@ -62,7 +62,7 @@ used for selection. Options are:
 \itemize{
 \item "l1-logistic" (default)
 \item "lasso"
-\item "Cox"
+\item "cox"
 \item "ridge"
 \item "multinomial"
 \item "pca.sd"
@@ -212,7 +212,7 @@ Performs stability selection on a set of predictive features and a response
 variable. Stability selection is performed using a user-specified kernel.
 For classification problems the \code{l1-logistic} kernel should be used and the
 response should be a vector or factor of with two class labels. For lasso
-the response column should be a numeric vector. For "Cox" the response is a
+the response column should be a numeric vector. For "cox" the response is a
 \emph{two column matrix} containing the event time in the first column and the
 censoring indicator in the second column.
 The randomized lasso is used if the \code{alpha} parameter is set to a value
@@ -268,7 +268,7 @@ via the \code{add_features} argument.
 # l1-logistic
 withr::with_seed(101, {
   n_feat      <- 10
-  n_samp      <- 25
+  n_samp      <- 250
   x           <- matrix(rnorm(n_samp * n_feat), n_samp, n_feat)
   colnames(x) <- paste0("feat", "_", head(letters, n_feat))
   y           <- sample(1:2, n_samp, replace = TRUE)
@@ -283,7 +283,7 @@ xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
 #   "time" and "status".
 
 ycox <- select(simdata, time, status) |> as.matrix()
-stab_sel_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 3)
+stab_sel_cox <- stability_selection(xcox, ycox, kernel = "cox", r_seed = 3)
 # Test for class `stab_sel`
 is_stab_sel(stab_sel)
 

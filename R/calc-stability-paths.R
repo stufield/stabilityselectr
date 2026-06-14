@@ -7,14 +7,14 @@
 #' @param x A numeric matrix of predictive features.
 #'   Contains a row for each observation.
 #' @param y Response variable. If kernel is `l1-logistic`, it is a
-#'   binary vector of class labels. If kernel is `Cox`, then it is a two column
+#'   binary vector of class labels. If kernel is `cox`, then it is a two column
 #'   matrix of (**NEED HELP HERE -- not sure if correct; untested**).
 #' @param kernel Character. String describing the underlying model
 #'   used for selection. Options are:
 #'   * l1-logistic
 #'   * lasso
 #'   * ridge
-#'   * Cox
+#'   * cox
 #'   * multinomial
 #'   * pca.sd
 #'   * pca.thresh
@@ -72,10 +72,11 @@
 #' # Note this works because colnames are already "time" and "status". In real
 #' # datasets, need to rename the final matrix as "time" and "status".
 #' ycox <- select(simdata, time, status) |> as.matrix()
-#' cox_pm <- calc_stability_paths(xcox, ycox, "Cox", standardize = TRUE,
+#' cox_pm <- calc_stability_paths(xcox, ycox, "cox", standardize = TRUE,
 #'                                lambda_seq = c(0, 1, 100), alpha = 0.8, Pw = 0.5)
 #' @importFrom stats prcomp runif
 #' @importFrom glmnet glmnet
+#' @importFrom withr with_environment
 #' @noRd
 calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq, alpha, Pw,
                                  standardize, elastic_alpha, beta_threshold = 0L) {
@@ -118,34 +119,37 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq, alpha, Pw,
     "pca.sd"      = .calc_pca_sd,
     "pca.thresh"  = .calc_pca_thresh,
     "ridge"       = .calc_ridge,
-    "Cox"         = .calc_Cox
+    "cox"         = .calc_cox
   )
 
-  .stab_path_type()
+  env <- function() parent.frame(n = 1)
+  withr::with_environment(
+    env(),
+    .stab_path_type()
+  )
 }
 
 
 #' L1-Logistic Regression
 #' @noRd
-.calc_l1 <- function(e = parent.frame()) {
-   # e: get all objects from parent environment
+.calc_l1 <- function() {
 
-  W <- .calcW(e$p, e$alpha, e$Pw, e$kernel)
+  W <- .calcW(p, alpha, Pw, kernel)
 
   # get selected features (0, 1)
-  first_half <- glmnet::glmnet(e$x1, e$y1, family = "binomial",
-                               lambda = e$lambda_seq,
-                               standardize = e$standardize,
+  first_half <- glmnet::glmnet(x1, y1, family = "binomial",
+                               lambda = lambda_seq,
+                               standardize = standardize,
                                penalty.factor = W)$beta |>
     as.logical() |> as.numeric()
-  second_half <- glmnet::glmnet(e$x2, e$y2, family = "binomial",
-                                lambda = e$lambda_seq,
-                                standardize = e$standardize,
+  second_half <- glmnet::glmnet(x2, y2, family = "binomial",
+                                lambda = lambda_seq,
+                                standardize = standardize,
                                 penalty.factor = W)$beta |>
     as.logical() |> as.numeric()
   # convert to same dim matrix as stabpath_matrix
-  first_half_mat  <- matrix(first_half, nrow = e$p)
-  second_half_mat <- matrix(second_half, nrow = e$p)
+  first_half_mat  <- matrix(first_half, nrow = p)
+  second_half_mat <- matrix(second_half, nrow = p)
 
   # add no. of selections for each feature by each lambda to stabpath_matrix
   # range: [0, 2]
@@ -155,26 +159,25 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq, alpha, Pw,
 
 #' Lasso Regression
 #' @noRd
-.calc_lasso <- function(e = parent.frame()) {
-  # e: get all objects from parent environment
+.calc_lasso <- function() {
 
-  W <- .calcW(e$p, e$alpha, e$Pw, e$kernel)
+  W <- .calcW(p, alpha, Pw, kernel)
 
-  first_half <- glmnet::glmnet(e$x1, e$y1, family = "gaussian",
-                               lambda = e$lambda_seq,
-                               standardize = e$standardize,
+  first_half <- glmnet::glmnet(x1, y1, family = "gaussian",
+                               lambda = lambda_seq,
+                               standardize = standardize,
                                penalty.factor = W,
-                               alpha = e$elastic_alpha)$beta |>
+                               alpha = elastic_alpha)$beta |>
     as.logical() |> as.numeric()
-  second_half <- glmnet::glmnet(e$x2, e$y2, family = "gaussian",
-                                lambda = e$lambda_seq,
-                                standardize = e$standardize,
+  second_half <- glmnet::glmnet(x2, y2, family = "gaussian",
+                                lambda = lambda_seq,
+                                standardize = standardize,
                                 penalty.factor = W,
-                                alpha = e$elastic_alpha)$beta |>
+                                alpha = elastic_alpha)$beta |>
     as.logical() |> as.numeric()
   # convert to same dim matrix as stabpath_matrix
-  first_half_mat  <- matrix(first_half, nrow = e$p)   # should error out
-  second_half_mat <- matrix(second_half, nrow = e$p)
+  first_half_mat  <- matrix(first_half, nrow = p)   # should error out
+  second_half_mat <- matrix(second_half, nrow = p)
 
   # add no. of selections for each feature by each lambda to stabpath_matrix
   return(first_half_mat + second_half_mat)
@@ -183,27 +186,27 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq, alpha, Pw,
 
 #' Multinomial Regression
 #' @noRd
-.calc_multinomial <- function(e = parent.frame()) {
+.calc_multinomial <- function() {
   # e: get all objects from parent environment
 
-  W <- .calcW(e$p, e$alpha, e$Pw, e$kernel)
+  W <- .calcW(p, alpha, Pw, kernel)
 
   # get selected features (0, 1)
   # nolint next: undesirable_linter.
-  first_half <- sapply(glmnet::glmnet(e$x1, e$y1, family = "multinomial",
-                                      lambda = e$lambda_seq,
-                                      standardize = e$standardize,
+  first_half <- sapply(glmnet::glmnet(x1, y1, family = "multinomial",
+                                      lambda = lambda_seq,
+                                      standardize = standardize,
                                       penalty.factor = W)$beta, as.logical)
 
   # nolint next: undesirable_linter.
-  second_half <- sapply(glmnet::glmnet(e$x2, e$y2, family = "multinomial",
-                                       lambda = e$lambda_seq,
-                                       standardize = e$standardize,
+  second_half <- sapply(glmnet::glmnet(x2, y2, family = "multinomial",
+                                       lambda = lambda_seq,
+                                       standardize = standardize,
                                        penalty.factor = W)$beta, as.logical)
 
   # selected (0,1) in ANY of the classes & convert to matrix same dim as stabpath_matrix
-  first_half_mat  <- matrix(as.numeric(apply(first_half, 1, any)), nrow = e$p)
-  second_half_mat <- matrix(as.numeric(apply(second_half, 1, any)), nrow = e$p)
+  first_half_mat  <- matrix(as.numeric(apply(first_half, 1, any)), nrow = p)
+  second_half_mat <- matrix(as.numeric(apply(second_half, 1, any)), nrow = p)
 
   # add no. of selections for each feature by each lambda to stabpath_matrix
   return(first_half_mat + second_half_mat)
@@ -212,17 +215,17 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq, alpha, Pw,
 
 #' PCA threshold
 #' @noRd
-.calc_pca_thresh <- function(e = parent.frame()) {
+.calc_pca_thresh <- function() {
   # e: get all objects from parent environment
-  pr1   <- stats::prcomp(e$x1, center = TRUE, scale. = e$standardize)
-  stab1 <- lapply(e$lambda_seq, function(lambda) {
-    apply(pr1$rotation[, 1:e$alpha], 2, function(.x) {
+  pr1   <- stats::prcomp(x1, center = TRUE, scale. = standardize)
+  stab1 <- lapply(lambda_seq, function(lambda) {
+    apply(pr1$rotation[, 1:alpha], 2, function(.x) {
           abs(.x) > lambda }) |>    # lambda is loadings threshold
           rowSums() |> as.logical() |> as.numeric()
   }) |> data.frame() |> as.matrix() |> unname()
-  pr2   <- stats::prcomp(e$x2, center = TRUE, scale. = e$standardize)
-  stab2 <- lapply(e$lambda_seq, function(lambda) {
-    apply(pr2$rotation[, 1:e$alpha], 2, function(.x) {
+  pr2   <- stats::prcomp(x2, center = TRUE, scale. = standardize)
+  stab2 <- lapply(lambda_seq, function(lambda) {
+    apply(pr2$rotation[, 1:alpha], 2, function(.x) {
           abs(.x) > lambda }) |>    # lambda is loadings threshold
           rowSums() |> as.logical() |> as.numeric()
   }) |> data.frame() |> as.matrix() |> unname()
@@ -232,19 +235,19 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq, alpha, Pw,
 
 #' PCA standard deviation
 #' @noRd
-.calc_pca_sd <- function(e = parent.frame()) {
+.calc_pca_sd <- function() {
   # e: get all objects from parent environment
-  pr1   <- stats::prcomp(e$x1, center = TRUE, scale. = e$standardize)
-  stab1 <- lapply(e$lambda_seq, function(lambda) {
-    apply(pr1$rotation[, 1:e$alpha], 2, function(.x) {
+  pr1   <- stats::prcomp(x1, center = TRUE, scale. = standardize)
+  stab1 <- lapply(lambda_seq, function(lambda) {
+    apply(pr1$rotation[, 1:alpha], 2, function(.x) {
           # MAD approx. for normal dist; Robust alternative to ML
           coefs <- helpr::fit_gauss(.x, mad = TRUE)
           as.numeric(abs(.x - coefs[1L]) > coefs[2L] * lambda) # lambda is SDs from mean.
           }) |> rowSums() |> as.logical() |> as.numeric()
   }) |> data.frame() |> as.matrix() |> unname()
-  pr2   <- stats::prcomp(e$x2, center = TRUE, scale. = e$standardize)
-  stab2 <- lapply(e$lambda_seq, function(lambda) {
-    apply(pr2$rotation[, 1:e$alpha], 2, function(.x) {
+  pr2   <- stats::prcomp(x2, center = TRUE, scale. = standardize)
+  stab2 <- lapply(lambda_seq, function(lambda) {
+    apply(pr2$rotation[, 1:alpha], 2, function(.x) {
           coefs <- helpr::fit_gauss(.x, mad = TRUE)
           as.numeric(abs(.x - coefs[1L]) > coefs[2L] * lambda) # lambda is SDs from mean.
           }) |> rowSums() |> as.logical() |> as.numeric()
@@ -255,32 +258,32 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq, alpha, Pw,
 
 #' Ridge Regression
 #' @noRd
-.calc_ridge <- function(e = parent.frame()) {
+.calc_ridge <- function() {
   # e: get all objects from parent environment
 
-  W <- .calcW(e$p, e$alpha, e$Pw, e$kernel)
+  W <- .calcW(p, alpha, Pw, kernel)
 
   # all variables will (almost) always have non-zero coefficients
   # in ridge regression; implement a threshold for selection
-  first_half <- apply(glmnet::glmnet(e$x1, e$y1, family = "gaussian",
-                                     alpha = 0, lambda = e$lambda_seq,
-                                     standardize = e$standardize,
+  first_half <- apply(glmnet::glmnet(x1, y1, family = "gaussian",
+                                     alpha = 0, lambda = lambda_seq,
+                                     standardize = standardize,
                                      penalty.factor = W)$beta,
                       1:2,
-                      function(.x) ifelse(abs(.x) < e$beta_threshold, 0L, .x)) |>
+                      function(.x) ifelse(abs(.x) < beta_threshold, 0L, .x)) |>
                   as.logical() |> as.numeric()
 
-  second_half <- apply(glmnet::glmnet(e$x2, e$y2, family = "gaussian",
-                                      alpha = 0, lambda = e$lambda_seq,
-                                      standardize = e$standardize,
+  second_half <- apply(glmnet::glmnet(x2, y2, family = "gaussian",
+                                      alpha = 0, lambda = lambda_seq,
+                                      standardize = standardize,
                                       penalty.factor = W)$beta,
                        1:2,
-                       function(.x) ifelse(abs(.x) < e$beta_threshold, 0L, .x)) |>
+                       function(.x) ifelse(abs(.x) < beta_threshold, 0L, .x)) |>
                    as.logical() |> as.numeric()
 
   # convert to same dim matrix as stabpath_matrix
-  first_half_mat  <- matrix(first_half, nrow = e$p)
-  second_half_mat <- matrix(second_half, nrow = e$p)
+  first_half_mat  <- matrix(first_half, nrow = p)
+  second_half_mat <- matrix(second_half, nrow = p)
 
   # add no. of selections for each feature by each lambda to stabpath_matrix
   return(first_half_mat + second_half_mat)
@@ -289,51 +292,51 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq, alpha, Pw,
 
 #' Cox model
 #' @noRd
-.calc_Cox <- function(e = parent.frame()) {
+.calc_cox <- function() {
   # e: get all objects from parent environment
 
   err_cnt <- 0
-  W       <- .calcW(e$p, e$alpha, e$Pw, e$kernel)
+  W       <- .calcW(p, alpha, Pw, kernel)
 
   # Try catch here to handle glmnet failures ...
   # first half
   first_half <- tryCatch({
-    glmnet::glmnet(e$x1, e$y1, family = "cox", lambda = e$lambda_seq,
+    glmnet::glmnet(x1, y1, family = "cox", lambda = lambda_seq,
                    standardize = FALSE, penalty.factor = W)$beta
     }, error = function(err) {
       # error handler picks up where error was generated
       print(sprintf("`calc_stability_paths()` glmnet error: %s", err))
-      rep(0, length = e$p)
+      rep(0, length = p)
     }
   )
 
-  if ( sum(first_half == 0) == e$p ) {
+  if ( sum(first_half == 0) == p ) {
     err_cnt <- err_cnt + 1
   }
 
-  W <- .calcW(e$p, e$alpha, e$Pw, e$kernel)
+  W <- .calcW(p, alpha, Pw, kernel)
 
   # second half
   second_half <- tryCatch({
-    glmnet::glmnet(e$x2, e$y2, family = "cox", lambda = e$lambda_seq,
+    glmnet::glmnet(x2, y2, family = "cox", lambda = lambda_seq,
                    standardize = FALSE, penalty.factor = W)$beta
     }, error = function(err) {
       # error handler picks up where error was generated
       print(sprintf("`calc_stability_paths()` glmnet error: %s", err))
-      rep(0, length = e$p)
+      rep(0, length = p)
     }
   )
 
-  if ( sum(second_half == 0) == e$p ) {
+  if ( sum(second_half == 0) == p ) {
     err_cnt <- err_cnt + 1
   }
 
   if ( err_cnt > 0 ) {
-    warning("Detected ", value(err_cnt), " `glmnet()` *Cox* errors",
+    warning("Detected ", value(err_cnt), " `glmnet()` *cox* errors",
             call. = FALSE)
   }
-  first_half_mat  <- matrix(as.numeric(as.logical(first_half)), nrow = e$p)
-  second_half_mat <- matrix(as.numeric(as.logical(second_half)), nrow = e$p)
+  first_half_mat  <- matrix(as.numeric(as.logical(first_half)), nrow = p)
+  second_half_mat <- matrix(as.numeric(as.logical(second_half)), nrow = p)
   return(first_half_mat + second_half_mat)
 }
 
@@ -342,7 +345,7 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq, alpha, Pw,
 #' @noRd
 .calcW <- function(p, alpha, Pw, kernel) {
 
-  if ( is.na(Pw) && kernel != "Cox" ) {
+  if ( is.na(Pw) && kernel != "cox" ) {
     W <- stats::runif(p, alpha, 1)
   } else {
     W    <- rep(1, length = p)

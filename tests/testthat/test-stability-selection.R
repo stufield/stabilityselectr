@@ -143,7 +143,7 @@ test_that("`stability_selection()` trips the correct errors if kernel = pca.sd",
 test_that("`stability_selection()` generates expected values for the Cox kernel", {
   xcox <- feature_matrix(log_rfu(simdata))
   ycox <- survival::Surv(simdata$time, simdata$status)
-  ss_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 101)
+  ss_cox <- stability_selection(xcox, ycox, kernel = "cox", r_seed = 101)
 
   expect_equal(sum(ss_cox$lambda), 13.533816327717)
   expect_equal(sum(ss_cox$perm_lambda), 2.3110419787012)
