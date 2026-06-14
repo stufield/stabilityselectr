@@ -1,12 +1,10 @@
 
-# Setup ----
-
 # Testing ----
 # No permutation ----
 test_that("`get_stable_features()` without permutation check shape & dims", {
   s_feat <- get_stable_features(ss, 0.55)
   expect_s3_class(s_feat, "data.frame")
-  expect_equal(dim(s_feat), c(n_feat, 2))       # all feats included
+  expect_equal(dim(s_feat), c(n_feat, 2L))       # all feats included
   expect_named(s_feat, c("MaxSelectProb", "FDRbound"))
   expect_setequal(rownames(s_feat), colnames(x))
 })
