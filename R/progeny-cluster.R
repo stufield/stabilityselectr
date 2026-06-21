@@ -149,17 +149,21 @@ is_pclust <- function(x) inherits(x, "pclust")
 
 #' Perform Progeny Clustering 1x (internal)
 #'
-#' Perform progeny clustering for 1 iteration of K in k-means clustering.
+#' Perform progeny clustering for 1 iteration of
+#'   `K` via k-means clustering.
 #'
-#' @param data The data matrix (n x p) containing n samples and p features.
-#' @param k Integer. The number of clusters.
-#' @param iter Integer. The number of progeny sampling iterations to perform.
-#' @param size Integer. The number of progeny to sample in each cluster.
-#'   Must be less than the number of samples in the data matrix,
-#'   typically > 10, minimum = 5.
+#' @param data The data matrix (`n x p`) containing `n` samples
+#'   and `p` features.
+#' @param k `integer(1)`. The number of clusters.
+#' @param iter `integer(1)`. The number of progeny sampling
+#'   iterations to perform.
+#' @param size `integer(1)`. The number of progeny to sample
+#'   in each cluster. Must be less than the number of samples in
+#'   the data matrix, typically > 10, minimum = 5.
 #' @return A list containing:
-#' \item{Pij:}{A `k*size` x `k*size` matrix of the individual probabilities of
-#'   repeat clustering for each progeny sample. See reference for full description}
+#' \item{Pij:}{A `k*size` x `k*size` matrix of the individual
+#'   probabilities of repeat clustering for each progeny sample.
+#'   See reference for full description}
 #' \item{size:}{The progeny sample size}
 #' \item{k:}{The k integer used in k-means}
 #' @author Stu Field
@@ -212,10 +216,11 @@ progeny_k <- function(data, k, size, iter) {
 
 #' Clustering Stability Metric (internal)
 #'
-#' This is an internal function calculating `S`, the progeny stability metric.
+#' This is an internal function calculating `S`,
+#'   the progeny stability metric.
 #'
-#' @param x An object created via `progenyK()`, primarily of a `Pij`
-#'   probability matrix.
+#' @param x An object created via `progeny_k()`, primarily of
+#'    a `Pij` probability matrix.
 #' @return A progeny stability metric, the ratio of the true
 #'   classifications vs. the false classifications.
 #'
@@ -233,7 +238,7 @@ calc_stability <- function(x) {
   falseprob   <- sum(pij) - trueprob
   true_score  <- ((trueprob - size * k) / ((size - 1) * size * k))
   false_score <- (falseprob / (size * (k - 1) * size * k))
-  return(true_score / ifelse(false_score == 0, NA, false_score))
+  return(true_score / ifelse(false_score == 0, NA_real_, false_score))
 }
 
 #' Calculate the Gap Score
@@ -262,7 +267,9 @@ calc_gap_score <- function(x) {
 scramble_data <- function(data) {
   n <- nrow(data)
   vapply(data.frame(data), function(.p) {
-    stats::runif(n, min = min(.p, na.rm = TRUE),
-                 max = max(.p, na.rm = TRUE))
+    runif(
+      n,
+      min = min(.p, na.rm = TRUE),
+      max = max(.p, na.rm = TRUE))
     }, double(n))
 }
