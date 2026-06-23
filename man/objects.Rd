@@ -47,9 +47,9 @@ plot(progeny_data, col = rep(2:4, each = 50L),
      main = "Simulated 3 Cluster Data")
 }
 \references{
-\code{clust_data}: Hu, C.W., Kornblau, S.M., Slater, J.H. and
-A.A. Qutub (\emph{2015}). Progeny Clustering: A Method to Identify
-Biological Phenotypes. Scientific Reports, 5:12894.
+\code{clust_data}: Hu, C.W., Kornblau, S.M., Slater, J.H.
+and A.A. Qutub (\emph{2015}). Progeny Clustering: A Method to Identify
+Biological Phenotypes. Scientific Reports, \strong{5}:12894.
 pg. 3. \url{http://www.nature.com/articles/srep12894}
 }
 \seealso{
