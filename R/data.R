@@ -13,9 +13,9 @@ NULL
 #'   the 2 features in the example, named "F1" and "F2",
 #'   and containing 20 observations.
 #'
-#' @references `clust_data`: Hu, C.W., Kornblau, S.M., Slater, J.H. and
-#'   A.A. Qutub (*2015*). Progeny Clustering: A Method to Identify
-#'   Biological Phenotypes. Scientific Reports, 5:12894.
+#' @references `clust_data`: Hu, C.W., Kornblau, S.M., Slater, J.H.
+#'   and A.A. Qutub (*2015*). Progeny Clustering: A Method to Identify
+#'   Biological Phenotypes. Scientific Reports, **5**:12894.
 #'   pg. 3. \url{http://www.nature.com/articles/srep12894}
 #'
 #' @source `clust_data`: Hu, et. al.
