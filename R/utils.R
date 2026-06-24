@@ -38,7 +38,7 @@ log_rfu <- function(x) {
   structure(x, class = cls)
 }
 
-col_palette <- list(
+col_palette <- c(
   purple     = "#24135F",
   lightgreen = "#00A499",
   lightgrey  = "#707372",
