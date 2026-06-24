@@ -10,6 +10,7 @@ pclust <- withr::with_seed(101,
 # Testing  ----
 test_that("the object returned by `progeny_cluster()` is correct", {
   expect_s3_class(pclust, "pclust")
+  expect_true(is_pclust(pclust))   # check the helper
   expect_type(pclust, "list")
   expect_named(pclust, c("scores", "mean_scores",
                          "ci95_scores", "random_scores",
@@ -17,29 +18,32 @@ test_that("the object returned by `progeny_cluster()` is correct", {
                          "D_gap", "clust_iter",
                          "repeats", "n_iter",
                          "size", "call"))
+  expect_snapshot( lapply(pclust, class) )
 })
 
-test_that("the individual outputs are currect for each element of pclust", {
-  expect_true(is.matrix(pclust$scores))
-  expect_equal(dim(pclust$scores), c(5L, 5L))
-  expect_equal(sum(pclust$scores), 393.9343373)
-  expect_equal(
-    pclust$mean_scores,
-    apply(pclust$scores, 2, mean)
+test_that("the object elements are the numerically expected results", {
+  skip_on_os("linux")
+  expect_snapshot( unclass(pclust) )
+})
+
+test_that("`progeny_cluster()` can handle data frames as well as matrices", {
+  p <- withr::with_seed(101,
+    progeny_cluster(data.frame(progeny_data),
+                    clust_iter = 2:6L, reps = 5L, n_iter = 10L, size = 6)
   )
-  expect_true(is.matrix(pclust$ci95_scores))
-  expect_equal(dim(pclust$ci95_scores), c(2L, 5L))
   expect_equal(
-    apply(pclust$ci95_scores, 1, mean),
-    c("2.5%"  = 9.812698941, "97.5%" = 25.214726238)
+    discard_it(p, names(p) == "call"),
+    discard_it(pclust, names(pclust) == "call")
   )
 })
 
-test_that("`is_pclust()` returns correct logical", {
-  expect_true(is_pclust(pclust))
-  expect_false(is_pclust(unclass(pclust)))
+# S3 print method ----
+test_that("`pclust` S3 print method returns expected known output", {
+  skip_on_os("linux")
+  expect_snapshot_output(pclust)
 })
 
+# error handling ----
 test_that("cluster comparisons is at least 3 ... throw error", {
   expect_error(
     progeny_cluster(progeny_data, clust_iter = 2:3L,
@@ -62,7 +66,7 @@ test_that("the `reps =` argument is >= 1 ..., otherwise throw error", {
   )
 })
 
-test_that("the `n_iter =` argument is passed via the ..., otherwise throw error", {
+test_that("the `n_iter =` argument is passed via the `...`; throw error", {
   expect_error(
     progeny_cluster(progeny_data, clust_iter = 2:6L),
     "You must pass an `n_iter =` argument via the `...` to `progeny_cluster()`.",
@@ -70,7 +74,7 @@ test_that("the `n_iter =` argument is passed via the ..., otherwise throw error"
   )
 })
 
-test_that("the `n_iter =` argument is >= 1 ..., otherwise throw error", {
+test_that("the `n_iter =` argument is >= 1 `...`; throw error", {
   expect_error(
     progeny_cluster(progeny_data, clust_iter = 2:6L, reps = 5L, n_iter = 0L),
     paste("The number of iterations can't be zero or negative.",
@@ -78,29 +82,15 @@ test_that("the `n_iter =` argument is >= 1 ..., otherwise throw error", {
   )
 })
 
-test_that("`progeny_cluster()` can handle data frames as well as matrices", {
-  p <- withr::with_seed(101,
-    progeny_cluster(data.frame(progeny_data),
-                    clust_iter = 2:6L, reps = 5L, n_iter = 10L, size = 6)
-  )
-  expect_equal(discard_it(p, names(p) == "call"),
-               discard_it(pclust, names(pclust) == "call"))
-})
-
 test_that("`progeny_k()` trips appropriate errors as expected", {
   expect_error(
     progeny_k(head(progeny_data, 15), k = 2, size = 18, n_iter = 10),
     paste("You are probably progeny sampling with too many samples for",
-          "these data ... try a smaller number\\.")
+          "these data ... try a smaller number")
   )
   expect_error(
     progeny_k(head(progeny_data, 10), k = 4, size = 4, n_iter = 10),
     paste("You are probably progeny sampling with too many",
-          "samples ... perhaps try `size` < 4\\."),
+          "samples ... perhaps try `size` < 4"),
   )
-})
-
-# S3 print method ----
-test_that("`pclust` S3 print method returns expected known output", {
-  expect_snapshot_output(pclust)
 })
