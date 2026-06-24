@@ -1,5 +1,5 @@
 
-create_local_objects <- function(n = 100, p = 20) {
+create_local_objects <- function(n = 100, p = 20, env = teardown_env()) {
   withr::local_options(list(signal.quiet = TRUE))
   nms <- paste0("feat", "_", head(letters, p))
   n_feat <- p
@@ -12,7 +12,12 @@ create_local_objects <- function(n = 100, p = 20) {
   ss_perm10 <- stability_selection(x, y, kernel = "l1-logistic",
                                    n_perm = 10, r_seed = 101)
   get_env <- function() parent.frame()
-  get("attach")(get_env(), name = "ss_testing", pos = 2L, warn.conflicts = FALSE)
+  get("attach")(get_env(), name = "ss_testing", pos = 2L,
+                warn.conflicts = FALSE)
+  withr::defer(
+    get("detach")("ss_testing", character.only = TRUE, force = TRUE),
+    envir = env
+  )
 }
 
 create_local_objects()
