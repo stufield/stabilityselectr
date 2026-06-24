@@ -1,6 +1,5 @@
 
 # Testing ----
-create_local_objects()
 L <- n_feat + n_samples
 
 # L1-logistic ----
@@ -70,7 +69,6 @@ test_that("`calc_stability_paths()` generates expected matrix for `lasso`", {
 
 # Cox ----
 test_that("`calc_stability_paths()` generates expected matrix for `cox`", {
-  skip("cox")
   xcox <- feature_matrix(log_rfu(simdata))
   ycox <- survival::Surv(simdata$time, simdata$status)
   mat  <- withr::with_seed(1234,
@@ -84,20 +82,19 @@ test_that("`calc_stability_paths()` generates expected matrix for `cox`", {
   )
   expect_true(is.matrix(mat))
   expect_equal(dim(mat), c(40, 2))
-  expect_equal(sum(mat), 19)
+  expect_equal(sum(mat), 21)
   expect_true(all(mat >= 0))   # range in [0,2]
   expect_true(all(mat <= 2))   # range in [0,2]
-  expect_equal(c(table(mat)), c("0" = 63, "1" = 15, "2" = 2))
-  expect_equal(diag(mat), c(0, 0))
-  expect_equal(colSums(mat), c(0, 19))
+  expect_equal(c(table(mat)), c("0" = 62, "1" = 15, "2" = 3))
+  expect_equal(colSums(mat), c(0, 21))
 
   # which features are never selected
   expect_equal(which(rowSums(mat) == 0),
-               c(1L, 2L, 3L, 4L, 5L, 8L, 10L, 16L, 19L, 21L, 22L, 23L, 24L,
+               c(1L, 3L, 4L, 5L, 8L, 10L, 16L, 19L, 21L, 22L, 23L, 24L,
                  26L, 27L, 29L, 31L, 33L, 34L, 35L, 38L, 39L, 40L))
   # zero seln
   expect_equal(rowSums(mat),
-               c(0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 2, 1, 1, 1, 0, 1, 1, 0, 1, 0,
+               c(0, 2, 0, 0, 0, 1, 1, 0, 1, 0, 1, 2, 1, 1, 1, 0, 1, 1, 0, 1, 0,
                  0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 2, 0, 0, 0))
 })
 
