@@ -33,9 +33,7 @@ plot.pclust <- function(x, ...) {
     labs(y = "Stability Score", x = "Clusters (k)",
          color = NULL, title = "Stability Scores") +
     geom_errorbar(aes(ymin = `2.5%`, ymax = `97.5%`), width = 0.1) +
-    theme(plot.title = ggplot2::element_text(hjust = 0.5))
-
-  ylims <- c(min(x$D_max, x$D_gap), max(x$D_max, x$D_gap))
+    theme(plot.title = element_text(hjust = 0.5))
 
   pdf2 <- cbind(max_dist = x$D_max, gap_dist = x$D_gap) |>
     as.data.frame() |> rn2col("cluster") |>
@@ -52,7 +50,7 @@ plot.pclust <- function(x, ...) {
                linetype = "dashed") +
     labs(y = "Stability Score", x = "Clusters (k)",
          color = NULL, title = "Difference Scores") +
-    theme(plot.title = ggplot2::element_text(hjust = 0.5))
+    theme(plot.title = element_text(hjust = 0.5))
 
   p2
   withr::with_namespace("patchwork", p1 + p2)

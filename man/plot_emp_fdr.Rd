@@ -52,7 +52,7 @@ withr::with_seed(101, {
 })
 
 # typically set > 75 permutations
-stab_sel <- stability_selection(x, y, "l1-logistic", num_perms = 25,
+stab_sel <- stability_selection(x, y, "l1-logistic", n_perm = 25,
                                 r_seed = 101, parallel = TRUE)
 plot_emp_fdr(stab_sel)
 
@@ -62,11 +62,11 @@ plot_permuted_data(stab_sel, 3L)   # choose 3rd permutation
 \seealso{
 \code{\link[=stability_selection]{stability_selection()}}, \code{\link[=get_stable_features]{get_stable_features()}}
 
-Other empirical FDR: 
+Other FDR: 
 \code{\link{calc_emp_fdr}()},
 \code{\link{calc_emp_fdr_breaks}()}
 }
 \author{
 Stu Field
 }
-\concept{empirical FDR}
+\concept{FDR}

@@ -34,8 +34,8 @@ FDR upper bound is undefined at thresholds \verb{<= 0.5}?}
 typically the \verb{add_features =} and \verb{warn =} arguments.}
 }
 \value{
-A two column data frame containing maximum selection probabilities
-and FDR upper bounds when appropriate, see \code{Details}.
+A two column data frame containing maximum selection
+probabilities and FDR upper bounds when appropriate, see \code{Details}.
 
 For \code{\link[=get_threshold_features]{get_threshold_features()}}, a \emph{list} of
 data frames for various thresholds corresponding

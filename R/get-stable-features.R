@@ -19,22 +19,26 @@
 #' @param x An `stab_sel` class object OR a matrix containing
 #'   selection probabilities, i.e. the `stabpath_matrix` entry
 #'   of a `stab_sel` class object.
+#'
 #' @param thresh `numeric(1)` in \verb{[0, 1]}. Minimum selection
 #'   probability threshold.
+#'
 #' @param add_features `character(n)`. A string of additional features
 #'   to *force* into the resulting table, irrespective of their
 #'   threshold. Used mostly in the S3 plot method to see a given
 #'   stability path of a feature not meeting a threshold cutoff.
 #'   Must be exact string match.
+#'
 #' @param warn `logical(1)`. Should warnings be triggered if no stable
 #'   features were found at the specified threshold OR if the
 #'   FDR upper bound is undefined at thresholds `<= 0.5`?
 #'
-#' @return A two column data frame containing maximum selection probabilities
-#'   and FDR upper bounds when appropriate, see `Details`.
+#' @return A two column data frame containing maximum selection
+#'   probabilities and FDR upper bounds when appropriate, see `Details`.
 #'
 #' @seealso [stability_selection()]
 #' @author Stu Field
+#'
 #' @examples
 #' # l1-logistic
 #' withr::with_seed(101, {

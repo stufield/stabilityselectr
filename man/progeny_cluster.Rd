@@ -36,7 +36,7 @@ Particularly useful if error bars during plotting are desired.}
 to the console. Defaults to \code{\link[=interactive]{interactive()}}.}
 
 \item{...}{Additional parameters passed to the internal \code{progeny_k()},
-typically \verb{iter =} and \verb{size =}. For the \code{\link[=plot]{plot()}} method,
+typically \verb{n_iter =} and \verb{size =}. For the \code{\link[=plot]{plot()}} method,
 arguments passed to the corresponding graphics device.}
 
 \item{x}{A \code{pclust} class object (or an object to be tested for one).}
@@ -71,16 +71,16 @@ The \code{\link[=is_pclust]{is_pclust()}} function checks whether
 an object is class \code{pclust}. See \code{\link[=inherits]{inherits()}}.
 }
 \examples{
-# `iter=` and `size=` are passed to `progeny_k()`
+# `n_iter =` and `size =` are passed to `progeny_k()`
 pclust <- withr::with_seed(1234,
-  progeny_cluster(progeny_data, clust_iter = 2:9L, iter = 20L, size = 6)
+  progeny_cluster(progeny_data, clust_iter = 2:9L, n_iter = 20L, size = 6)
 )
 pclust
 
 # Test progeny clustering on iris data set
 # Doesn't work quite as well as the simulated data set
 clust_iris <- withr::with_seed(99,
-  progeny_cluster(iris[, -5L], clust_iter = 2:5L, size = 6L, iter = 50)
+  progeny_cluster(iris[, -5L], clust_iter = 2:5L, size = 6L, n_iter = 50)
 )
 clust_iris    # true n clusters = 3
 

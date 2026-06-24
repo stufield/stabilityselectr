@@ -8,13 +8,17 @@
 #' @param data A (`n x p`) data matrix containing *n* samples and *p* features.
 #'   Can also be a data frame where each row corresponds to a sample or
 #'   observation, whereas each column corresponds to a feature or variable.
+#'
 #' @param clust_iter `integer(n)`. Span of `k` clusters to interrogate
+#'
 #' @param reps `integer(1)`. The number of repeat iterations to perform.
 #'   Particularly useful if error bars during plotting are desired.
+#'
 #' @param verbose `logical(1)`. Print the progress of the clustering repeats
 #'   to the console. Defaults to [interactive()].
+#'
 #' @param ... Additional parameters passed to the internal `progeny_k()`,
-#'   typically `iter =` and `size =`. For the [plot()] method,
+#'   typically `n_iter =` and `size =`. For the [plot()] method,
 #'   arguments passed to the corresponding graphics device.
 #'
 #' @return A `pclust` class object, a list containing:
@@ -40,19 +44,20 @@
 #' @references Hu, C.W., Kornblau, S.M., Slater, J.H. and A.A. Qutub (2015).
 #'   Progeny Clustering: A Method to Identify Biological Phenotypes.
 #'   Scientific Reports, 5:12894. \url{http://www.nature.com/articles/srep12894}
+#'
 #' @seealso [stats::kmeans()]
 #'
 #' @examples
-#' # `iter=` and `size=` are passed to `progeny_k()`
+#' # `n_iter =` and `size =` are passed to `progeny_k()`
 #' pclust <- withr::with_seed(1234,
-#'   progeny_cluster(progeny_data, clust_iter = 2:9L, iter = 20L, size = 6)
+#'   progeny_cluster(progeny_data, clust_iter = 2:9L, n_iter = 20L, size = 6)
 #' )
 #' pclust
 #'
 #' # Test progeny clustering on iris data set
 #' # Doesn't work quite as well as the simulated data set
 #' clust_iris <- withr::with_seed(99,
-#'   progeny_cluster(iris[, -5L], clust_iter = 2:5L, size = 6L, iter = 50)
+#'   progeny_cluster(iris[, -5L], clust_iter = 2:5L, size = 6L, n_iter = 50)
 #' )
 #' clust_iris    # true n clusters = 3
 #'
@@ -76,13 +81,13 @@ progeny_cluster <- function(data, clust_iter = 2:10L, reps = 10L,
       "Please use a positive value.", call. = FALSE
     )
   }
-  if ( !"iter" %in% names(list(...)) ) {
+  if ( !"n_iter" %in% names(list(...)) ) {
     stop(
-      "You must pass an `iter =` argument via the `...` to `progeny_cluster()`.",
+      "You must pass an `n_iter =` argument via the `...` to `progeny_cluster()`.",
       call. = FALSE
     )
   }
-  if ( list(...)$iter < 1 ) {
+  if ( list(...)$n_iter < 1 ) {
     stop(
       "The number of iterations can't be zero or negative. ",
       "Please use a positive value.", call. = FALSE
@@ -101,13 +106,14 @@ progeny_cluster <- function(data, clust_iter = 2:10L, reps = 10L,
        vapply(clust_iter, .calc_k, .data = data, FUN.VALUE = 0.1)
     }, simplify = FALSE) |> do.call(what = rbind)
 
-  rdata <- scramble_data(data)   # scrambled runif data
+  # Generate reference data of random noise from orig data
+  rdata <- apply(data, 2, sample) # scrambled data
   random_scores <- replicate(reps, {
       vapply(clust_iter, .calc_k, .data = rdata, FUN.VALUE = 0.1)
     }, simplify = FALSE) |> do.call(what = rbind)
 
-  stopifnot(identical(dim(scores), dim(random_scores)))   # check
-  colnames(scores)        <- sprintf("k=%i", clust_iter)
+  stopifnot(identical(dim(scores), dim(random_scores))) # sanity check
+  colnames(scores) <- sprintf("k=%i", clust_iter)
   colnames(random_scores) <- colnames(scores)
 
   cm <- be_hard(colMeans, na.rm = TRUE)  # set default for use below
@@ -155,7 +161,7 @@ is_pclust <- function(x) inherits(x, "pclust")
 #' @param data The data matrix (`n x p`) containing `n` samples
 #'   and `p` features.
 #' @param k `integer(1)`. The number of clusters.
-#' @param iter `integer(1)`. The number of progeny sampling
+#' @param n_iter `integer(1)`. The number of progeny sampling
 #'   iterations to perform.
 #' @param size `integer(1)`. The number of progeny to sample
 #'   in each cluster. Must be less than the number of samples in
@@ -169,7 +175,7 @@ is_pclust <- function(x) inherits(x, "pclust")
 #' @author Stu Field
 #' @importFrom stats kmeans
 #' @noRd
-progeny_k <- function(data, k, size, iter) {
+progeny_k <- function(data, k, size, n_iter) {
 
   data <- data.matrix(data, rownames.force = FALSE)
 
@@ -194,24 +200,22 @@ progeny_k <- function(data, k, size, iter) {
   Qij          <- matrix(0, ncol = kn, nrow = kn)
 
   # loop replaces Qij matrix in place via `+` at each iter
-  for ( r in 1:iter ) {
-    progeny <- lapply(data.frame(data), function(.p) {
-                 # cat("* feature", .p, "\n")  # nolint: commented_code_linter.
-                 lapply(cluster_list, function(.clust) {
-                   # sample entries of .p according to .clust
-                   .p[sample(.clust, size, replace = TRUE)]
-                 }) |> unlist()
-    }) |> data.frame() |> data.matrix()
+  for ( r in 1:n_iter ) {
+    progeny <- apply(data, 2, function(feat) {
+                 vapply(cluster_list, function(.clust) {
+                        feat[sample(.clust, size, replace = TRUE)]
+                 }, FUN.VALUE = numeric(size))
+      })
 
     new_clust <- stats::kmeans(progeny, k, nstart = 25, iter.max = 20)$cluster
-    q_ij      <- outer(new_clust, new_clust, function(x, y) as.numeric(x == y))
-    q_ij[ lower.tri(q_ij) ] <- 0
+    q_ij <- outer(new_clust, new_clust, function(x, y) as.numeric(x == y))
+    q_ij[lower.tri(q_ij)] <- 0
     q_ij <- q_ij + t(q_ij)
     stopifnot(isSymmetric(q_ij))
     Qij <- Qij + q_ij
   }
-  diag(Qij) <- iter
-  list(Pij = Qij / iter, size = size, k = k)
+  diag(Qij) <- n_iter
+  list(Pij = Qij / n_iter, size = size, k = k)
 }
 
 #' Clustering Stability Metric (internal)
@@ -238,7 +242,7 @@ calc_stability <- function(x) {
   falseprob   <- sum(pij) - trueprob
   true_score  <- ((trueprob - size * k) / ((size - 1) * size * k))
   false_score <- (falseprob / (size * (k - 1) * size * k))
-  return(true_score / ifelse(false_score == 0, NA_real_, false_score))
+  true_score / ifelse(false_score == 0, NA_real_, false_score)
 }
 
 #' Calculate the Gap Score
@@ -251,25 +255,6 @@ calc_gap_score <- function(x) {
 
   g1 <- x[, 1] - 2 * x[, 2] + x[, 3]
   g2 <- x[, ncol(x)] - 2 * x[, ncol(x) - 1] + x[, ncol(x) - 2]
-  g  <- colMeans(cbind(g1, gmat, g2), na.rm = TRUE)
-  names(g) <- colnames(x)
-  g
-}
-
-#' Generate Reference Dataset of random noise from original data
-#'   Do we want runif()? What about rnorm()?
-#'
-#' @param data A data matrix.
-#' @return A data matrix.
-#'
-#' @importFrom stats runif
-#' @noRd
-scramble_data <- function(data) {
-  n <- nrow(data)
-  vapply(data.frame(data), function(.p) {
-    runif(
-      n,
-      min = min(.p, na.rm = TRUE),
-      max = max(.p, na.rm = TRUE))
-    }, double(n))
+  colMeans(cbind(g1, gmat, g2), na.rm = TRUE) |>
+    setNames(colnames(x))
 }

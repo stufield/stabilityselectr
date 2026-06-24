@@ -4,7 +4,8 @@ linters: linters_with_defaults(
   object_name_linter = NULL
   )
 exclusions: list(
-  "R/stability-selection.R"   = list(cyclocomp_linter = Inf),
+  "R/stability-selection.R" = list(cyclocomp_linter = Inf),
+  "R/0-declare-global-variables.R",
   "tests/testthat/helper.R",
   "tests/testthat.R"
   )

@@ -1,5 +1,5 @@
 
-clust <- withr::with_seed(1, stability_cluster(progeny_data, k = 3, iter = 250))
+clust <- withr::with_seed(1, stability_cluster(progeny_data, k = 3, n_iter = 250))
 
 test_that("`stability_cluster()` generates the correct object and dimensions", {
   expect_s3_class(clust, "tbl_df")

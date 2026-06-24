@@ -35,7 +35,7 @@ The "true" number of clusters in the `progeny_data` object is 3.
 
 ```{r progeny}
 pc <- progeny_cluster(progeny_data, clust_iter = 2:9L,
-                      reps = 10L, iter = 25L, size = 6)
+                      reps = 10L, n_iter = 25L, size = 6)
 pc
 ```
 
@@ -64,7 +64,7 @@ Correct clusters are:
 
 ```{r stab-clusters}
 stab_clust <- withr::with_seed(999,
-  stability_cluster(progeny_data, k = 3L, iter = 500L)
+  stability_cluster(progeny_data, k = 3L, n_iter = 500L)
 )
 stab_clust
 

@@ -8,23 +8,29 @@
 #'   labels are arbitrarily assigned.
 #'
 #' @family cluster
+#' @family stability
 #'
 #' @inheritParams progeny_cluster
+#'
 #' @param k `integer(1)`. The number of clusters.
-#' @param iter `integer(1)`. The number of random subset iterations to perform.
+#'
+#' @param n_iter `integer(1)`. The number of random subset iterations to perform.
+#'
 #' @return A n x (k + 1) dimensional `tibble` of clustering probabilities for
 #'   each `k`, plus a final column named `"ProbK"`, which indicates
 #'   the "most probable" cluster membership for that sample.
 #'
 #' @note How do we make sure clusters are indexed the same as what
 #'   comes out of k-means? Worried about index errors (but seems ok for now).
+#'
 #' @author Stu Field
 #' @seealso [pam()]
 #'
 #' @references Hastie, et al. 2009.
 #'
 #' @examples
-#' stab_clust <- withr::with_seed(999, stability_cluster(progeny_data, k = 3, iter = 500))
+#' stab_clust <- withr::with_seed(999,
+#'   stability_cluster(progeny_data, k = 3, n_iter = 500))
 #' table(actual = rep(1:3L, each = 50L), predicted = stab_clust$ProbK)
 #'
 #' stab_clust$true_cluster <- rep(1:3L, each = 50L)
@@ -52,12 +58,12 @@
 #' @importFrom cluster pam
 #' @importFrom tibble as_tibble
 #' @export
-stability_cluster <- function(data, k, iter = 100) {
+stability_cluster <- function(data, k, n_iter = 100) {
 
   data <- data.matrix(data, rownames.force = FALSE)
   n    <- nrow(data)
 
-  cluster_mat <- replicate(iter,  {
+  cluster_mat <- replicate(n_iter,  {
       s <- sample(n, floor(n / 2), replace = FALSE)
       # don't use; inconsistent labels
       # clust_idx1 <- stats::kmeans(data[ s,], k)$cluster # nolint: commented_code_linter.
