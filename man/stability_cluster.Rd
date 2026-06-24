@@ -4,7 +4,7 @@
 \alias{stability_cluster}
 \title{Perform Stability Clustering}
 \usage{
-stability_cluster(data, k, iter = 100)
+stability_cluster(data, k, n_iter = 100)
 }
 \arguments{
 \item{data}{A (\verb{n x p}) data matrix containing \emph{n} samples and \emph{p} features.
@@ -13,7 +13,7 @@ observation, whereas each column corresponds to a feature or variable.}
 
 \item{k}{\code{integer(1)}. The number of clusters.}
 
-\item{iter}{\code{integer(1)}. The number of random subset iterations to perform.}
+\item{n_iter}{\code{integer(1)}. The number of random subset iterations to perform.}
 }
 \value{
 A n x (k + 1) dimensional \code{tibble} of clustering probabilities for
@@ -33,7 +33,8 @@ How do we make sure clusters are indexed the same as what
 comes out of k-means? Worried about index errors (but seems ok for now).
 }
 \examples{
-stab_clust <- withr::with_seed(999, stability_cluster(progeny_data, k = 3, iter = 500))
+stab_clust <- withr::with_seed(999,
+  stability_cluster(progeny_data, k = 3, n_iter = 500))
 table(actual = rep(1:3L, each = 50L), predicted = stab_clust$ProbK)
 
 stab_clust$true_cluster <- rep(1:3L, each = 50L)
@@ -67,8 +68,12 @@ Hastie, et al. 2009.
 
 Other cluster: 
 \code{\link{progeny_cluster}()}
+
+Other stability: 
+\code{\link{stability_selection}()}
 }
 \author{
 Stu Field
 }
 \concept{cluster}
+\concept{stability}

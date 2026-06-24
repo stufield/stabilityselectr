@@ -3,14 +3,16 @@
 #' Calculate the mean number of false positive features from
 #'   a permutation analysis performed during a stability selection
 #'   run. This assumes a permutation set was generated during
-#'   stability selection, (i.e. `num_perms > 0`).
+#'   stability selection, (i.e. `n_perm > 0`).
 #'
-#' @family empirical FDR
+#' @family FDR
 #'
 #' @param x A `stab_sel` class object generated
 #'   via [stability_selection()].
+#'
 #' @param thresh_seq `numeric(n)`. A sequence in
 #'   \verb{[0, 1]} specifying the thresholds to evaluate.
+#'
 #' @param warn `logical(1)`. Should warnings be triggered if
 #'   mean of `< 5` permutations is being returned?
 #'
@@ -29,8 +31,8 @@
 #'   colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 #'   y  <- sample(1:2, n_samples, replace = TRUE)
 #' })
-#' ss <- stability_selection(x, y, "l1-logistic", num_iter = 25,
-#'                           num_perms = 25, r_seed = 101, parallel = TRUE)
+#' ss <- stability_selection(x, y, "l1-logistic", n_iter = 25,
+#'                           n_perm = 25, r_seed = 101, parallel = TRUE)
 #' calc_emp_fdr(ss, seq(0.5, 0.9, 0.1))
 #' @export
 calc_emp_fdr <- function(x, thresh_seq, warn = TRUE) {
@@ -45,7 +47,7 @@ calc_emp_fdr <- function(x, thresh_seq, warn = TRUE) {
 
   if ( !x$perm_data || is.null(x$permpath_list) ) {
     stop("No permuted data ...\n",
-         "Please set `num_perms > 0` in `stability_selection()`",
+         "Please set `n_perm > 0` in `stability_selection()`",
          call. = FALSE)
   }
 

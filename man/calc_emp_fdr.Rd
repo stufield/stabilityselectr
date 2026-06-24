@@ -25,7 +25,7 @@ various thresholds specified by \code{thresh_seq}.
 Calculate the mean number of false positive features from
 a permutation analysis performed during a stability selection
 run. This assumes a permutation set was generated during
-stability selection, (i.e. \code{num_perms > 0}).
+stability selection, (i.e. \code{n_perm > 0}).
 }
 \examples{
 withr::with_seed(101, {
@@ -35,18 +35,18 @@ withr::with_seed(101, {
   colnames(x) <- paste0("feat", "_", head(letters, n_feat))
   y  <- sample(1:2, n_samples, replace = TRUE)
 })
-ss <- stability_selection(x, y, "l1-logistic", num_iter = 25,
-                          num_perms = 25, r_seed = 101, parallel = TRUE)
+ss <- stability_selection(x, y, "l1-logistic", n_iter = 25,
+                          n_perm = 25, r_seed = 101, parallel = TRUE)
 calc_emp_fdr(ss, seq(0.5, 0.9, 0.1))
 }
 \seealso{
 \code{\link[=get_threshold_features]{get_threshold_features()}}
 
-Other empirical FDR: 
+Other FDR: 
 \code{\link{calc_emp_fdr_breaks}()},
 \code{\link{plot_emp_fdr}()}
 }
 \author{
 Stu Field, Michael R. Mehan
 }
-\concept{empirical FDR}
+\concept{FDR}

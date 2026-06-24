@@ -8,6 +8,7 @@
 #' @rdname get_stable_features
 #'
 #' @param thresh_vec `numeric(1)`. A vector of threshold values.
+#'
 #' @param ... Additional arguments passed to [get_stable_features()],
 #'   typically the `add_features =` and `warn =` arguments.
 #'

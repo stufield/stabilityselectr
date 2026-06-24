@@ -7,6 +7,7 @@
 #'
 #' @param which `integer(1)`. Which of the null hypothesis
 #'   permuted stability paths to plot.
+#'
 #' @param ... Additional arguments passed to [plot.stab_sel()].
 #'
 #' @examples

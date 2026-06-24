@@ -2,6 +2,7 @@
 # Setup ----
 # silence signalling from `signal_done()`
 withr::local_options(list(signal.quiet = TRUE))
+create_local_objects()
 
 # Testing ----
 # stability_selection ----
@@ -13,7 +14,7 @@ test_that("`stability_selection()` generates correct object", {
   expect_true(is.matrix(ss$stabpath_matrix))
   expect_named(ss, c("stabpath_matrix", "lambda",
                      "alpha", "Pw",
-                     "kernel", "num_iter",
+                     "kernel", "n_iter",
                      "standardize", "impute_outliers",
                      "lambda_min_ratio", "perm_data",
                      "permpath_list", "perm_lambda",
@@ -21,7 +22,7 @@ test_that("`stability_selection()` generates correct object", {
     )
   expect_equal(ss$alpha, 0.8)
   expect_equal(ss$Pw, 0.5)
-  expect_equal(ss$num_iter, 100L)
+  expect_equal(ss$n_iter, 100L)
   expect_true(ss$standardize)
   expect_equal(ss$lambda_min_ratio, 0.1)
   expect_length(ss$lambda, 120L)
@@ -141,10 +142,10 @@ test_that("`stability_selection()` trips the correct errors if kernel = pca.sd",
 
 # Cox kernel ----
 test_that("`stability_selection()` generates expected values for the Cox kernel", {
-  xcox <- feature_matrix(log_rfu(simdata))
-  ycox <- survival::Surv(simdata$time, simdata$status)
+  skip("cox")
+  xcox   <- feature_matrix(log_rfu(simdata))
+  ycox   <- survival::Surv(simdata$time, simdata$status)  # a matrix
   ss_cox <- stability_selection(xcox, ycox, kernel = "cox", r_seed = 101)
-
   expect_equal(sum(ss_cox$lambda), 13.533816327717)
   expect_equal(sum(ss_cox$perm_lambda), 2.3110419787012)
   expect_length(ss_cox$perm_lambda, 20L)

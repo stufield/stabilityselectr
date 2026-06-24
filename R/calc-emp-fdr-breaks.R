@@ -6,11 +6,14 @@
 #'   Relies on [calc_emp_fdr()] to calculate the mean false discovery
 #'   based on permutations during the stability selection algorithm.
 #'
-#' @family empirical FDR
+#' @family FDR
+#'
 #' @inheritParams calc_emp_fdr
 #'
-#' @param fdr_breaks `numeric(n)`. A vector specifying the desired mean number
-#'   of empirical false positives at which to calculate various thresholds.
+#' @param fdr_breaks `numeric(n)`. A vector specifying the
+#'   desired mean number of empirical false positives at which
+#'   to calculate various thresholds.
+#'
 #' @return A list consisting of:
 #'   \item{n_selected}{A vector of the number of features selected at each
 #'     empirical stability selection threshold}
@@ -31,9 +34,8 @@
 #'   colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 #'   y        <- sample(1:2, n_samples, replace = TRUE)
 #' })
-#' stab_sel <- stability_selection(x, y, "l1-logistic", num_iter = 25,
-#'                                 num_perms = 25,
-#'                                 r_seed = 101, parallel = TRUE)
+#' stab_sel <- stability_selection(x, y, "l1-logistic", n_iter = 25,
+#'                                 n_perm = 10, r_seed = 101, parallel = TRUE)
 #' calc_emp_fdr_breaks(stab_sel)
 #' @importFrom dplyr filter bind_rows
 #' @importFrom tibble tibble

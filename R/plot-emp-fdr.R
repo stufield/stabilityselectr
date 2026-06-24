@@ -11,7 +11,7 @@
 #'   empirical FDR breaks: `c(0.5, 1, 2, 3, 5)` evaluated to the nearest
 #'   threshold cutoff.
 #'
-#' @family empirical FDR
+#' @family FDR
 #'
 #' @inheritParams calc_emp_fdr
 #' @author Stu Field
@@ -29,7 +29,7 @@
 #' })
 #'
 #' # typically set > 75 permutations
-#' stab_sel <- stability_selection(x, y, "l1-logistic", num_perms = 25,
+#' stab_sel <- stability_selection(x, y, "l1-logistic", n_perm = 25,
 #'                                 r_seed = 101, parallel = TRUE)
 #' plot_emp_fdr(stab_sel)
 #'
