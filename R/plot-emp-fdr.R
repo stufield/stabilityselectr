@@ -52,8 +52,8 @@ plot_emp_fdr <- function(x, thresh_seq = seq(1, 0.1, by = -0.01)) {
     geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
     geom_point(data = emp_breaks$breaks, size = 2.5,
                aes(x = n_selected, y = MeanFPs, colour = thresh_mean)) +
-    scale_color_manual(name = "threshold | Mean FPs",
-                       values = head(unlist(col_palette),
+    scale_color_manual(name   = "threshold | Mean FPs",
+                       values = head(unname(col_palette),
                                      nrow(emp_breaks$breaks))) +
     labs(
       x = "Number Selected Features",
