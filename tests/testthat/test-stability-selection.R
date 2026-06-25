@@ -45,7 +45,7 @@ test_that("`stability_selection()` generates the correct values", {
                  0.045, 0.035, 0.05, 0.25, 0.14, 0.375))
   expect_equal(sum(ss$stabpath_matrix), 1216.42)
 
-  withr::with_options(list(pillar.sigfig = 6L),
+  withr::with_options(list(pillar.sigfig = 4L),
     expect_snapshot(
       print(
         tibble::enframe(rowSums(ss$stabpath_matrix), "feat", "rowsum"),
@@ -134,7 +134,7 @@ test_that("`stability_selection()` generates expected values for the Cox kernel"
                c(ncol(xcox), length(ss_cox$lambda)))
   expect_equal(sum(ss_cox$stabpath_matrix), 25.1850)
 
-  withr::with_options(list(pillar.sigfig = 6L),
+  withr::with_options(list(pillar.sigfig = 4L),
     expect_snapshot(
       print(
         tibble::enframe(rowSums(ss_cox$stabpath_matrix), "feat", "rowsum"),
