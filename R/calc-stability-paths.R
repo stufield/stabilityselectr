@@ -102,23 +102,23 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq,
   W <- .calcW(p, alpha, Pw, kernel)
 
   # get selected features (0, 1)
-  first_half <- glmnet::glmnet(x1, y1, family = "binomial",
-                               lambda = lambda_seq,
-                               standardize = standardize,
-                               penalty.factor = W)$beta |>
+  h1 <- glmnet::glmnet(x1, y1, family = "binomial",
+                       lambda = lambda_seq,
+                       standardize = standardize,
+                       penalty.factor = W)$beta |>
     as.logical() |> as.numeric()
-  second_half <- glmnet::glmnet(x2, y2, family = "binomial",
-                                lambda = lambda_seq,
-                                standardize = standardize,
-                                penalty.factor = W)$beta |>
+  h2 <- glmnet::glmnet(x2, y2, family = "binomial",
+                       lambda = lambda_seq,
+                       standardize = standardize,
+                       penalty.factor = W)$beta |>
     as.logical() |> as.numeric()
   # convert to same dim matrix as stabpath_matrix
-  first_half_mat  <- matrix(first_half, nrow = p)
-  second_half_mat <- matrix(second_half, nrow = p)
+  first_half  <- matrix(h1, nrow = p)
+  second_half <- matrix(h2, nrow = p)
 
   # add no. of selections for each feature by each lambda to stabpath_matrix
   # range: [0, 2]
-  first_half_mat + second_half_mat
+  first_half + second_half
 }
 
 
@@ -140,10 +140,8 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq,
                        penalty.factor = W,
                        alpha = elastic_alpha)$beta |>
     as.logical() |> as.numeric()
-  # convert to same dim matrix as stabpath_matrix
   first_half  <- matrix(h1, nrow = p)
   second_half <- matrix(h2, nrow = p)
-  # add no. of selections for each feature by each lambda to stabpath_matrix
   first_half + second_half
 }
 
@@ -181,37 +179,36 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq,
 #' Cox Regression
 #' @noRd
 .calc_cox <- function() {
-  err_cnt <- 0L
 
-  # tryCatch to handle glmnet failures ...
-  # first half
-  h1 <- tryCatch({
+  W <- .calcW(p, alpha, Pw, kernel)
+
+  h1 <- tryCatch({   # tryCatch to handle glmnet failures
     glmnet::glmnet(
       x1, y1, family = "cox", standardize = FALSE,
       lambda = lambda_seq, cox.ties = "breslow",
-      penalty.factor = .calcW(p, alpha, Pw, kernel)
-    )$beta
-    }, error = function(err) {
-      # error handler picks up where error was generated
-      print(sprintf("`calc_stability_paths()` glmnet error: %s", err))
-      rep(0, length = p)
+      penalty.factor = W)$beta
+    }, error = function(e) {
+      cat("\n`glmnet()` error in `calc_stability_paths()`:\n",
+          e$message, "\n")
+      rep.int(0, p)
     }
   )
+
+  err_cnt <- 0L
 
   if ( sum(h1 == 0) == p ) {
     err_cnt <- err_cnt + 1L
   }
 
-  # second half
   h2 <- tryCatch({
     glmnet::glmnet(
       x2, y2, family = "cox", standardize = FALSE,
       lambda = lambda_seq, cox.ties = "breslow",
-      penalty.factor = .calcW(p, alpha, Pw, kernel)
-    )$beta
-    }, error = function(err) {
-      print(sprintf("`calc_stability_paths()` glmnet error: %s", err))
-      rep(0, length = p)
+      penalty.factor = W)$beta
+    }, error = function(e) {
+      cat("\n`glmnet()` error in `calc_stability_paths()`:\n",
+          e$message, "\n")
+      rep.int(0, p)
     }
   )
 
@@ -223,6 +220,7 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq,
     warning("Detected ", value(err_cnt), " `glmnet()` *cox* errors",
             call. = FALSE)
   }
+
   first_half  <- matrix(as.numeric(as.logical(h1)), nrow = p)
   second_half <- matrix(as.numeric(as.logical(h2)), nrow = p)
   first_half + second_half
