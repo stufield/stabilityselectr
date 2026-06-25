@@ -55,7 +55,7 @@ n_samples   <- 100L
 x           <- matrix(rnorm(n_feat * n_samples), n_samples, n_feat)
 colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 y           <- sample(1:2, n_samples, replace = TRUE)
-stab_sel    <- stability_selection(x, y, kernel = "l1-logistic", num_iter = 500L)
+stab_sel    <- stability_selection(x, y, "l1-logistic", n_iter = 500L)
 is_stab_sel(stab_sel)
 stab_sel
 ```
