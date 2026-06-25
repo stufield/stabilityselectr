@@ -57,28 +57,28 @@
       print(tibble::enframe(rowSums(ss$stabpath_matrix), "feat", "rowsum"), n = Inf)
     Output
       # A tibble: 20 x 2
-         feat    rowsum
-         <chr>    <dbl>
-       1 feat_a 64.96  
-       2 feat_b 52.73  
-       3 feat_c 60.875 
-       4 feat_d 77.0550
-       5 feat_e 54.44  
-       6 feat_f 59.56  
-       7 feat_g 53.285 
-       8 feat_h 53.49  
-       9 feat_i 49.225 
-      10 feat_j 75.985 
-      11 feat_k 55.3   
-      12 feat_l 63.265 
-      13 feat_m 86.2400
-      14 feat_n 46.3   
-      15 feat_o 47.75  
-      16 feat_p 47.83  
-      17 feat_q 56.51  
-      18 feat_r 65.8   
-      19 feat_s 66.645 
-      20 feat_t 79.1750
+         feat   rowsum
+         <chr>   <dbl>
+       1 feat_a  64.96
+       2 feat_b  52.73
+       3 feat_c  60.87
+       4 feat_d  77.05
+       5 feat_e  54.44
+       6 feat_f  59.56
+       7 feat_g  53.28
+       8 feat_h  53.49
+       9 feat_i  49.23
+      10 feat_j  75.99
+      11 feat_k  55.3 
+      12 feat_l  63.26
+      13 feat_m  86.24
+      14 feat_n  46.3 
+      15 feat_o  47.75
+      16 feat_p  47.83
+      17 feat_q  56.51
+      18 feat_r  65.8 
+      19 feat_s  66.65
+      20 feat_t  79.18
 
 # the S3 `summary` method generates correct output
 
