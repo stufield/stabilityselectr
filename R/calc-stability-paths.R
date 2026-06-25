@@ -185,7 +185,7 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq,
   h1 <- tryCatch({   # tryCatch to handle glmnet failures
     glmnet::glmnet(
       x1, y1, family = "cox", standardize = FALSE,
-      lambda = lambda_seq, cox.ties = "breslow",
+      lambda = lambda_seq, cox.ties = "efron",
       penalty.factor = W)$beta
     }, error = function(e) {
       cat("\n`glmnet()` error in `calc_stability_paths()`:\n",
@@ -203,7 +203,7 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq,
   h2 <- tryCatch({
     glmnet::glmnet(
       x2, y2, family = "cox", standardize = FALSE,
-      lambda = lambda_seq, cox.ties = "breslow",
+      lambda = lambda_seq, cox.ties = "efron",
       penalty.factor = W)$beta
     }, error = function(e) {
       cat("\n`glmnet()` error in `calc_stability_paths()`:\n",

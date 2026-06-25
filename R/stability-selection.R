@@ -350,7 +350,7 @@ stability_selection <- function(x, y = NULL,
     "cox"         = {
       glmnet_args$family   = "cox"
       glmnet_args$nlambda  = 100   # nsteps
-      glmnet_args$cox.ties = "breslow"
+      glmnet_args$cox.ties = "efron"
       glmnet_args},
     NULL)  # pca kernels
 

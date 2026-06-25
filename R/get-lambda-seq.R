@@ -74,7 +74,7 @@
     y <- cbind(time = S[, 1L], status = S[, 2L])
     lambda_seq <- glmnet::glmnet(
       x, y, nlambda = 100, family = "cox", standardize = standardize,
-      cox.ties = "breslow", # penalty.factor = W, (this differs from others)
+      cox.ties = "efron", # penalty.factor = W, (this differs from others)
       lambda.min.ratio = lambda_min_ratio)$lambda
 
   }
