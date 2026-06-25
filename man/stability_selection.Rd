@@ -25,8 +25,7 @@ stability_selection(
   lambda_pad = 20,
   impute_outliers = FALSE,
   impute_n_sigma = 3,
-  r_seed = 1234,
-  ...
+  r_seed = 1234
 )
 
 is_stab_sel(x)
@@ -293,7 +292,7 @@ xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
 #   In 'real' datasets, you may need to rename the final matrix to
 #   `time` and `status`.
 
-ycox <- select(simdata, time, status) |> as.matrix()
+ycox <- data.matrix(select(simdata, time, status))
 stab_sel_cox <- stability_selection(xcox, ycox, kernel = "cox", r_seed = 3)
 # Test for class `stab_sel`
 is_stab_sel(stab_sel)
