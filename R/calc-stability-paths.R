@@ -42,8 +42,9 @@
 #' @importFrom stats prcomp runif
 #' @importFrom glmnet glmnet
 #' @noRd
-calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq, alpha, Pw,
-                                 standardize, elastic_alpha, beta_threshold = 0L) {
+calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq,
+                                 alpha, Pw, standardize,
+                                 elastic_alpha, beta_threshold = 0L) {
 
   if ( kernel == "ridge" && beta_threshold == 0L ) {
     stop(
@@ -57,15 +58,12 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq, alpha, Pw,
   p            <- ncol(x)
   n_half1      <- floor(nobs / 2)
   lambda_seq_n <- length(lambda_seq)
-  # nrow = no. features
-  # ncol = lambda penalty sequence
   half1 <- sample(seq_len(nobs), n_half1, replace = FALSE)
   x1    <- x[half1, ]
   x2    <- x[-half1, ]
 
   if ( kernel %in% c("pca.sd", "pca.thresh") ) {
-    # for unsupervised methods (PCA) which have no y
-    NULL
+    NULL   # unsupervised methods (PCA) have no y
   } else {
     if (is.null(dim(y))) {  # response a vector
       y1 <- y[half1]
@@ -295,19 +293,4 @@ calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq, alpha, Pw,
          }) |> rowSums() |> as.logical() |> as.numeric()
   }) |> data.frame() |> as.matrix() |> unname()
   first_half + second_half
-}
-
-
-#' @importFrom stats runif
-#' @noRd
-.calcW <- function(p, alpha, Pw, kernel) {
-  if ( is.na(Pw) && kernel != "cox" ) {
-    W <- runif(p, alpha, 1)
-  } else {
-    W    <- rep(1, length = p)
-    draw <- runif(p)
-    # as per the paper (RKD 2013-11-08)
-    W[draw < Pw] <- ifelse(kernel %in% c("ridge", "lasso"), 1L / alpha, alpha)
-  }
-  W
 }

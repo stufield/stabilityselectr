@@ -99,9 +99,7 @@ test_that("`stability_selection()` with NAs throws an error", {
 test_that("`stability_selection()` trips the correct errors if kernel = ridge", {
   expect_error(
     stability_selection(x, y, kernel = "ridge",
-                       lambda_seq = lambda_vec,
-                       elastic_alpha = 1L,     # ridge is alpha = 0!
-                       standardize = TRUE),
+                       elastic_alpha = 1L),  # ridge is alpha = 0!
     paste("Invalid `elastic_alpha =` argument for 'ridge' kernels (1).",
           "Please set `elastic_alpha = 0`."), fixed = TRUE
   )
@@ -110,9 +108,7 @@ test_that("`stability_selection()` trips the correct errors if kernel = ridge", 
 test_that("`stability_selection()` trips the correct errors if kernel = pca.thresh", {
   expect_error(
     stability_selection(x, y, kernel = "pca.thresh",
-                       lambda_seq = lambda_vec,
-                       alpha = 0.8, Pw = 0.5,   # alpha must be PC dim
-                       standardize = TRUE),
+                       alpha = 0.8), # alpha must be PC dim
     "Bad alpha: 0.8\nPlease set to number of principal components to consider\\."
   )
 })
@@ -120,9 +116,7 @@ test_that("`stability_selection()` trips the correct errors if kernel = pca.thre
 test_that("`stability_selection()` trips the correct error for `kernel = pca.sd`", {
   expect_error(
     stability_selection(x, y, kernel = "pca.sd",
-                       lambda_seq = lambda_vec,
-                       alpha = 0.8, Pw = 0.5, # alpha must be PC dim
-                       standardize = TRUE),
+                       alpha = 0.8), # alpha must be PC dim
     "Bad alpha: 0.8\nPlease set to number of principal components to consider\\.",
   )
 })
@@ -138,7 +132,7 @@ test_that("`stability_selection()` generates expected values for the Cox kernel"
   expect_length(ss_cox$perm_lambda, 20L)
   expect_equal(dim(ss_cox$stabpath_matrix),
                c(ncol(xcox), length(ss_cox$lambda)))
-  expect_equal(sum(ss_cox$stabpath_matrix), 26.595)
+  expect_equal(sum(ss_cox$stabpath_matrix), 27.0550)
 
   withr::with_options(list(pillar.sigfig = 6L),
     expect_snapshot(

@@ -1,4 +1,19 @@
 
+#' @importFrom stats runif
+#' @noRd
+.calcW <- function(p, alpha, Pw, kernel) {
+  if ( is.na(Pw) && kernel != "cox" ) {
+    W <- runif(p, alpha, 1.0)
+  } else {
+    W    <- rep(1.0, length = p)
+    draw <- runif(p)
+    # as per the paper (RKD: 2013-11-08)
+    alpha_star <- ifelse(kernel %in% c("ridge", "lasso"), 1.0 / alpha, alpha)
+    W[draw < Pw] <- alpha_star
+  }
+  W
+}
+
 #' Check for `stabpath_matrix` "type"
 #'   internal for trapping bad objects.
 #' @noRd

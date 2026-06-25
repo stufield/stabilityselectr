@@ -159,7 +159,7 @@
 #' #   In 'real' datasets, you may need to rename the final matrix to
 #' #   `time` and `status`.
 #'
-#' ycox <- select(simdata, time, status) |> as.matrix()
+#' ycox <- data.matrix(select(simdata, time, status))
 #' stab_sel_cox <- stability_selection(xcox, ycox, kernel = "cox", r_seed = 3)
 #' @importFrom glmnet glmnet
 #' @importFrom stats runif setNames
@@ -176,9 +176,9 @@ stability_selection <- function(x, y = NULL,
                                 beta_threshold = 0L,
                                 elastic_alpha = 1.0, lambda_pad = 20,
                                 impute_outliers = FALSE, impute_n_sigma = 3,
-                                r_seed = 1234, ...) {
+                                r_seed = 1234) {
 
-  x <- data.matrix(x)      # turn into data matrix
+  x <- data.matrix(x)  # convert to data matrix if df
 
   if ( any(is.na(x)) ) {
     ft_na <- names(which(apply(x, 2, function(.x) any(is.na(.x)))))
@@ -205,139 +205,32 @@ stability_selection <- function(x, y = NULL,
 
   signal_done(
     "Using kernel:", value(kernel), "and", value(n_cores),
-    ifelse(n_cores > 1, "cores (parallel)", "core (serial)")
+    ifelse(n_cores > 1L, "cores (parallel)", "core (serial)")
   )
 
   # set seed for reproducibility
-  set.seed(r_seed,
-           kind = ifelse(n_cores > 1L, "L'Ecuyer", "default"))
+  set.seed(r_seed, kind = ifelse(n_cores > 1L, "L'Ecuyer", "default"))
 
 
-  if ( n_perm > 0 ) {
+  if ( n_perm > 0L ) {
     perm_seq <- seq_len(n_perm)
-    perm.y   <- # assigned by if statement
-      if ( inherits(y, "matrix") ) {
-        lapply(perm_seq,
-               function(i) y[sample(1:nrow(y), nrow(y)), ]) # nolint: seq_linter.
-      } else if ( is.vector(y) || is.factor(y) ) {
-        lapply(perm_seq,
-               function(i) y[sample(1:length(y), length(y))]) # nolint: seq_linter.
-      } else {
-        list()
-      }
+    if ( inherits(y, "matrix") ) {
+      perm_y <- lapply(perm_seq, function(i) {
+        y[sample(1:nrow(y), nrow(y)), ]}) # nolint: seq_linter.
+    } else if ( is.vector(y) || is.factor(y) ) {
+      perm_y <- lapply(perm_seq, function(i) {
+        y[sample(1:length(y), length(y))]}) # nolint: seq_linter.
+    } else {
+      perm_y <- list()
+    }
   }
 
-  if ( kernel == "l1-logistic" ) {
-    p <- ncol(x)
-    if ( is.na(Pw) ) {
-      W <- stats::runif(p, alpha, 1)
-    } else {
-      W    <- rep(1, length = p)
-      draw <- stats::runif(p, 0, 1)
-      W[draw < Pw] <- alpha
-    }
-    lambda_seq <- glmnet::glmnet(x, y, family = "binomial",
-                                 standardize = standardize,
-                                 lambda.min.ratio = lambda_min_ratio,
-                                 penalty.factor = W)$lambda
-
-  } else if ( kernel == "multinomial") {
-    y <- factor(y)
-    p <- ncol(x)
-    if ( is.na(Pw) ) {
-      W <- stats::runif(p, alpha, 1)
-    } else {
-      W    <- rep(1, length = p)
-      draw <- stats::runif(p, 0, 1)
-      W[draw < Pw] <- alpha
-    }
-    lambda_seq <- glmnet::glmnet(x, y, family = "multinomial",
-                                 standardize = standardize,
-                                 lambda.min.ratio = lambda_min_ratio,
-                                 penalty.factor = W)$lambda
-
-  } else if ( kernel == "pca.sd" ) {
-    if ( floor(alpha) != alpha ) {
-      stop(
-        "Bad alpha: ", alpha,
-        "\nPlease set to number of principal components to consider.",
-        call. = FALSE
-      )
-    }
-    max_lambda <- 10
-    lambda_seq <- exp(
-      seq(log(max_lambda),                    # log-space
-          log(max_lambda * lambda_min_ratio), # hi resolution at low values
-          length.out = 100L)
-      )                                       # back to linear space
-
-  } else if ( kernel == "pca.thresh" ) {
-    if ( floor(alpha) != alpha ) {
-      stop(
-        "Bad alpha: ", alpha,
-        "\nPlease set to number of principal components to consider.",
-        call. = FALSE
-      )
-    }
-    max_lambda <- 0.5
-    lambda_seq <- exp(
-      seq(log(max_lambda), log(max_lambda * lambda_min_ratio),
-          length.out = 100)
-      )
-
-  } else if ( kernel == "lasso" ) {
-    p <- ncol(x)
-    if ( is.na(Pw) ) {
-      W <- stats::runif(p, alpha, 1)
-    } else {
-      W    <- rep(1, length = p)
-      draw <- stats::runif(p, 0, 1)
-      W[draw < Pw] <- 1.0 / alpha # as per the paper - RKD 2013 Nov 8
-    }
-    lambda_seq <- glmnet::glmnet(x, y, family = "gaussian",
-                                 standardize = standardize,
-                                 lambda.min.ratio = lambda_min_ratio,
-                                 penalty.factor = W,
-                                 alpha = elastic_alpha)$lambda
-
-  } else if ( kernel == "ridge" ) {
-    if ( elastic_alpha != 0 ) {
-      stop(
-        "Invalid `elastic_alpha =` argument for 'ridge' kernels (",
-        value(elastic_alpha), "). Please set `elastic_alpha = 0`.",
-        call. = FALSE
-      )
-    }
-    p <- ncol(x)
-    if ( is.na(Pw) ) {
-      W <- stats::runif(p, alpha, 1)
-    } else {
-      W    <- rep(1, length = p)
-      draw <- stats::runif(p, 0, 1)
-      W[draw < Pw] <- 1.0 / alpha     # as per the paper version - RKD 2013 Nov 8
-    }
-    lambda_seq <- glmnet::glmnet(x, y, family = "gaussian",
-                                 standardize = standardize,
-                                 penalty.factor = W, alpha = 0)$lambda
-
-  } else if ( kernel == "cox" ) {
-    nsteps <- 100
-    S <- survival::Surv(y[, 1L], y[, 2L])
-    y <- cbind(time = S[, 1L], status = S[, 2L])
-    lambda_seq <- glmnet::glmnet(x, y, nlambda = nsteps, family = "cox",
-                                 cox.ties = "breslow",
-                                 standardize = standardize,
-                                 lambda.min.ratio = lambda_min_ratio)$lambda
-  }
-
-
-  if ( !kernel %in% c("pca.thresh", "pca.sd") ) {
-    # pad lambda at the upper end
-    seq_shift <- lambda_seq[1L] / lambda_seq[2L]
-    pad <- rev(seq_len(lambda_pad)) |>  # default 1:20 & invert 20:1
-      vapply(function(.x) lambda_seq[1L] * seq_shift^.x, 0.1)
-    lambda_seq <- c(pad, lambda_seq)
-  }
+  W <- .calcW(ncol(x), alpha, Pw, kernel)
+  lambda_seq <- .get_lambda_seq(x = x, y = y, kernel = kernel, Pw = Pw,
+                                standardize = standardize, alpha = alpha,
+                                W = W, elastic_alpha = elastic_alpha,
+                                lambda_min_ratio = lambda_min_ratio,
+                                lambda_pad = lambda_pad)
 
   if ( length(lambda_seq) > 20L ) {
     perm_lambda <- lambda_seq[round(seq(1, length(lambda_seq),
@@ -370,7 +263,7 @@ stability_selection <- function(x, y = NULL,
       perm_time <- system.time(
         permpath_list <- lapply(perm_seq, function(.j) {
             parallel::mclapply(seq(n_iter), function(i) {
-                calc_stability_paths(x, perm.y[[.j]],
+                calc_stability_paths(x, perm_y[[.j]],
                                      kernel         = kernel,
                                      lambda_seq     = perm_lambda,
                                      alpha          = alpha,
@@ -399,7 +292,7 @@ stability_selection <- function(x, y = NULL,
     if ( n_perm > 0L ) {
       permpath_list <- lapply(perm_seq, function(.x) {
           replicate(n_iter, simplify = FALSE,
-            calc_stability_paths(x, perm.y[[.x]],
+            calc_stability_paths(x, perm_y[[.x]],
                                  kernel         = kernel,
                                  lambda_seq     = perm_lambda,
                                  alpha          = alpha,
@@ -431,30 +324,38 @@ stability_selection <- function(x, y = NULL,
   }
 
   # get the betas for the appropriate lambda sequence
-  beta <- switch(kernel,
-         "l1-logistic" = glmnet::glmnet(x, y, family = "binomial",
-                                        standardize = standardize,
-                                        lambda = lambda_seq,
-                                        penalty.factor = W),
-         "multinomial" = glmnet::glmnet(x, y, family = "multinomial",
-                                        standardize = standardize,
-                                        lambda = lambda_seq,
-                                        penalty.factor = W),
-         "lasso"       = glmnet::glmnet(x, y, family = "gaussian",
-                                        standardize = standardize,
-                                        lambda = lambda_seq,
-                                        penalty.factor = W,
-                                        alpha = elastic_alpha),
-         "ridge"       = glmnet::glmnet(x, y, family = "gaussian",
-                                        standardize = standardize,
-                                        penalty.factor = W, alpha = 0),
-         "cox"         = glmnet::glmnet(x, y, nlambda = nsteps,
-                                        family = "cox",
-                                        cox.ties = "breslow",
-                                        standardize = standardize,
-                                        lambda = lambda_seq),
-         "pca.sd"      = NULL,
-         "pca.thresh"  = NULL)
+  glmnet_args <- list(
+    x = x,
+    y = y,
+    standardize = standardize,
+    lambda = lambda_seq,
+    penalty.factor = W
+  )
+
+  glmnet_args <- switch(kernel,
+    "l1-logistic" = {
+      glmnet_args$family  = "binomial"
+      glmnet_args},
+    "multinomial" = {
+      glmnet_args$family  = "multinomial"
+      glmnet_args},
+    "lasso"       = {
+      glmnet_args$family = "gaussian"
+      glmnet_args$alpha  = elastic_alpha
+      glmnet_args},
+    "ridge"       = {
+      glmnet_args$family = "gaussian"
+      glmnet_args$alpha  = 0
+      glmnet_args},
+    "cox"         = {
+      glmnet_args$family   = "cox"
+      glmnet_args$nlambda  = 100   # nsteps
+      glmnet_args$cox.ties = "breslow"
+      glmnet_args},
+    NULL)  # pca kernels
+
+  beta <- tryCatch(do.call(glmnet::glmnet, glmnet_args)$beta,
+                   error = function(e) NULL) # NULL for pca kernels
 
   list(stabpath_matrix  = stabpath_mat,
        lambda           = lambda_seq,
@@ -469,6 +370,6 @@ stability_selection <- function(x, y = NULL,
        permpath_list    = permpath_list,
        perm_lambda      = perm_lambda,
        permpath_max     = perm_max_mat,
-       beta             = beta$beta,
+       beta             = beta,
        r_seed           = r_seed) |> add_class("stab_sel")
 }
