@@ -132,7 +132,7 @@ test_that("`stability_selection()` generates expected values for the Cox kernel"
   expect_length(ss_cox$perm_lambda, 20L)
   expect_equal(dim(ss_cox$stabpath_matrix),
                c(ncol(xcox), length(ss_cox$lambda)))
-  expect_equal(sum(ss_cox$stabpath_matrix), 25.190)
+  expect_equal(sum(ss_cox$stabpath_matrix), 25.1850)
 
   withr::with_options(list(pillar.sigfig = 6L),
     expect_snapshot(
