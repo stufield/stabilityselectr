@@ -15,22 +15,24 @@ print.pclust <- function(x, ...) {
     v
   }
 
-  signal_rule("Progeny Cluster Object", line_col = "blue", lty = "double")
+  signal_rule("Progeny Clustering", line_col = "blue", lty = "double")
   key <- c(
     "Call",
     "Progeny Size",
-    "No. iterations",
     "K iterations",
+    "No. iterations",
     "No. repeats"
-  ) |> pad(25)
-  value <- c(
+  ) |> pad(17)
+  value <- list(
     gsub(" {2,}", " ", paste(deparse(x$call), collapse = "")),
     x$size,
-    x$n_iter,
     paste(min(x$clust_iter), symbl$arrow_right, max(x$clust_iter)),
+    x$n_iter,
     x$repeats
   )
-  writeLines(paste0("   ", key, value))
+  liter(key, value, function(.x, .y) {
+    writeLines(paste(add_color(symbl$bullet, "red"), .x, value(.y)))
+  })
 
   cat("\n")
   signal_rule("Mean & CI95 Stability Scores", line_col = "cyan")

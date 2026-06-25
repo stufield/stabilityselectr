@@ -101,12 +101,12 @@
 
 # `pclust` S3 print method returns expected known output
 
-    == Progeny Cluster Object ======================================================
-       Call                     progeny_cluster(data = progeny_data, clust_iter = 2:6L, reps = 5L, n_iter = 10L, size = 6)
-       Progeny Size             6
-       No. iterations           10
-       K iterations             2 > 6
-       No. repeats              5
+    == Progeny Clustering ==========================================================
+    * Call              'progeny_cluster(data = progeny_data, clust_iter = 2:6L, reps = 5L, n_iter = 10L, size = 6)'
+    * Progeny Size      6
+    * K iterations      '2 > 6'
+    * No. iterations    10
+    * No. repeats       5
     
     -- Mean & CI95 Stability Scores ------------------------------------------------
            k=2 *k=3*   k=4  k=5  k=6

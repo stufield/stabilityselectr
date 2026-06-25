@@ -22,7 +22,7 @@ test_that("the object returned by `progeny_cluster()` is correct", {
 })
 
 test_that("the object elements are the numerically expected results", {
-  skip_on_os("linux")
+  skip_on_os("linux") # stats::kmeans numerically inconsistent across OS
   expect_snapshot( unclass(pclust) )
 })
 
