@@ -70,8 +70,11 @@
 
   } else if ( kernel == "cox" ) {
 
-    S <- survival::Surv(y[, 1L], y[, 2L])   # come back to this
-    y <- cbind(time = S[, 1L], status = S[, 2L])
+    stopifnot(
+      "`y` response must be named `time` and `status` respectively." =
+        identical(colnames(y), c("time", "status"))
+    )
+
     lambda_seq <- glmnet::glmnet(
       x, y, nlambda = 100, family = "cox", standardize = standardize,
       cox.ties = "efron", # penalty.factor = W, (this differs from others)
