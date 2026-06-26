@@ -49,6 +49,7 @@ get_cores <- function() {
   }
 }
 
+restore_rng_kind <- getFromNamespace("restore_rng_kind", "withr")
 
 #' Internal for calculating the AUC for all stability paths
 #'

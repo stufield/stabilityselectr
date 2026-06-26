@@ -59,26 +59,26 @@
       # A tibble: 20 x 2
          feat   rowsum
          <chr>   <dbl>
-       1 feat_a  64.96
-       2 feat_b  52.73
-       3 feat_c  60.87
-       4 feat_d  77.05
-       5 feat_e  54.44
-       6 feat_f  59.56
-       7 feat_g  53.28
-       8 feat_h  53.49
-       9 feat_i  49.23
-      10 feat_j  75.99
-      11 feat_k  55.3 
-      12 feat_l  63.26
-      13 feat_m  86.24
-      14 feat_n  46.3 
-      15 feat_o  47.75
-      16 feat_p  47.83
-      17 feat_q  56.51
-      18 feat_r  65.8 
-      19 feat_s  66.65
-      20 feat_t  79.18
+       1 feat_a  60.94
+       2 feat_b  51.04
+       3 feat_c  61.62
+       4 feat_d  76.32
+       5 feat_e  50.31
+       6 feat_f  52.08
+       7 feat_g  58.62
+       8 feat_h  51.34
+       9 feat_i  51.09
+      10 feat_j  75.84
+      11 feat_k  54.74
+      12 feat_l  52.37
+      13 feat_m  84.61
+      14 feat_n  48.41
+      15 feat_o  49.42
+      16 feat_p  46.21
+      17 feat_q  54.37
+      18 feat_r  66.18
+      19 feat_s  64.82
+      20 feat_t  80.20
 
 # the S3 `summary` method generates correct output
 
@@ -91,41 +91,40 @@
       # A tibble: 20 x 4
          feature MaxSelectProb      AUC FDRbound
          <chr>           <dbl>    <dbl>    <dbl>
-       1 feat_d          0.945 0.422319       NA
-       2 feat_t          0.935 0.415582       NA
-       3 feat_a          0.915 0.342093       NA
-       4 feat_j          0.915 0.430052       NA
-       5 feat_s          0.905 0.343445       NA
-       6 feat_m          0.9   0.410396       NA
-       7 feat_l          0.89  0.326203       NA
-       8 feat_f          0.885 0.299708       NA
-       9 feat_q          0.88  0.290240       NA
-      10 feat_g          0.87  0.269070       NA
-      11 feat_e          0.86  0.283133       NA
-      12 feat_n          0.86  0.226053       NA
-      13 feat_r          0.86  0.352070       NA
-      14 feat_c          0.855 0.326408       NA
-      15 feat_k          0.85  0.292292       NA
-      16 feat_b          0.845 0.275154       NA
-      17 feat_o          0.84  0.243122       NA
-      18 feat_h          0.835 0.274262       NA
-      19 feat_p          0.83  0.236150       NA
-      20 feat_i          0.785 0.241943       NA
+       1 feat_t          0.95  0.413037       NA
+       2 feat_d          0.92  0.394679       NA
+       3 feat_m          0.92  0.374027       NA
+       4 feat_s          0.92  0.328683       NA
+       5 feat_g          0.9   0.303614       NA
+       6 feat_c          0.895 0.328239       NA
+       7 feat_j          0.885 0.413677       NA
+       8 feat_a          0.875 0.323781       NA
+       9 feat_l          0.875 0.269080       NA
+      10 feat_b          0.865 0.245967       NA
+      11 feat_i          0.865 0.249322       NA
+      12 feat_r          0.865 0.347174       NA
+      13 feat_o          0.86  0.240215       NA
+      14 feat_q          0.855 0.273082       NA
+      15 feat_f          0.835 0.251229       NA
+      16 feat_h          0.825 0.261538       NA
+      17 feat_k          0.825 0.284152       NA
+      18 feat_e          0.82  0.254872       NA
+      19 feat_n          0.81  0.247171       NA
+      20 feat_p          0.81  0.219970       NA
 
 ---
 
     Code
       summary(ss, thresh = 0.9)
     Output
-      # A tibble: 6 x 4
+      # A tibble: 5 x 4
         feature MaxSelectProb      AUC FDRbound
         <chr>           <dbl>    <dbl>    <dbl>
-      1 feat_d          0.945 0.422319 0.003125
-      2 feat_t          0.935 0.415582 0.00625 
-      3 feat_a          0.915 0.342093 0.009375
-      4 feat_j          0.915 0.430052 0.0125  
-      5 feat_s          0.905 0.343445 0.015625
-      6 feat_m          0.9   0.410396 0.01875 
+      1 feat_t           0.95 0.413037 0.003125
+      2 feat_d           0.92 0.394679 0.00625 
+      3 feat_m           0.92 0.374027 0.009375
+      4 feat_s           0.92 0.328683 0.0125  
+      5 feat_g           0.9  0.303614 0.015625
 
 # `stab_sel` S3 print method returns expected known output
 
@@ -135,7 +134,7 @@
     * Number of Iterations        100
     * Standardized                'Yes'
     * Imputed Outliers            'No'
-    * Lambda Max                  0.144
+    * Lambda Max                  0.1471
     * Lambda Min Ratio            0.1
     * Permuted Data               'No'
     * Random Seed                 101
@@ -149,43 +148,43 @@
       # A tibble: 40 x 2
          feat        rowsum
          <chr>        <dbl>
-       1 seq.2802.68  0.055
-       2 seq.9251.29  0.4  
-       3 seq.1942.70  0.11 
-       4 seq.5751.80  0.245
-       5 seq.9608.12  0.01 
-       6 seq.3459.49  2.945
-       7 seq.3865.56  0.045
-       8 seq.3363.21  0.005
-       9 seq.4487.88  0.06 
-      10 seq.5994.84  0.035
-      11 seq.9011.72  0.24 
-      12 seq.2902.23  6.245
-      13 seq.2260.48  3.28 
-      14 seq.4936.96  1.115
-      15 seq.2277.95  0.98 
-      16 seq.2953.31  0.115
-      17 seq.3032.11  2.475
-      18 seq.4330.4   0.105
-      19 seq.4914.10  0.085
-      20 seq.3896.5   1.47 
-      21 seq.5002.7   0.19 
+       1 seq.2802.68  0.01 
+       2 seq.9251.29  0.145
+       3 seq.1942.70  0.08 
+       4 seq.5751.80  0.505
+       5 seq.9608.12  0    
+       6 seq.3459.49  3.525
+       7 seq.3865.56  0.225
+       8 seq.3363.21  0    
+       9 seq.4487.88  0    
+      10 seq.5994.84  0    
+      11 seq.9011.72  0.42 
+      12 seq.2902.23  5.91 
+      13 seq.2260.48  3.23 
+      14 seq.4936.96  0.88 
+      15 seq.2277.95  0.835
+      16 seq.2953.31  0.045
+      17 seq.3032.11  2.53 
+      18 seq.4330.4   0.02 
+      19 seq.4914.10  0.105
+      20 seq.3896.5   1.28 
+      21 seq.5002.7   0.22 
       22 seq.3476.4   0    
-      23 seq.1130.49  0.09 
+      23 seq.1130.49  0.085
       24 seq.6356.60  0    
-      25 seq.4579.40  0    
-      26 seq.8344.24  0    
-      27 seq.8441.53  0.23 
-      28 seq.9360.55  0.035
-      29 seq.7841.8   0    
-      30 seq.8142.63  0.08 
-      31 seq.4461.56  0.005
-      32 seq.9297.97  3.775
+      25 seq.4579.40  0.005
+      26 seq.8344.24  0.065
+      27 seq.8441.53  0.055
+      28 seq.9360.55  0    
+      29 seq.7841.8   0.005
+      30 seq.8142.63  0.145
+      31 seq.4461.56  0.045
+      32 seq.9297.97  3.44 
       33 seq.9396.38  0    
-      34 seq.3300.26  0.135
-      35 seq.2772.14  0.08 
+      34 seq.3300.26  0.16 
+      35 seq.2772.14  0    
       36 seq.6615.18  0    
-      37 seq.8797.98  0.485
+      37 seq.8797.98  0.345
       38 seq.9879.88  0    
       39 seq.8993.16  0    
       40 seq.9373.82  0.06 

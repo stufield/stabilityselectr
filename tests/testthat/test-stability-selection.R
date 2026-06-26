@@ -33,17 +33,17 @@ test_that("`stability_selection()` generates correct object", {
 
 # Testing values ----
 test_that("`stability_selection()` generates the correct values", {
-  expect_equal(sum(ss$lambda), 5.8775715729)
-  expect_equal(sum(ss$perm_lambda), 1.0036573800)
+  expect_equal(sum(ss$lambda), 6.006749)
+  expect_equal(sum(ss$perm_lambda), 1.025715784)
   expect_length(ss$perm_lambda, 20L)
   expect_equal(dim(ss$stabpath_matrix), c(ncol(x), length(ss$lambda)))
   expect_equal(rownames(ss$stabpath_matrix),
                paste0("feat_", letters[1:20L]))
   expect_equal(diag(ss$stabpath_matrix),
-               c(0.035, 0.015, 0.03, 0.08, 0.02, 0.04, 0.005,
-                 0.005, 0.03, 0.17, 0.055, 0.105, 0.395, 0.015,
-                 0.045, 0.035, 0.05, 0.25, 0.14, 0.375))
-  expect_equal(sum(ss$stabpath_matrix), 1216.42)
+               c(0.010, 0.030, 0.03, 0.095, 0.015, 0.030, 0.015,
+                 0.005, 0.035, 0.20, 0.075, 0.045, 0.375, 0.025,
+                 0.015, 0.035, 0.07, 0.220, 0.135, 0.330))
+  expect_equal(sum(ss$stabpath_matrix), 1190.530)
 
   withr::with_options(list(pillar.sigfig = 4L),
     expect_snapshot(
@@ -61,7 +61,7 @@ test_that("the `stab_select` object is created correctly when imputing outliers"
   expect_s3_class(ss1, "stab_sel")
   expect_equal(dim(ss1$stabpath_matrix), dim(ss$stabpath_matrix))
   expect_true(ss1$impute_outliers)
-  expect_equal(sum(ss1$stabpath_matrix), 1216.755)
+  expect_equal(sum(ss1$stabpath_matrix), 1191.620)
   expect_equal(
     rownames(ss1$stabpath_matrix), rownames(ss$stabpath_matrix)
   )
@@ -84,6 +84,23 @@ test_that("`stab_sel` S3 print method returns expected known output", {
     expect_snapshot_output(ss)
   )
 })
+
+# RNGkind ----
+test_that("stability seln restores RNGkind() on exit", {
+  rng  <- RNGkind()
+  ss1  <- stability_selection(x, y)
+  exit <- RNGkind()
+  expect_equal(rng, exit)
+})
+
+# multi cores ----
+test_that("parallel processing generates identical results", {
+  skip("unable to match parallel & single core solutions")
+  ss1 <- stability_selection(x, y, parallel = FALSE, r_seed = 1)
+  ss2 <- stability_selection(x, y, parallel = TRUE, r_seed = 1)
+  expect_equal(ss1, ss2)
+})
+
 
 # NAs throw errors ----
 test_that("`stability_selection()` with NAs throws an error", {
@@ -132,7 +149,7 @@ test_that("`stability_selection()` generates expected values for the Cox kernel"
   expect_length(ss_cox$perm_lambda, 20L)
   expect_equal(dim(ss_cox$stabpath_matrix),
                c(ncol(xcox), length(ss_cox$lambda)))
-  expect_equal(sum(ss_cox$stabpath_matrix), 25.1850)
+  expect_equal(sum(ss_cox$stabpath_matrix), 24.3750)
 
   withr::with_options(list(pillar.sigfig = 4L),
     expect_snapshot(

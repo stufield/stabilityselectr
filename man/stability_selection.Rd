@@ -73,8 +73,8 @@ model used for selection. Current options are:
 sub-sampling iterations for the stability selection.}
 
 \item{parallel}{\code{logical(1)}. Should parallel processing
-via multiple cores be implemented? Must be on a Linux
-platform and have the \pkg{parallel}
+via multiple cores be implemented? Must be on Linux or
+MacOS platform and have the \pkg{parallel}
 package installed. Otherwise defaults to 1 core.}
 
 \item{alpha}{\code{numeric(1)}. Value defining the weakness
