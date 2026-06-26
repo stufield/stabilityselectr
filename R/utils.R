@@ -42,6 +42,8 @@ get_cores <- function() {
     1L
   } else if ( nzchar(chk) && chk == "TRUE" ) {
     2L   # use 2 cores in CRAN/Travis/AppVeyor
+  } else if ( identical(Sys.getenv("TESTTHAT"), "true") ) {
+    2L   # use 2 cores if testing
   } else {
     max(1L, parallel::detectCores() - 2L) # leave 2 cores for system
   }
