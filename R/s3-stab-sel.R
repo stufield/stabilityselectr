@@ -114,14 +114,12 @@ summary.stab_sel <- function(object, ..., thresh) {
   lambda_norm <- object$lambda / max(object$lambda)
   df <- get_stable_features(object, thresh = thresh, ...)
 
-  if ( nrow(df) > 0L ) {
-    df$AUC <- object$stabpath_matrix[rownames(df), , drop = FALSE] |> # reordr feats
+  if ( nrow(df) > 0L ) { # reorder feats
+    df$AUC <- object$stabpath_matrix[df$feature, , drop = FALSE] |>
       calc_path_auc(values = lambda_norm)
   }
 
-  dplyr::select(df, -matches("FDR"), everything()) |>
-    rn2col("feature") |>
-    as_tibble()
+  dplyr::select(df, -matches("FDR"), everything())
 }
 
 

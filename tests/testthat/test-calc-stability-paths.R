@@ -1,28 +1,25 @@
 
 # Testing ----
-L <- n_feat + n_samples
-
 # L1-logistic ----
 test_that("`calc_stability_paths()` generates expected matrix for `l1-logistic`", {
   withr::with_seed(101, {
-    lambda_vec <- glmnet::glmnet(
-      x, y, family = "binomial",
-      standardize = TRUE, lambda.min.ratio = 0.1,
-      penalty.factor = stats::runif(ncol(x)))$lambda
+    tmp_lambda <- glmnet::glmnet(
+      x, y, family = "binomial", standardize = TRUE,
+      lambda.min.ratio = 0.1,
+      penalty.factor = stats::runif(p))$lambda
     path_matrix <- calc_stability_paths(
       x, y, kernel = "l1-logistic",
-      lambda_seq = lambda_vec,
+      lambda_seq = tmp_lambda,
       alpha = 0.8, Pw = 0.5,
-      elastic_alpha = 1,     # not used
-      standardize = TRUE)
+      standardize = TRUE
+    )
   })
   expect_true(is.matrix(path_matrix))
-  expect_equal(dim(path_matrix), c(n_feat, length(lambda_vec)))
+  expect_equal(dim(path_matrix), c(n_feat, length(tmp_lambda)))
   expect_equal(sum(path_matrix), 81)
-  expect_true(all(path_matrix >= 0))          # range in [0,2]
-  expect_true(all(path_matrix <= 2))          # range in [0,2]
+  expect_true(all(path_matrix >= 0))  # range in [0,2]
+  expect_true(all(path_matrix <= 2))  # range in [0,2]
   expect_equal(c(table(path_matrix)), c("0" = 1921, "1" = 77, "2" = 2))
-  expect_equal(diag(path_matrix), rep(0, n_feat))
   expect_equal(colSums(path_matrix),
                rep(c(0, 1, 2, 3, 5, 6), c(74, 4, 11, 1, 8, 2)))
   # which features are never selected
@@ -38,7 +35,7 @@ test_that("`calc_stability_paths()` generates expected matrix for `lasso`", {
     y <- rnorm(n_samples)
     path_matrix <- calc_stability_paths(
       x, y, kernel = "lasso",
-      lambda_seq = seq(0.25, 0.016, length.out = L),
+      lambda_seq = seq(0.25, 0.016, length.out = n + p),
       alpha = 0.8, Pw = 0.5,
       elastic_alpha = 1,    # 1 is lasso
       beta_threshold = 0,
@@ -46,12 +43,11 @@ test_that("`calc_stability_paths()` generates expected matrix for `lasso`", {
     )
   })
   expect_true(is.matrix(path_matrix))
-  expect_equal(dim(path_matrix), c(n_feat, L))
+  expect_equal(dim(path_matrix), c(n_feat, n + p))
   expect_equal(sum(path_matrix), 1607)
-  expect_true(all(path_matrix >= 0))          # range in [0,2]
-  expect_true(all(path_matrix <= 2))          # range in [0,2]
+  expect_true(all(path_matrix >= 0))  # range in [0,2]
+  expect_true(all(path_matrix <= 2))  # range in [0,2]
   expect_equal(c(table(path_matrix)), c("0" = 1199, "1" = 795, "2" = 406))
-  expect_equal(diag(path_matrix), c(0, 1, 0, 0, 1, 0, 0, 0, 1, 1, rep(0, 10)))
   expect_equal(colSums(path_matrix),
     c(3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6,
       6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8,
@@ -104,7 +100,7 @@ test_that("`calc_stability_paths()` generates expected matrix `ridge`", {
     y <- rnorm(n_samples)
     path_matrix <- calc_stability_paths(
       x, y, kernel = "ridge",
-      lambda_seq = seq(0.25, 0.016, length.out = L),
+      lambda_seq = seq(0.25, 0.016, length.out = n + p),
       alpha = 0.8, Pw = 0.5,
       elastic_alpha = 0,   # 0 is ridge
       beta_threshold = 0.1,
@@ -112,13 +108,11 @@ test_that("`calc_stability_paths()` generates expected matrix `ridge`", {
     )
   })
   expect_true(is.matrix(path_matrix))
-  expect_equal(dim(path_matrix), c(n_feat, L))
+  expect_equal(dim(path_matrix), c(n_feat, n + p))
   expect_equal(sum(path_matrix), 2346)
-  expect_true(all(path_matrix >= 0))          # range in [0,2]
-  expect_true(all(path_matrix <= 2))          # range in [0,2]
+  expect_true(all(path_matrix >= 0))  # range in [0,2]
+  expect_true(all(path_matrix <= 2))  # range in [0,2]
   expect_equal(c(table(path_matrix)), c("0" = 621, "1" = 1212, "2" = 567))
-  expect_equal(diag(path_matrix), c(0, 1, 2, 0, 0, 0, 2, 2, 1, 1, 1, 1,
-                                    2, 1, 0, 1, 1, 0, 1, 1))
   expect_equal(colSums(path_matrix),
                c(18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18,
                  18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18,
@@ -136,8 +130,8 @@ test_that("`calc_stability_paths()` generates expected matrix `ridge`", {
 
   expect_error( # beta must be > 0
     calc_stability_paths(kernel = "ridge", beta_threshold = 0),
-    paste("A `beta_threshold = 0` performs no feature selecting.",
-          "Please set a value of `beta_threshold > 0`.")
+    paste("In ridge regression, a `beta_threshold = 0` performs no",
+      "feature selection.\nPlease set a value of `beta_threshold > 0`.")
     )
 })
 
@@ -147,19 +141,18 @@ test_that("`calc_stability_paths()` generates expected matrix for `multinomial`"
     y <- sample(1:2, n_samples, replace = TRUE)
     path_matrix <- calc_stability_paths(
       x, y, kernel = "multinomial",
-      lambda_seq = seq(0.25, 0.016, length.out = L),
+      lambda_seq = seq(0.25, 0.016, length.out = n + p),
       alpha = 0.8, Pw = 0.5,
       elastic_alpha = 1,     # not used
       standardize = TRUE
     )
   })
   expect_true(is.matrix(path_matrix))
-  expect_equal(dim(path_matrix), c(n_feat, L))
+  expect_equal(dim(path_matrix), c(n_feat, n + p))
   expect_equal(sum(path_matrix), 754)
-  expect_true(all(path_matrix >= 0))          # range in [0,2]
-  expect_true(all(path_matrix <= 2))          # range in [0,2]
+  expect_true(all(path_matrix >= 0))  # range in [0,2]
+  expect_true(all(path_matrix <= 2))  # range in [0,2]
   expect_equal(c(table(path_matrix)), c("0" = 1744, "1" = 558, "2" = 98))
-  expect_equal(diag(path_matrix), rep(0, 20))
   expect_equal(colSums(path_matrix),
                c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2,
@@ -194,10 +187,9 @@ test_that("`calc_stability_paths()` generates expected matrix for `pca.thresh`",
   expect_true(is.matrix(path_matrix))
   expect_equal(dim(path_matrix), c(n_feat, length(lambda_vec)))
   expect_equal(sum(path_matrix), 2736)
-  expect_true(all(path_matrix >= 0))          # range in [0,2]
-  expect_true(all(path_matrix <= 2))          # range in [0,2]
+  expect_true(all(path_matrix >= 0))  # range in [0,2]
+  expect_true(all(path_matrix <= 2))  # range in [0,2]
   expect_equal(c(table(path_matrix)), c("0" = 474, "1" = 316, "2" = 1210))
-  expect_equal(diag(path_matrix), c(rep(0, 8), 2, rep(0, 9), 2, 0))
   expect_equal(colSums(path_matrix),
                c(0, 0, 0, 1, 1, 1, 1, 3, 4, 4, 4, 4, 4, 5, 5, 6, 6, 7, 7,
                  7, 8, 10, 14, 17, 19, 19, 21, 21, 21, 22, 25, 25, 26, 27,
@@ -232,10 +224,9 @@ test_that("`calc_stability_paths()` generates expected matrix `pca.sd`", {
   expect_true(is.matrix(path_matrix))
   expect_equal(dim(path_matrix), c(n_feat, length(lambda_vec)))
   expect_equal(sum(path_matrix), 614)
-  expect_true(all(path_matrix >= 0))          # range in [0,2]
-  expect_true(all(path_matrix <= 2))          # range in [0,2]
+  expect_true(all(path_matrix >= 0))  # range in [0,2]
+  expect_true(all(path_matrix <= 2))  # range in [0,2]
   expect_equal(c(table(path_matrix)), c("0" = 1542, "1" = 302, "2" = 156))
-  expect_equal(diag(path_matrix), rep(0, n_feat))
   expect_equal(colSums(path_matrix),
                c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

@@ -53,8 +53,8 @@
 #'   sub-sampling iterations for the stability selection.
 #'
 #' @param parallel `logical(1)`. Should parallel processing
-#'   via multiple cores be implemented? Must be on a Linux
-#'   platform and have the \pkg{parallel}
+#'   via multiple cores be implemented? Must be on Linux or
+#'   MacOS platform and have the \pkg{parallel}
 #'   package installed. Otherwise defaults to 1 core.
 #'
 #' @param alpha `numeric(1)`. Value defining the weakness
@@ -174,8 +174,10 @@ stability_selection <- function(x, y = NULL,
                                 n_perm = 0, standardize = TRUE,
                                 lambda_min_ratio = 0.1,
                                 beta_threshold = 0L,
-                                elastic_alpha = 1.0, lambda_pad = 20,
-                                impute_outliers = FALSE, impute_n_sigma = 3,
+                                elastic_alpha = 1.0,
+                                lambda_pad = 20,
+                                impute_outliers = FALSE,
+                                impute_n_sigma = 3,
                                 r_seed = 1234) {
 
   x <- data.matrix(x)  # convert to data matrix if df
@@ -209,8 +211,11 @@ stability_selection <- function(x, y = NULL,
   )
 
   # set seed for reproducibility
-  set.seed(r_seed, kind = ifelse(n_cores > 1L, "L'Ecuyer", "default"))
-
+  # Claude says "L'Ecuyer-CMRG" is better cross
+  # platform & in parallel processing
+  rng <- RNGkind()
+  withr::local_seed(r_seed, .rng_kind = "L'Ecuyer-CMRG")
+  withr::defer(restore_rng_kind(rng))
 
   if ( n_perm > 0L ) {
     perm_seq <- seq_len(n_perm)
@@ -256,7 +261,7 @@ stability_selection <- function(x, y = NULL,
         }, mc.cores = n_cores) |> Reduce(f = "+") # add them all up
     )
     signal_done(
-      "Stablity path run time:", value(round(stab_time["elapsed"], 4))
+      "Stablity path run time:", value(round(stab_time["elapsed"], 4L))
     )
 
     if ( n_perm > 0L ) {
@@ -268,14 +273,14 @@ stability_selection <- function(x, y = NULL,
                                      lambda_seq     = perm_lambda,
                                      alpha          = alpha,
                                      Pw             = Pw,
-                                     beta_threshold = beta_threshold,
                                      standardize    = standardize,
+                                     beta_threshold = beta_threshold,
                                      elastic_alpha  = elastic_alpha)
               }, mc.cores = n_cores) |> Reduce(f = "+")
           }) |> setNames(sprintf("Perm_%03i", perm_seq))
       )
       signal_done(
-        "Perm path run time:", value(round(perm_time["elapsed"], 4))
+        "Perm path run time:", value(round(perm_time["elapsed"], 4L))
       )
     }
 
@@ -288,7 +293,8 @@ stability_selection <- function(x, y = NULL,
                         Pw             = Pw,
                         standardize    = standardize,
                         beta_threshold = beta_threshold,
-                        elastic_alpha  = elastic_alpha)) |> Reduce(f = "+")
+                        elastic_alpha  = elastic_alpha)
+      ) |> Reduce(f = "+")
     if ( n_perm > 0L ) {
       permpath_list <- lapply(perm_seq, function(.x) {
           replicate(n_iter, simplify = FALSE,

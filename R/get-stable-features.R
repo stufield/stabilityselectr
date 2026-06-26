@@ -96,6 +96,7 @@ get_stable_features.stab_sel <- function(x, thresh = 0.75, add_features = NULL,
 #' **This is the main workhorse**
 #'
 #' @importFrom dplyr filter arrange desc mutate row_number
+#' @importFrom tibble as_tibble
 #' @noRd
 #' @export
 get_stable_features.matrix <- function(x, thresh = 0.75, add_features = NULL,
@@ -132,5 +133,5 @@ get_stable_features.matrix <- function(x, thresh = 0.75, add_features = NULL,
       df, FDRbound = row_number() / n_feat^2 / (2 * thresh - 1)
     )
   }
-  col2rn(df, "feature")
+  as_tibble(df)
 }

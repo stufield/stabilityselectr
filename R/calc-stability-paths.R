@@ -42,14 +42,17 @@
 #' @importFrom stats prcomp runif
 #' @importFrom glmnet glmnet
 #' @noRd
-calc_stability_paths <- function(x, y = NULL, kernel, lambda_seq,
-                                 alpha, Pw, standardize,
-                                 elastic_alpha, beta_threshold = 0L) {
+calc_stability_paths <- function(x, y = NULL, kernel,
+                                 lambda_seq, alpha, Pw,
+                                 standardize = NULL,
+                                 elastic_alpha = NULL,
+                                 beta_threshold = 0L) {
 
   if ( kernel == "ridge" && beta_threshold == 0L ) {
     stop(
-      "A `beta_threshold = 0` performs no feature selecting. Please ",
-      "set a value of `beta_threshold > 0`.", call. = FALSE
+      "In ridge regression, a `beta_threshold = 0` performs no ",
+      "feature selection.\nPlease set a value of `beta_threshold > 0`.",
+      call. = FALSE
     )
   }
 
