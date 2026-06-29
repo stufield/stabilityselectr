@@ -1,28 +1,29 @@
 #' Stability Selection
 #'
-#' Performs stability selection on a set of predictive features and a
-#'   response variable. Stability selection is performed using a
-#'   user-specified kernel. For classification problems the
-#'   `l1-logistic` kernel should be used and the response should be a
-#'   vector or factor of with two class labels. For lasso the
-#'   response column should be a numeric vector. For "cox" the response
-#'   is a *two column matrix* containing the event time in the
-#'   first column and the censoring indicator in the second column.
+#' Performs stability selection on a set of predictive features
+#'   and a response variable. Stability selection is performed using
+#'   a user-specified kernel. For classification problems the
+#'   `l1-logistic` kernel should be used and the response should be
+#'   a vector or factor of with two class labels. For lasso the
+#'   response column should be a numeric vector. For "cox" the
+#'   response is a *two column matrix* containing the event time in
+#'   the first column and the censoring indicator in the second column.
 #
-#' The randomized lasso is used if the `alpha` parameter is set to a value
-#'   less than 1. In a randomized Lasso the model coefficients are randomly
-#'   re-weighted when calculating the regularization term. This weighting can be
-#'   performed in two different ways. If `Pw = NA` then these random
-#'   weights are sampled uniformly between `alpha` and 1. If `Pw` is
-#'   supplied, then the random weights are chosen to be `alpha` with
-#'   probability `Pw` and 1 otherwise. The latter choice is used in Theorem
-#'   2 in Meinshausen and Buhlmann. Recommended values of `alpha` and
-#'   `Pw` are \verb{[0.5, 0.2]}.
+#' The randomized lasso is used if the `alpha` parameter is set to
+#'   a value less than 1. In a randomized Lasso the model
+#'   coefficients are randomly re-weighted when calculating the
+#'   regularization term. This weighting can be performed in two
+#'   different ways. If `Pw = NA` then these random weights are
+#'   sampled uniformly between `alpha` and 1. If `Pw` is supplied,
+#'   then the random weights are chosen to be `alpha` with
+#'   probability `Pw` and 1 otherwise. The latter choice is used
+#'   in Theorem 2 in Meinshausen and Buhlmann. Recommended values
+#'   of `alpha` and `Pw` are \verb{[0.5, 0.2]}.
 #'
-#' Stability selection can be performed on multiple cores by setting
-#'   `parallel = TRUE`. This functionality requires
+#' Stability selection can be run in parallel using multiple forked
+#'   processes by setting `parallel = TRUE`. This requires
 #'   [parallel::mclapply()] from the \pkg{parallel} package.
-#'   This is *not* available for Windows based OS.
+#'   This is *not* available for Windows OS.
 #'
 #' @order 1
 #' @family stability
@@ -84,17 +85,16 @@
 #'   absolute value greater than or equal to `beta_threshold`
 #'   will be selected.
 #'
-#' @param elastic_alpha `numeric(1)`. Floating point value in `[0, 1]`.
-#'   When 0, the results of [glmnet()] are equivalent to Ridge regression.
+#' @param elastic_alpha `numeric(1)`. A value in `[0, 1]`. When 0,
+#'   the results of [glmnet()] are equivalent to Ridge regression.
 #'   When 1, the results are equivalent to Lasso. Any value between
-#'   0 and 1 creates a compromise between L1 and L2 penalty.
+#'   0 and 1 creates a compromise between the L1 and L2 penalty.
 #'
 #' @param lambda_pad `numeric(1)`. The lambda path is padded
 #'   with high lambda values to produce more appealing stability
-#'   paths for plotting.
-#'   Occasionally, the degree of padding needs adjustment to produce
-#'   better resolution at lower lambda. Typical values are:
-#'   20 (default), 15, 10, or 5.
+#'   paths for plotting. Occasionally, the degree of padding
+#'   needs adjustment to produce better resolution at lower lambda.
+#'   Typical values are: 20 (default), 15, 10, or 5.
 #'
 #' @param impute_outliers `logical(1)`. Should statistical
 #'   outliers (\eqn{3 * \sigma}) be imputed to approximate
@@ -108,8 +108,8 @@
 #' @param r_seed `integer(1)`. Seed for the random number
 #'   generator, for reproducibility.
 #'
-#' @param ... Additional arguments passed to one of the S3 methods for
-#'   `stab_sel` class objects, generics include:
+#' @param ... Additional arguments passed to one of the S3 methods
+#'   for `stab_sel` class objects, generics include:
 #'   * [plot.stab_sel()]
 #'   * [print.stab_sel()]
 #'   * [summary.stab_sel()]
@@ -145,8 +145,8 @@
 #'
 #' @examples
 #' # l1-logistic
-#' n_feat      <- 10
-#' n_samp      <- 2500
+#' n_feat      <- 20L
+#' n_samp      <- 2500L
 #' x           <- matrix(rnorm(n_samp * n_feat), n_samp, n_feat)
 #' colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 #' y           <- sample(1:2, n_samp, replace = TRUE)
@@ -247,68 +247,40 @@ stability_selection <- function(x, y = NULL,
   permpath_list <- NULL
 
   # THE ACTION ----
-  if ( n_cores > 1L ) {  # parallel
-    stab_time <- system.time(
-      stabpath_mat <- parallel::mclapply(seq(n_iter), function(i) {
-             calc_stability_paths(x, y,
-                                  kernel         = kernel,
-                                  lambda_seq     = lambda_seq,
-                                  alpha          = alpha,
-                                  Pw             = Pw,
-                                  beta_threshold = beta_threshold,
-                                  elastic_alpha  = elastic_alpha,
-                                  standardize    = standardize)
-        }, mc.cores = n_cores) |> Reduce(f = "+") # add them all up
+  stab_time <- system.time(
+    stabpath_mat <- parallel::mclapply(seq(n_iter), function(i) {
+           calc_stability_paths(x, y,
+                                kernel         = kernel,
+                                lambda_seq     = lambda_seq,
+                                alpha          = alpha,
+                                Pw             = Pw,
+                                beta_threshold = beta_threshold,
+                                elastic_alpha  = elastic_alpha,
+                                standardize    = standardize)
+      }, mc.set.seed = TRUE, mc.cores = n_cores) |> Reduce(f = "+")
+  )
+  signal_done(
+    "Stablity path run time:", value(round(stab_time["elapsed"], 4L))
+  )
+
+  if ( n_perm > 0L ) {
+    perm_time <- system.time(
+      permpath_list <- lapply(perm_seq, function(.j) {
+          parallel::mclapply(seq(n_iter), function(i) {
+              calc_stability_paths(x, perm_y[[.j]],
+                                   kernel         = kernel,
+                                   lambda_seq     = perm_lambda,
+                                   alpha          = alpha,
+                                   Pw             = Pw,
+                                   standardize    = standardize,
+                                   beta_threshold = beta_threshold,
+                                   elastic_alpha  = elastic_alpha)
+            }, mc.set.seed = TRUE, mc.cores = n_cores) |> Reduce(f = "+")
+        }) |> setNames(sprintf("Perm_%03i", perm_seq))
     )
     signal_done(
-      "Stablity path run time:", value(round(stab_time["elapsed"], 4L))
+      "Perm path run time:", value(round(perm_time["elapsed"], 4L))
     )
-
-    if ( n_perm > 0L ) {
-      perm_time <- system.time(
-        permpath_list <- lapply(perm_seq, function(.j) {
-            parallel::mclapply(seq(n_iter), function(i) {
-                calc_stability_paths(x, perm_y[[.j]],
-                                     kernel         = kernel,
-                                     lambda_seq     = perm_lambda,
-                                     alpha          = alpha,
-                                     Pw             = Pw,
-                                     standardize    = standardize,
-                                     beta_threshold = beta_threshold,
-                                     elastic_alpha  = elastic_alpha)
-              }, mc.cores = n_cores) |> Reduce(f = "+")
-          }) |> setNames(sprintf("Perm_%03i", perm_seq))
-      )
-      signal_done(
-        "Perm path run time:", value(round(perm_time["elapsed"], 4L))
-      )
-    }
-
-  } else {
-    stabpath_mat <- replicate(n_iter, simplify = FALSE,
-                      calc_stability_paths(x, y,
-                        kernel         = kernel,
-                        lambda_seq     = lambda_seq,
-                        alpha          = alpha,
-                        Pw             = Pw,
-                        standardize    = standardize,
-                        beta_threshold = beta_threshold,
-                        elastic_alpha  = elastic_alpha)
-      ) |> Reduce(f = "+")
-    if ( n_perm > 0L ) {
-      permpath_list <- lapply(perm_seq, function(.x) {
-          replicate(n_iter, simplify = FALSE,
-            calc_stability_paths(x, perm_y[[.x]],
-                                 kernel         = kernel,
-                                 lambda_seq     = perm_lambda,
-                                 alpha          = alpha,
-                                 Pw             = Pw,
-                                 standardize    = standardize,
-                                 beta_threshold = beta_threshold,
-                                 elastic_alpha  = elastic_alpha)) |> Reduce(f = "+")
-        }) |>
-        setNames(sprintf("Perm_%03i", perm_seq))
-    }
   }
 
   stabpath_mat <- stabpath_mat / n_iter / 2
@@ -318,15 +290,13 @@ stability_selection <- function(x, y = NULL,
     permpath_list <- lapply(permpath_list, function(.mat) {
       structure(.mat / n_iter / 2, dimnames = list(colnames(x), NULL))
     })
-  }
-
-  if ( is.null(permpath_list) ) {
-    perm_max_mat <- tibble(Feature = character(0))
-  } else {
-    perm_max_mat <- lapply(permpath_list, function(.x) apply(.x, 1, max)) |>
+    perm_max_mat <- permpath_list |>
+      lapply(function(.x) apply(.x, 1, max)) |>
       data.frame() |>        # preserve feature rownames
       rn2col("Feature") |>   # move features to column
       as_tibble()            # df => tibble
+  } else {
+    perm_max_mat <- tibble(Feature = character(0))
   }
 
   # get the betas for the appropriate lambda sequence
