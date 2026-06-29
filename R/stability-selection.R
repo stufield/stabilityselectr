@@ -28,7 +28,7 @@
 #' @order 1
 #' @family stability
 #'
-#' @param x A numeric \eqn{n x p} matrix of predictive features
+#' @param x A numeric \eqn{n \times p} matrix of predictive features
 #'   containing `n` observation rows and `p` feature columns.
 #'   Alternatively, a `stab_sel` class object if passing to one of
 #'   the S3 generic methods.
@@ -97,7 +97,7 @@
 #'   Typical values are: 20 (default), 15, 10, or 5.
 #'
 #' @param impute_outliers `logical(1)`. Should statistical
-#'   outliers (\eqn{3 * \sigma}) be imputed to approximate
+#'   outliers (\eqn{3 \times \sigma}) be imputed to approximate
 #'   a Gaussian distribution during stability selection?
 #'   See [wranglr::impute_outliers()].
 #'
@@ -115,7 +115,7 @@
 #'   * [summary.stab_sel()]
 #'
 #' @return A `stab_sel` class object:
-#'   \item{stabpath_matrix}{A matrix of \eqn{features x lambda_seq}
+#'   \item{stabpath_matrix}{A matrix of \eqn{p \times lambda\_seq}
 #'     containing stability selection probabilities. A row in this
 #'     matrix corresponds to a stability selection path for a single feature.}
 #'   \item{lambda}{the sequence of lambdas used for regularization. They

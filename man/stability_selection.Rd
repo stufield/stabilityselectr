@@ -47,7 +47,7 @@ is_stab_sel(x)
 )
 }
 \arguments{
-\item{x}{A numeric \eqn{n x p} matrix of predictive features
+\item{x}{A numeric \eqn{n \times p} matrix of predictive features
 containing \code{n} observation rows and \code{p} feature columns.
 Alternatively, a \code{stab_sel} class object if passing to one of
 the S3 generic methods.}
@@ -116,7 +116,7 @@ needs adjustment to produce better resolution at lower lambda.
 Typical values are: 20 (default), 15, 10, or 5.}
 
 \item{impute_outliers}{\code{logical(1)}. Should statistical
-outliers (\eqn{3 * \sigma}) be imputed to approximate
+outliers (\eqn{3 \times \sigma}) be imputed to approximate
 a Gaussian distribution during stability selection?
 See \code{\link[wranglr:impute_outliers]{wranglr::impute_outliers()}}.}
 
@@ -164,7 +164,7 @@ threshold values to be used (\code{default = seq(1, 0.1, by = 0.01)}).}
 }
 \value{
 A \code{stab_sel} class object:
-\item{stabpath_matrix}{A matrix of \eqn{features x lambda_seq}
+\item{stabpath_matrix}{A matrix of \eqn{p \times lambda\_seq}
 containing stability selection probabilities. A row in this
 matrix corresponds to a stability selection path for a single feature.}
 \item{lambda}{the sequence of lambdas used for regularization. They
