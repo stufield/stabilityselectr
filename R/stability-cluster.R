@@ -17,7 +17,7 @@
 #' @param n_iter `integer(1)`. The number of random subset
 #'   iterations to perform.
 #'
-#' @return A \eqn{n x (k + 1)} dimensional `tibble` of clustering
+#' @return A \eqn{n \times (k + 1)} dimensional `tibble` of clustering
 #'   probabilities for each `k`, plus a final column
 #'   named `prob_k`, which indicates the "most probable"
 #'   cluster membership for that sample.

@@ -20,7 +20,7 @@ iterations to perform.}
 generator, for reproducibility.}
 }
 \value{
-A \eqn{n x (k + 1)} dimensional \code{tibble} of clustering
+A \eqn{n \times (k + 1)} dimensional \code{tibble} of clustering
 probabilities for each \code{k}, plus a final column
 named \code{prob_k}, which indicates the "most probable"
 cluster membership for that sample.
