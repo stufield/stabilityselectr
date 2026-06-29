@@ -314,9 +314,6 @@ Methodology), 72: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
 }
 \seealso{
 \code{\link[glmnet:glmnet]{glmnet::glmnet()}}, \code{\link[=get_stable_features]{get_stable_features()}}
-
-Other stability: 
-\code{\link{stability_cluster}()}
 }
 \author{
 Stu Field, Michael R. Mehan, and Robert Kirk DeLisle
