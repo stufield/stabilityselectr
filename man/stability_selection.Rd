@@ -104,17 +104,16 @@ is not effective. Any variable having a coefficient with
 absolute value greater than or equal to \code{beta_threshold}
 will be selected.}
 
-\item{elastic_alpha}{\code{numeric(1)}. Floating point value in \verb{[0, 1]}.
-When 0, the results of \code{\link[glmnet:glmnet]{glmnet::glmnet()}} are equivalent to Ridge regression.
+\item{elastic_alpha}{\code{numeric(1)}. A value in \verb{[0, 1]}. When 0,
+the results of \code{\link[glmnet:glmnet]{glmnet::glmnet()}} are equivalent to Ridge regression.
 When 1, the results are equivalent to Lasso. Any value between
-0 and 1 creates a compromise between L1 and L2 penalty.}
+0 and 1 creates a compromise between the L1 and L2 penalty.}
 
 \item{lambda_pad}{\code{numeric(1)}. The lambda path is padded
 with high lambda values to produce more appealing stability
-paths for plotting.
-Occasionally, the degree of padding needs adjustment to produce
-better resolution at lower lambda. Typical values are:
-20 (default), 15, 10, or 5.}
+paths for plotting. Occasionally, the degree of padding
+needs adjustment to produce better resolution at lower lambda.
+Typical values are: 20 (default), 15, 10, or 5.}
 
 \item{impute_outliers}{\code{logical(1)}. Should statistical
 outliers (\eqn{3 * \sigma}) be imputed to approximate
@@ -128,8 +127,8 @@ for outlier detection when imputing outliers. Ignored if
 \item{r_seed}{\code{integer(1)}. Seed for the random number
 generator, for reproducibility.}
 
-\item{...}{Additional arguments passed to one of the S3 methods for
-\code{stab_sel} class objects, generics include:
+\item{...}{Additional arguments passed to one of the S3 methods
+for \code{stab_sel} class objects, generics include:
 \itemize{
 \item \code{\link[=plot.stab_sel]{plot.stab_sel()}}
 \item \code{\link[=print.stab_sel]{print.stab_sel()}}
@@ -215,32 +214,33 @@ for subset selection.}
 A \code{ggplot}.
 }
 \description{
-Performs stability selection on a set of predictive features and a
-response variable. Stability selection is performed using a
-user-specified kernel. For classification problems the
-\code{l1-logistic} kernel should be used and the response should be a
-vector or factor of with two class labels. For lasso the
-response column should be a numeric vector. For "cox" the response
-is a \emph{two column matrix} containing the event time in the
-first column and the censoring indicator in the second column.
-The randomized lasso is used if the \code{alpha} parameter is set to a value
-less than 1. In a randomized Lasso the model coefficients are randomly
-re-weighted when calculating the regularization term. This weighting can be
-performed in two different ways. If \code{Pw = NA} then these random
-weights are sampled uniformly between \code{alpha} and 1. If \code{Pw} is
-supplied, then the random weights are chosen to be \code{alpha} with
-probability \code{Pw} and 1 otherwise. The latter choice is used in Theorem
-2 in Meinshausen and Buhlmann. Recommended values of \code{alpha} and
-\code{Pw} are \verb{[0.5, 0.2]}.
+Performs stability selection on a set of predictive features
+and a response variable. Stability selection is performed using
+a user-specified kernel. For classification problems the
+\code{l1-logistic} kernel should be used and the response should be
+a vector or factor of with two class labels. For lasso the
+response column should be a numeric vector. For "cox" the
+response is a \emph{two column matrix} containing the event time in
+the first column and the censoring indicator in the second column.
+The randomized lasso is used if the \code{alpha} parameter is set to
+a value less than 1. In a randomized Lasso the model
+coefficients are randomly re-weighted when calculating the
+regularization term. This weighting can be performed in two
+different ways. If \code{Pw = NA} then these random weights are
+sampled uniformly between \code{alpha} and 1. If \code{Pw} is supplied,
+then the random weights are chosen to be \code{alpha} with
+probability \code{Pw} and 1 otherwise. The latter choice is used
+in Theorem 2 in Meinshausen and Buhlmann. Recommended values
+of \code{alpha} and \code{Pw} are \verb{[0.5, 0.2]}.
 
 The \code{\link[=is_stab_sel]{is_stab_sel()}} function checks whether
 an object is class \code{stab_sel}. See \code{\link[=inherits]{inherits()}}.
 }
 \details{
-Stability selection can be performed on multiple cores by setting
-\code{parallel = TRUE}. This functionality requires
+Stability selection can be run in parallel using multiple forked
+processes by setting \code{parallel = TRUE}. This requires
 \code{\link[parallel:mclapply]{parallel::mclapply()}} from the \pkg{parallel} package.
-This is \emph{not} available for Windows based OS.
+This is \emph{not} available for Windows OS.
 }
 \section{Functions}{
 \itemize{
@@ -278,8 +278,8 @@ summary method via the \code{add_features} argument.
 }
 \examples{
 # l1-logistic
-n_feat      <- 10
-n_samp      <- 2500
+n_feat      <- 20L
+n_samp      <- 2500L
 x           <- matrix(rnorm(n_samp * n_feat), n_samp, n_feat)
 colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 y           <- sample(1:2, n_samp, replace = TRUE)
