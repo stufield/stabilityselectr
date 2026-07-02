@@ -1,11 +1,8 @@
 
 # Setup ----
 # `n_iter =` and `size =` are passed to `progeny_k()` via the '...'
-pclust <- withr::with_seed(101,
-  progeny_cluster(progeny_data, clust_iter = 2:6L,
-                  reps = 5L, n_iter = 10L, size = 6)
-)
-
+pclust <- progeny_cluster(progeny_data, clust_iter = 2:6L, repeats = 5L,
+                          r_seed = 101, n_iter = 10L, size = 6)
 
 # Testing  ----
 test_that("the object returned by `progeny_cluster()` is correct", {
@@ -27,10 +24,8 @@ test_that("the object elements are the numerically expected results", {
 })
 
 test_that("`progeny_cluster()` can handle data frames as well as matrices", {
-  p <- withr::with_seed(101,
-    progeny_cluster(data.frame(progeny_data),
-                    clust_iter = 2:6L, reps = 5L, n_iter = 10L, size = 6)
-  )
+  p <- progeny_cluster(data.frame(progeny_data), r_seed = 101,
+                       clust_iter = 2:6L, repeats = 5L, n_iter = 10L, size = 6)
   expect_equal(
     discard_it(p, names(p) == "call"),
     discard_it(pclust, names(pclust) == "call")
@@ -58,9 +53,9 @@ test_that("clusters are all > 2 ... throw error", {
   )
 })
 
-test_that("the `reps =` argument is >= 1 ..., otherwise throw error", {
+test_that("the `repeats =` argument is >= 1 ..., otherwise throw error", {
   expect_error(
-    progeny_cluster(progeny_data, clust_iter = 2:6L, reps = 0L),
+    progeny_cluster(progeny_data, clust_iter = 2:6L, repeats = 0L),
     paste("The number of repeats can't be zero or negative.",
           "Please use a positive value.")
   )
@@ -76,7 +71,7 @@ test_that("the `n_iter =` argument is passed via the `...`; throw error", {
 
 test_that("the `n_iter =` argument is >= 1 `...`; throw error", {
   expect_error(
-    progeny_cluster(progeny_data, clust_iter = 2:6L, reps = 5L, n_iter = 0L),
+    progeny_cluster(progeny_data, clust_iter = 2:6L, repeats = 5L, n_iter = 0L),
     paste("The number of iterations can't be zero or negative.",
           "Please use a positive value.")
   )

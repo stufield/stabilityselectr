@@ -87,11 +87,9 @@ print.stab_sel <- function(x, ...) {
 #' @describeIn stability_selection
 #'   The S3 `summary` method for class `stab_sel`.
 #'
-#' @param object An `stab_sel` class object.
+#' @inheritParams get_stable_features
 #'
-#' @param thresh A numeric minimum selection probability threshold.
-#'   This value can also be a vector of values in \verb{[0, 1]},
-#'   but ideally greater than 0.50.
+#' @param object A `stab_sel` class object.
 #'
 #' @note Additional features can be passed as strings to the
 #'   summary method via the `add_features` argument.
@@ -99,12 +97,14 @@ print.stab_sel <- function(x, ...) {
 #' @examples
 #' # S3 summary method
 #' summary(stab_sel, thresh = 0.6)
+#'
 #' summary(stab_sel, thresh = 0.8, add_features = "feat_c")   # force feat_c into table
+#'
 #' @importFrom dplyr select everything matches
 #'
 #' @export
-summary.stab_sel <- function(object, ..., thresh) {
-  if ( missing(thresh) ) {
+summary.stab_sel <- function(object, thresh = NULL, ...) {
+  if ( is.null(thresh) ) {
     stop(
       "Must pass a stability threshold to S3 summary method. ",
       "Please pass `thresh =`.", call. = FALSE
@@ -112,7 +112,7 @@ summary.stab_sel <- function(object, ..., thresh) {
   }
 
   lambda_norm <- object$lambda / max(object$lambda)
-  df <- get_stable_features(object, thresh = thresh, ...)
+  df <- get_stable_features(object, thresh = thresh, ...)[[1L]]
 
   if ( nrow(df) > 0L ) { # reorder feats
     df$AUC <- object$stabpath_matrix[df$feature, , drop = FALSE] |>

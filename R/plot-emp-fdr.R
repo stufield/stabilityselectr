@@ -1,37 +1,21 @@
 #' Plot Empirical FDR
 #'
-#' Plot the mean number of false positives (FPs) versus the number of selected
-#'   features by a sequence of selection probability thresholds. For this to
-#'   be possible, the `stab_sel` object _must_ have permuted
-#'   data in order to calculate empirical false discovery rates. The area
-#'   in the sub-diagonal represents where more features are added without
-#'   a commensurate increase in false positives (**Good**). The inverse is true
-#'   for the super-diagonal, false positives are being included faster
-#'   than additional features (**Bad**). The legend highlights pre-defined
-#'   empirical FDR breaks: `c(0.5, 1, 2, 3, 5)` evaluated to the nearest
-#'   threshold cutoff.
-#'
-#' @family FDR
-#'
-#' @inheritParams calc_emp_fdr
-#' @author Stu Field
-#'
-#' @seealso [stability_selection()], [get_stable_features()]
+#' @describeIn calc_emp_fdr
+#'   plots the mean number of false positives (FPs)
+#'   versus the numberof selected features by a sequence of
+#'   selection probability thresholds. For this to be possible,
+#'   the `stab_sel` object *must* have permuted data in order to
+#'   calculate empirical false discovery rates. The area in the
+#'   sub-diagonal represents where more features are added without
+#'   a commensurate increase in false positives (**Good**).
+#'   The inverse is true for the super-diagonal, false positives
+#'   are being included faster than additional features (**Bad**).
+#'   The legend highlights pre-defined empirical FDR breaks:
+#'   `c(0.5, 1, 2, 3, 5)` evaluated to the nearest threshold cutoff.
 #'
 #' @examples
-#' # l1-logistic
-#' withr::with_seed(101, {
-#'   n_feat      <- 20
-#'   n_samples   <- 100
-#'   x           <- matrix(rnorm(n_feat * n_samples), n_samples, n_feat)
-#'   colnames(x) <- paste0("feat", "_", head(letters, n_feat))
-#'   y           <- sample(1:2, n_samples, replace = TRUE)
-#' })
-#'
-#' # typically set > 75 permutations
-#' stab_sel <- stability_selection(x, y, "l1-logistic", n_perm = 25,
-#'                                 r_seed = 101, parallel = TRUE)
-#' plot_emp_fdr(stab_sel)
+#' # plot the FDR
+#' plot_emp_fdr(ss)  # typically set permutations > 75
 #'
 #' @importFrom ggplot2 ggplot aes geom_abline geom_point theme
 #' @importFrom ggplot2 scale_color_manual labs annotate geom_step

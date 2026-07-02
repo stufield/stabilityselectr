@@ -8,13 +8,7 @@
 \alias{print.pclust}
 \title{Perform Progeny Clustering}
 \usage{
-progeny_cluster(
-  data,
-  clust_iter = 2:10L,
-  reps = 10L,
-  verbose = interactive(),
-  ...
-)
+progeny_cluster(data, clust_iter = 2:10L, repeats = 10L, r_seed = 1234, ...)
 
 is_pclust(x)
 
@@ -23,21 +17,25 @@ is_pclust(x)
 \method{print}{pclust}(x, ...)
 }
 \arguments{
-\item{data}{A (\verb{n x p}) data matrix containing \emph{n} samples and \emph{p} features.
-Can also be a data frame where each row corresponds to a sample or
-observation, whereas each column corresponds to a feature or variable.}
+\item{data}{A \eqn{n \times p} data matrix containing \emph{n} samples
+and \emph{p} features. Can also be a data frame where each row
+corresponds to a sample or observation, and each column
+corresponds to a feature or variable.}
 
-\item{clust_iter}{\code{integer(n)}. Span of \code{k} clusters to interrogate}
+\item{clust_iter}{\code{integer(n)}. Span of \code{k} clusters to
+interrogate over.}
 
-\item{reps}{\code{integer(1)}. The number of repeat iterations to perform.
-Particularly useful if error bars during plotting are desired.}
+\item{repeats}{\code{integer(1)}. The number of repeat iterations to
+perform. Particularly useful if error bars during plotting
+are desired.}
 
-\item{verbose}{\code{logical(1)}. Print the progress of the clustering repeats
-to the console. Defaults to \code{\link[=interactive]{interactive()}}.}
+\item{r_seed}{\code{integer(1)}. Seed for the random number
+generator, for reproducibility.}
 
-\item{...}{Additional parameters passed to the internal \code{progeny_k()},
-typically \verb{n_iter =} and \verb{size =}. For the \code{\link[=plot]{plot()}} method,
-arguments passed to the corresponding graphics device.}
+\item{...}{Important! Parameters passed to the internal
+\code{progeny_k()}, i.e. \verb{n_iter =} and \verb{size =}. Or,
+for the \code{\link[=plot]{plot()}} method, arguments passed to the corresponding
+graphics device.}
 
 \item{x}{A \code{pclust} class object (or an object to be tested for one).}
 }
@@ -47,8 +45,8 @@ A \code{pclust} class object, a list containing:
 with \code{k} columns}
 \item{mean_scores}{The mean stability scores for each cluster \code{k}}
 \item{ci95_scores}{95\% confidence interval scores}
-\item{random_scores}{The reference (random) scores for each iteration
-at each clustering level (\code{k})}
+\item{random_scores}{The reference (random) scores for each
+iteration at each clustering level (\code{k})}
 \item{mean_random_scores}{The mean of the reference (random) data set, i.e.
 column means of \code{random_scores}}
 \item{D_max}{The distance between the mean stability scores and the mean
@@ -57,7 +55,7 @@ reference scores for each cluster \code{k}}
 See original paper for reference.}
 \item{clust_iter}{Integer Sequence of \code{k} clusters interrogated}
 \item{repeats}{The number of repeat iterations to performed}
-\item{iter}{The number of progeny iterations to performed}
+\item{n_iter}{The number of progeny iterations to performed}
 \item{size}{The progeny size used in each iteration}
 \item{call}{The call made to \code{\link[=progeny_cluster]{progeny_cluster()}}}
 
@@ -72,17 +70,17 @@ an object is class \code{pclust}. See \code{\link[=inherits]{inherits()}}.
 }
 \examples{
 # `n_iter =` and `size =` are passed to `progeny_k()`
-pclust <- withr::with_seed(1234,
-  progeny_cluster(progeny_data, clust_iter = 2:9L, n_iter = 20L, size = 6)
-)
+pclust <- progeny_cluster(progeny_data, clust_iter = 2:9L,
+                          n_iter = 20L, size = 6)
 pclust
 
 # Test progeny clustering on iris data set
-# Doesn't work quite as well as the simulated data set
-clust_iris <- withr::with_seed(99,
-  progeny_cluster(iris[, -5L], clust_iter = 2:5L, size = 6L, n_iter = 50)
-)
-clust_iris    # true n clusters = 3
+# Doesn't work as well as the simulated data set
+clust_iris <- progeny_cluster(iris[, -5L], clust_iter = 2:5L,
+                              size = 6L, n_iter = 250)  # pass `...`
+
+# true n_clusters = 3
+clust_iris
 
 # Test for class `pclust`
 is_pclust(pclust)

@@ -1,8 +1,11 @@
 
+# Setup ----
+pi_vec <- seq(0.6, 0.9, 0.1)
+
 # Testing ----
 # No permutation ----
 test_that("`get_stable_features()` without permutation check shape & dims", {
-  s_feat <- get_stable_features(ss, 0.55)
+  s_feat <- get_stable_features(ss, 0.55)$thresh_0.55
   expect_s3_class(s_feat, "tbl_df")
   expect_equal(dim(s_feat), c(n_feat, 3L))       # all feats included
   expect_named(s_feat, c("feature", "MaxSelectProb", "FDRbound"))
@@ -23,7 +26,7 @@ test_that("the S3 methods work for `get_stable_features()`", {
 })
 
 test_that("`get_stable_features()` returns correct values at thresh = 0.55", {
-  s_feat <- get_stable_features(ss, 0.55)
+  s_feat <- get_stable_features(ss, 0.55)$thresh_0.55
 
   withr::with_options(list(pillar.sigfig = 4L),
     expect_snapshot( print(s_feat, n = Inf) )
@@ -38,7 +41,7 @@ test_that("`get_stable_features()` returns correct values at thresh = 0.55", {
 
 test_that("`get_stable_features()` returns correct values at thresh <= 0.5", {
   expect_warning(
-    s_feat <- get_stable_features(ss, 0.49, warn = TRUE),
+    s_feat <- get_stable_features(ss, 0.49, warn = TRUE)$thresh_0.49,
     "FDR upper bound not defined for `thresh <= 0.5`"
   )
   withr::with_options(list(pillar.sigfig = 4L),
@@ -47,7 +50,7 @@ test_that("`get_stable_features()` returns correct values at thresh <= 0.5", {
 })
 
 test_that("`get_stable_features` returns correct values at thresh = 0.90", {
-  s_feat <- get_stable_features(ss, 0.90)
+  s_feat <- get_stable_features(ss, 0.9)$thresh_0.9
   withr::with_options(list(pillar.sigfig = 4L),
     expect_snapshot( print(s_feat, n = Inf) )
   )
@@ -86,7 +89,7 @@ test_that("the `get_stable_features()` trips proper warnings", {
 # Empty when thresh high ----
 test_that("`get_stable_features()` returns empty data frame when thresh too high", {
   expect_warning(
-    s_feat <- get_stable_features(ss, 0.99, warn = TRUE),
+    s_feat <- get_stable_features(ss, 0.99, warn = TRUE)$thresh_0.99,
     "No stable features at `thresh = 0.99`"
   )
   expect_equal(dim(s_feat), c(0, 3))
@@ -95,7 +98,7 @@ test_that("`get_stable_features()` returns empty data frame when thresh too high
 
 # with permutation ----
 test_that("`get_stable_features()` with permutation adds `EmpFDR` column", {
-  s_feat_perm <- get_stable_features(ss_perm, 0.88)
+  s_feat_perm <- get_stable_features(ss_perm, 0.88)$thresh_0.88
 
   expect_s3_class(s_feat_perm, "tbl_df")
   expect_false(all(colnames(x) %in% s_feat_perm$feature))
@@ -107,5 +110,25 @@ test_that("`get_stable_features()` with permutation adds `EmpFDR` column", {
 
   withr::with_options(list(pillar.sigfig = 4L),
     expect_snapshot( print(s_feat_perm, n = Inf) )
+  )
+})
+
+
+test_that("`get_stable_features()` accepts a vector of thresholds", {
+  thresh_feat_tbl <- get_stable_features(ss$stabpath_matrix, thresh = pi_vec)
+  withr::with_options(list(pillar.sigfig = 4L),
+    expect_snapshot( print(thresh_feat_tbl) )
+  )
+})
+
+test_that("`get_stable_features()` trips warning when no stable features found", {
+  expect_warning(
+    thresh_feat_tbl <- get_stable_features(
+      ss$stabpath_matrix, warn = TRUE, thresh = c(0.92, 0.97)),
+    "No stable features at `thresh = 0.97`"
+  )
+
+  withr::with_options(list(pillar.sigfig = 4L),
+    expect_snapshot( print(thresh_feat_tbl) )
   )
 })

@@ -14,9 +14,6 @@
 #'
 #' @param k `integer(1)`. The number of clusters.
 #'
-#' @param n_iter `integer(1)`. The number of random subset
-#'   iterations to perform.
-#'
 #' @return A \eqn{n \times (k + 1)} dimensional `tibble` of clustering
 #'   probabilities for each `k`, plus a final column
 #'   named `prob_k`, which indicates the "most probable"
@@ -63,6 +60,7 @@
 #' })
 #' @importFrom cluster pam
 #' @importFrom tibble as_tibble
+#' @importFrom parallel mclapply
 #' @importFrom dplyr pick everything mutate
 #' @export
 stability_cluster <- function(data, k, n_iter = 100L, r_seed = 1234) {

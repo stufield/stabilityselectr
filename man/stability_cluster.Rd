@@ -7,14 +7,15 @@
 stability_cluster(data, k, n_iter = 100L, r_seed = 1234)
 }
 \arguments{
-\item{data}{A (\verb{n x p}) data matrix containing \emph{n} samples and \emph{p} features.
-Can also be a data frame where each row corresponds to a sample or
-observation, whereas each column corresponds to a feature or variable.}
+\item{data}{A \eqn{n \times p} data matrix containing \emph{n} samples
+and \emph{p} features. Can also be a data frame where each row
+corresponds to a sample or observation, and each column
+corresponds to a feature or variable.}
 
 \item{k}{\code{integer(1)}. The number of clusters.}
 
-\item{n_iter}{\code{integer(1)}. The number of random subset
-iterations to perform.}
+\item{n_iter}{\code{integer(1)}. Defining the number of
+sub-sampling iterations during each selection.}
 
 \item{r_seed}{\code{integer(1)}. Seed for the random number
 generator, for reproducibility.}
