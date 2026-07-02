@@ -1,7 +1,6 @@
 
-#' @describeIn plot_emp_fdr
-#'   Plot the permutation paths for an object of
-#'   class `stab_sel`.
+#' @describeIn calc_emp_fdr
+#'   Plot the permutation paths for a `stab_sel` object.
 #'   These paths are the stability selection paths
 #'   of the `n` class scrambled permutations, i.e. the null.
 #'
@@ -12,11 +11,13 @@
 #'
 #' @examples
 #' # Plot the permuted data individually
-#' plot_permuted_data(stab_sel, 3L)   # choose 3rd permutation
+#' plot_permuted_data(ss, 3L)   # choose 3rd permutation
 #' @importFrom graphics plot
 #' @export
 plot_permuted_data <- function(x, which = NULL, ...) {
-  stopifnot(x$perm_data)
+  stopifnot(
+    "`x` must have permuted data. Please set `n_perm`." = x$perm_data
+  )
   if ( is.null(which) ) {
     L   <- length(x$permpath_list)
     idx <- readline(

@@ -32,7 +32,7 @@ is_stab_sel(x)
 
 \method{print}{stab_sel}(x, ...)
 
-\method{summary}{stab_sel}(object, ..., thresh)
+\method{summary}{stab_sel}(object, thresh = NULL, ...)
 
 \method{plot}{stab_sel}(
   x,
@@ -70,7 +70,7 @@ model used for selection. Current options are:
 }}
 
 \item{n_iter}{\code{integer(1)}. Defining the number of
-sub-sampling iterations for the stability selection.}
+sub-sampling iterations during each selection.}
 
 \item{parallel}{\code{logical(1)}. Should parallel processing
 via multiple cores be implemented? Must be on Linux or
@@ -135,11 +135,12 @@ for \code{stab_sel} class objects, generics include:
 \item \code{\link[=summary.stab_sel]{summary.stab_sel()}}
 }}
 
-\item{object}{An \code{stab_sel} class object.}
+\item{object}{A \code{stab_sel} class object.}
 
-\item{thresh}{A numeric minimum selection probability threshold.
-This value can also be a vector of values in \verb{[0, 1]},
-but ideally greater than 0.50.}
+\item{thresh}{\code{numeric(1)} in \verb{[0, 1]}. the minimum
+selection probability threshold.
+In some instances this value can also be a vector, but is
+generally a scalar > 0.50 for \code{\link[=get_stable_features]{get_stable_features()}}.}
 
 \item{custom_labels}{\code{character(n)}. Character vector of
 additional features to label in the plot, see \code{Details}.}
@@ -302,7 +303,9 @@ stab_sel
 
 # S3 summary method
 summary(stab_sel, thresh = 0.6)
+
 summary(stab_sel, thresh = 0.8, add_features = "feat_c")   # force feat_c into table
+
 # S3 plot method
 plot(stab_sel, thresh = 0.8)
 

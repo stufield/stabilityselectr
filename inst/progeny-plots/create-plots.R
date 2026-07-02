@@ -11,10 +11,8 @@ suppressPackageStartupMessages(devtools::load_all(quiet = TRUE))
 # Progeny Clustering ----
 
 # This can take a while!
-pclust <- withr::with_seed(101,
-  progeny_cluster(progeny_data, clust_iter = 2:9L,
-                  reps = 25L, n_iter = 100L, size = 8)
-)
+pclust <- progeny_cluster(progeny_data, clust_iter = 2:9L, r_seed = 101,
+                          repeats = 25L, n_iter = 100L, size = 8L)
 
 p <- plot(pclust)
 
@@ -25,8 +23,8 @@ ggplot2::ggsave(
 
 
 # Stability Clustering ----
-stab_clust <- withr::with_seed(101, stability_cluster(progeny_data,
-                                                      k = 3L, n_iter = 1000L))
+stab_clust <- stability_cluster(progeny_data, k = 3L, n_iter = 1000L,
+                                r_seed = 101)
 stab_clust$true_cluster <- rep(1:3L, each = 50L)
 
 cols <- c("#24135F", "#00A499", "#840B55")

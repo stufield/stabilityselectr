@@ -51,7 +51,7 @@
 #'   }
 #'
 #' @param n_iter `integer(1)`. Defining the number of
-#'   sub-sampling iterations for the stability selection.
+#'   sub-sampling iterations during each selection.
 #'
 #' @param parallel `logical(1)`. Should parallel processing
 #'   via multiple cores be implemented? Must be on Linux or
@@ -163,6 +163,7 @@
 #' stab_sel_cox <- stability_selection(xcox, ycox, kernel = "cox", r_seed = 3)
 #' @importFrom glmnet glmnet
 #' @importFrom stats runif setNames
+#' @importFrom parallel mclapply
 #' @importFrom tibble tibble as_tibble
 #' @export
 stability_selection <- function(x, y = NULL,

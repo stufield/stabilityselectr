@@ -35,7 +35,7 @@ The "true" number of clusters in the `progeny_data` object is 3.
 
 ```{r progeny}
 pc <- progeny_cluster(progeny_data, clust_iter = 2:9L,
-                      reps = 10L, n_iter = 25L, size = 6)
+                      repeats = 10L, n_iter = 25L, size = 6)
 pc
 ```
 

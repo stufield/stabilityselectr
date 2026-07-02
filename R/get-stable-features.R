@@ -18,10 +18,12 @@
 #'
 #' @param x An `stab_sel` class object OR a matrix containing
 #'   selection probabilities, i.e. the `stabpath_matrix` entry
-#'   of a `stab_sel` class object.
+#'   of a `stab_sel` object.
 #'
-#' @param thresh `numeric(1)` in \verb{[0, 1]}. Minimum selection
-#'   probability threshold.
+#' @param thresh `numeric(1)` in \verb{[0, 1]}. the minimum
+#'   selection probability threshold.
+#'   In some instances this value can also be a vector, but is
+#'   generally a scalar > 0.50 for [get_stable_features()].
 #'
 #' @param add_features `character(n)`. A string of additional features
 #'   to *force* into the resulting table, irrespective of their
@@ -41,18 +43,18 @@
 #'
 #' @examples
 #' # l1-logistic
-#' withr::with_seed(101, {
-#'   n_feat      <- 20
-#'   n_samples   <- 100
-#'   x           <- matrix(rnorm(n_feat * n_samples), n_samples, n_feat)
-#'   colnames(x) <- paste0("feat", "_", head(letters, n_feat))
-#'   y           <- sample(1:2, n_samples, replace = TRUE)
-#' })
+#' n_feat      <- 20
+#' n_samples   <- 100
+#' x           <- matrix(rnorm(n_feat * n_samples), n_samples, n_feat)
+#' colnames(x) <- paste0("feat", "_", head(letters, n_feat))
+#' y           <- sample(1:2, n_samples, replace = TRUE)
 #'
-#' stab_sel <- stability_selection(x, y)
+#' stab_sel <- stability_selection(x, y, r_seed = 101)
 #'
-#' # Stable features at thresh = 0.55
-#' get_stable_features(stab_sel, 0.55)
+#' # Stable features at `thresh =`
+#' get_stable_features(stab_sel, 0.75)
+#'
+#' get_stable_features(stab_sel, c(0.75, 0.9))
 #' @export
 get_stable_features <- function(x, thresh, add_features, warn) {
   UseMethod("get_stable_features")
@@ -70,36 +72,50 @@ get_stable_features.default <- function(x, thresh, add_features, warn) {
 
 #' @noRd
 #' @export
-get_stable_features.stab_sel <- function(x, thresh = 0.75, add_features = NULL,
+get_stable_features.stab_sel <- function(x, thresh = 0.75,
+                                         add_features = NULL,
                                          warn = interactive()) {
 
   # pass thru to S3 matrix method
-  df <- get_stable_features(x$stabpath_matrix,
-                            thresh       = thresh,
-                            add_features = add_features,
-                            warn         = warn)
+  df <- get_stable_features(
+    x$stabpath_matrix,
+    thresh       = thresh,
+    add_features = add_features,
+    warn         = warn
+  )
 
   # the next part is key:
   # it only happens in the `get_stable_features.stab_sel()` method.
-  # in the `get_stable_features.matrix()` method we do not calculate empirical FDRs
-  # this saves time when not desired and provides a method to control the behavior
-  if ( x$perm_data && nrow(df) > 0 ) {
-    # unsure which is correct
-    denom <- seq_len(nrow(df))
-    denom <- nrow(df)    # use this one for now; sgf
-    df$EmpFDR <- calc_emp_fdr(x, thresh_seq = df$MaxSelectProb, warn = FALSE) / denom
+  # in the `get_stable_features.matrix()` method we do *not*
+  # calculate empirical FDRs; this saves time when not desired and
+  # provides a method to control the behavior
+  if ( x$perm_data ) {
+    df <- lapply(df, function(pi_df) {
+        if ( nrow(pi_df) == 0L ) {
+          pi_df$EmpFDR <- NULL
+        } else {
+          denom <- seq_len(nrow(pi_df)) # unsure which is correct
+          denom <- nrow(pi_df)          # use this for now (sgf)
+          pi_df$EmpFDR <- calc_emp_fdr(x,
+                                       thresh_seq = pi_df$MaxSelectProb,
+                                       warn = FALSE) / denom
+        }
+        pi_df
+      })
   }
   df
 }
 
-#' If passing the `stabpath_matrix` element of a `stab_sel` object.
+#' The S3 matrix method
+#'
 #' **This is the main workhorse**
 #'
 #' @importFrom dplyr filter arrange desc mutate row_number
 #' @importFrom tibble as_tibble
 #' @noRd
 #' @export
-get_stable_features.matrix <- function(x, thresh = 0.75, add_features = NULL,
+get_stable_features.matrix <- function(x, thresh = 0.75,
+                                       add_features = NULL,
                                        warn = interactive()) {
 
   if ( !is_stabpath_matrix(x) ) {
@@ -109,29 +125,35 @@ get_stable_features.matrix <- function(x, thresh = 0.75, add_features = NULL,
       "Are you sure this is a matrix of stability paths?", call. = FALSE
     )
   }
+  base_fn <- function(x, pi, add_features) {
+    # within this function internal, thresh == pi
+    df <- data.frame(MaxSelectProb = apply(x, 1, max)) |> rn2col("feature")
+    df <- dplyr::arrange(df, desc(MaxSelectProb)) |>
+      dplyr::filter(MaxSelectProb >= pi | feature %in% add_features)
 
-  df <- data.frame(MaxSelectProb = apply(x, 1, max)) |> rn2col("feature")
-  df <- dplyr::arrange(df, desc(MaxSelectProb)) |>
-    dplyr::filter(MaxSelectProb >= thresh | feature %in% add_features)
-
-  if ( nrow(df) == 0L ) {
-    if ( warn ) {
-      warning("No stable features at `thresh = ",
-              value(round(thresh, 3L)), "`",
-              call. = FALSE)
+    if ( nrow(df) == 0L ) {
+      if ( warn ) {
+        warning("No stable features at `thresh = ",
+                value(round(pi, 3L)), "`",
+                call. = FALSE)
+      }
+      df <- dplyr::mutate(df, FDRbound = numeric(0))
+    } else if ( pi <= 0.5 ) {
+      if ( warn ) {
+        warning("FDR upper bound not defined for `thresh <= 0.5`",
+                call. = FALSE)
+      }
+      df <- dplyr::mutate(df, FDRbound = NA_real_)
+    } else {
+      n_feat <- nrow(x)
+      df <- df |>
+        dplyr::mutate(
+          FDRbound = row_number() / n_feat^2 / (2 * pi - 1)
+        )
     }
-    df <- dplyr::mutate(df, FDRbound = numeric(0))
-  } else if ( thresh <= 0.5 ) {
-    if ( warn ) {
-      warning("FDR upper bound not defined for `thresh <= 0.5`",
-              call. = FALSE)
-    }
-    df <- dplyr::mutate(df, FDRbound = NA_real_)
-  } else {
-    n_feat <- nrow(x)
-    df <- dplyr::mutate(
-      df, FDRbound = row_number() / n_feat^2 / (2 * thresh - 1)
-    )
+    as_tibble(df)
   }
-  as_tibble(df)
+
+  setNames(thresh, paste0("thresh_", thresh)) |>
+    lapply(base_fn, x = x, add_features = add_features)
 }

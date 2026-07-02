@@ -4,30 +4,32 @@
 #'   Progeny Clustering algorithm.
 #'
 #' @family cluster
+#' @inheritParams stability_cluster
 #'
-#' @param data A (`n x p`) data matrix containing *n* samples and *p* features.
-#'   Can also be a data frame where each row corresponds to a sample or
-#'   observation, whereas each column corresponds to a feature or variable.
+#' @param data A \eqn{n \times p} data matrix containing *n* samples
+#'   and *p* features. Can also be a data frame where each row
+#'   corresponds to a sample or observation, and each column
+#'   corresponds to a feature or variable.
 #'
-#' @param clust_iter `integer(n)`. Span of `k` clusters to interrogate
+#' @param clust_iter `integer(n)`. Span of `k` clusters to
+#'   interrogate over.
 #'
-#' @param reps `integer(1)`. The number of repeat iterations to perform.
-#'   Particularly useful if error bars during plotting are desired.
+#' @param repeats `integer(1)`. The number of repeat iterations to
+#'   perform. Particularly useful if error bars during plotting
+#'   are desired.
 #'
-#' @param verbose `logical(1)`. Print the progress of the clustering repeats
-#'   to the console. Defaults to [interactive()].
-#'
-#' @param ... Additional parameters passed to the internal `progeny_k()`,
-#'   typically `n_iter =` and `size =`. For the [plot()] method,
-#'   arguments passed to the corresponding graphics device.
+#' @param ... Important! Parameters passed to the internal
+#'   `progeny_k()`, i.e. `n_iter =` and `size =`. Or,
+#'   for the [plot()] method, arguments passed to the corresponding
+#'   graphics device.
 #'
 #' @return A `pclust` class object, a list containing:
 #'   \item{scores}{A matrix of stability scores for each iteration in a matrix,
 #'      with `k` columns}
 #'   \item{mean_scores}{The mean stability scores for each cluster `k`}
 #'   \item{ci95_scores}{95% confidence interval scores}
-#'   \item{random_scores}{The reference (random) scores for each iteration
-#'     at each clustering level (`k`)}
+#'   \item{random_scores}{The reference (random) scores for each
+#'     iteration at each clustering level (`k`)}
 #'   \item{mean_random_scores}{The mean of the reference (random) data set, i.e.
 #'     column means of `random_scores`}
 #'   \item{D_max}{The distance between the mean stability scores and the mean
@@ -36,11 +38,12 @@
 #'     See original paper for reference.}
 #'   \item{clust_iter}{Integer Sequence of `k` clusters interrogated}
 #'   \item{repeats}{The number of repeat iterations to performed}
-#'   \item{iter}{The number of progeny iterations to performed}
+#'   \item{n_iter}{The number of progeny iterations to performed}
 #'   \item{size}{The progeny size used in each iteration}
 #'   \item{call}{The call made to [progeny_cluster()]}
 #'
 #' @author Stu Field
+#'
 #' @references Hu, C.W., Kornblau, S.M., Slater, J.H. and A.A. Qutub (2015).
 #'   Progeny Clustering: A Method to Identify Biological Phenotypes.
 #'   Scientific Reports, 5:12894. \url{http://www.nature.com/articles/srep12894}
@@ -49,22 +52,23 @@
 #'
 #' @examples
 #' # `n_iter =` and `size =` are passed to `progeny_k()`
-#' pclust <- withr::with_seed(1234,
-#'   progeny_cluster(progeny_data, clust_iter = 2:9L, n_iter = 20L, size = 6)
-#' )
+#' pclust <- progeny_cluster(progeny_data, clust_iter = 2:9L,
+#'                           n_iter = 20L, size = 6)
 #' pclust
 #'
 #' # Test progeny clustering on iris data set
-#' # Doesn't work quite as well as the simulated data set
-#' clust_iris <- withr::with_seed(99,
-#'   progeny_cluster(iris[, -5L], clust_iter = 2:5L, size = 6L, n_iter = 50)
-#' )
-#' clust_iris    # true n clusters = 3
+#' # Doesn't work as well as the simulated data set
+#' clust_iris <- progeny_cluster(iris[, -5L], clust_iter = 2:5L,
+#'                               size = 6L, n_iter = 250)  # pass `...`
+#'
+#' # true n_clusters = 3
+#' clust_iris
 #'
 #' @importFrom stats quantile runif sd
+#' @importFrom parallel mclapply
 #' @export
-progeny_cluster <- function(data, clust_iter = 2:10L, reps = 10L,
-                            verbose = interactive(), ...) {
+progeny_cluster <- function(data, clust_iter = 2:10L, repeats = 10L,
+                            r_seed = 1234, ...) {
 
   if ( length(clust_iter) < 3L ) {
     stop(
@@ -72,43 +76,56 @@ progeny_cluster <- function(data, clust_iter = 2:10L, reps = 10L,
       value(length(clust_iter)), call. = FALSE
     )
   }
+
   if ( sum(clust_iter < 2L) != 0 ) {
     stop("The number of clusters must be greater than 1.", call. = FALSE)
   }
-  if ( reps < 1L ) {
+
+  if ( repeats < 1L ) {
     stop(
       "The number of repeats can't be zero or negative. ",
       "Please use a positive value.", call. = FALSE
     )
   }
+
   if ( !"n_iter" %in% names(list(...)) ) {
     stop(
       "You must pass an `n_iter =` argument via the `...` to `progeny_cluster()`.",
       call. = FALSE
     )
   }
+
   if ( list(...)$n_iter < 1 ) {
     stop(
       "The number of iterations can't be zero or negative. ",
       "Please use a positive value.", call. = FALSE
     )
   }
+
   if ( inherits(data, "data.frame") ) {
     data <- data.matrix(data)
   }
+
+  # set seed for reproducibility
+  # Claude says "L'Ecuyer-CMRG" is better cross
+  # platform & in parallel processing
+  rng <- RNGkind()
+  withr::local_seed(r_seed, .rng_kind = "L'Ecuyer-CMRG")
+  withr::defer(restore_rng_kind(rng))
 
   # internal: generate stability for a specific `k`
   .calc_k <- function(.data, .i) {
     calc_stability(progeny_k(.data, k = .i, ...))
   }
 
-  scores <- replicate(reps, {
+  scores <- parallel::mclapply(seq(repeats), function(i) {
        vapply(clust_iter, .calc_k, .data = data, FUN.VALUE = 0.1)
-    }, simplify = FALSE) |> do.call(what = rbind)
+    }, mc.set.seed = TRUE, mc.cores = get_cores()) |>
+    do.call(what = rbind)
 
   # Generate reference data of random noise from orig data
   rdata <- apply(data, 2, sample) # scrambled data
-  random_scores <- replicate(reps, {
+  random_scores <- replicate(repeats, {
       vapply(clust_iter, .calc_k, .data = rdata, FUN.VALUE = 0.1)
     }, simplify = FALSE) |> do.call(what = rbind)
 
@@ -129,7 +146,7 @@ progeny_cluster <- function(data, clust_iter = 2:10L, reps = 10L,
   ret$D_max       <- cm(scores) - cm(random_scores)
   ret$D_gap       <- calc_gap_score(scores)
   ret$clust_iter  <- clust_iter
-  ret$repeats     <- reps
+  ret$repeats     <- repeats
   ret             <- c(ret, list(...))
   ret$call        <- match.call(expand.dots = TRUE)
   add_class(ret, "pclust")

@@ -32,7 +32,6 @@ various forms of permutation clustering analyses.
 * `stability_selection()`
 * `is_stab_sel()`
 * `get_stable_features()`
-* `get_threshold_features()`
 * `calc_emp_fdr()`
 * `calc_emp_fdr_breaks()`
 * `plot_emp_fdr()`
@@ -71,12 +70,9 @@ plot(stab_sel, thresh = 0.85)
 
 ```{r get-features}
 get_stable_features(stab_sel, thresh = 0.85)
-```
 
-#### Stable Features at multiple thresholds
-
-```{r get-threshold}
-get_threshold_features(stab_sel, thresh_vec = seq(0.7, 0.9, 0.05))
+# at multiple thresholds
+get_stable_features(stab_sel, thresh = seq(0.7, 0.9, 0.05))
 ```
 
 ---------------

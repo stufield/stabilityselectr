@@ -25,12 +25,12 @@ Imports:
     dplyr,
     ggplot2,
     glmnet,
+    parallel,
     tibble,
     withr
 Suggests:
     lintr,
     knitr,
-    parallel,
     patchwork,
     rmarkdown,
     spelling,
