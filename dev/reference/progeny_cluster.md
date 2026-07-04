@@ -9,13 +9,7 @@ See [`inherits()`](https://rdrr.io/r/base/class.html).
 ## Usage
 
 ``` r
-progeny_cluster(
-  data,
-  clust_iter = 2:10L,
-  reps = 10L,
-  verbose = interactive(),
-  ...
-)
+progeny_cluster(data, clust_iter = 2:10L, repeats = 10L, r_seed = 1234, ...)
 
 is_pclust(x)
 
@@ -30,29 +24,28 @@ print(x, ...)
 
 - data:
 
-  A (`n x p`) data matrix containing *n* samples and *p* features. Can
-  also be a data frame where each row corresponds to a sample or
-  observation, whereas each column corresponds to a feature or variable.
+  A \\n \times p\\ data matrix containing *n* samples and *p* features.
+  Can also be a data frame where each row corresponds to a sample or
+  observation, and each column corresponds to a feature or variable.
 
 - clust_iter:
 
-  `integer(n)`. Span of `k` clusters to interrogate
+  `integer(n)`. Span of `k` clusters to interrogate over.
 
-- reps:
+- repeats:
 
   `integer(1)`. The number of repeat iterations to perform. Particularly
   useful if error bars during plotting are desired.
 
-- verbose:
+- r_seed:
 
-  `logical(1)`. Print the progress of the clustering repeats to the
-  console. Defaults to
-  [`interactive()`](https://rdrr.io/r/base/interactive.html).
+  `integer(1)`. Seed for the random number generator, for
+  reproducibility.
 
 - ...:
 
-  Additional parameters passed to the internal `progeny_k()`, typically
-  `iter =` and `size =`. For the
+  Important! Parameters passed to the internal `progeny_k()`, i.e.
+  `n_iter =` and `size =`. Or, for the
   [`plot()`](https://rdrr.io/r/graphics/plot.default.html) method,
   arguments passed to the corresponding graphics device.
 
@@ -105,7 +98,7 @@ A `pclust` class object, a list containing:
 
   The number of repeat iterations to performed
 
-- iter:
+- n_iter:
 
   The number of progeny iterations to performed
 
@@ -139,61 +132,69 @@ Stu Field
 ## Examples
 
 ``` r
-# `iter=` and `size=` are passed to `progeny_k()`
-pclust <- withr::with_seed(1234,
-  progeny_cluster(progeny_data, clust_iter = 2:9L, iter = 20L, size = 6)
-)
+# `n_iter =` and `size =` are passed to `progeny_k()`
+pclust <- progeny_cluster(progeny_data, clust_iter = 2:9L,
+                          n_iter = 20L, size = 6)
 pclust
-#> ══ Progeny Cluster Object ═════════════════════════════════════════════
-#>    Call                     progeny_cluster(data = progeny_data, clust_iter = 2:9L, iter = 20L, size = 6)
-#>    Progeny Size             6
-#>    No. of Iterations        20
-#>    K Iterations             2 3 4 5 6 7 8 9
+#> ══ Progeny Clustering ═════════════════════════════════════════════════
+#> • Call              'progeny_cluster(data = progeny_data, clust_iter = 2:9L, n_iter = 20L, size = 6)'
+#> • Progeny Size      6
+#> • K iterations      '2 → 9'
+#> • No. iterations    20
+#> • No. repeats       10
 #> 
 #> ── Mean & CI95 Stability Scores ───────────────────────────────────────
-#>        k=2  k=3   k=4  k=5  k=6  k=7  k=8 k=9*
-#> 2.5%  2.66 15.4  8.24 12.8 10.5 16.4 14.7 19.6
-#>       3.63 21.0 12.70 15.5 13.5 18.2 20.0 24.6
-#> 97.5% 5.49 33.1 15.89 21.2 16.7 20.4 23.1 29.8
+#>        k=2  k=3  k=4  k=5  k=6  k=7  k=8 ★k=9★
+#> 2.5%  2.40 13.4 10.2 12.6 10.8 15.0 16.2  21.8
+#> mean  3.34 18.2 13.8 15.8 13.9 16.4 18.4  24.7
+#> 97.5% 4.87 24.4 18.7 20.2 17.0 17.6 22.0  27.8
 #> 
 #> ── Maximum Distance Scores ────────────────────────────────────────────
-#>      k=2     k=3*      k=4      k=5      k=6      k=7      k=8 
-#>  -1.4136  12.5106   0.0873   1.9946  -3.6936  -2.6257  -5.0276 
-#>      k=9 
-#> -11.7264 
+#>    k=2  ★k=3★    k=4    k=5    k=6    k=7    k=8    k=9 
+#>  0.666 11.403  4.447  2.235 -2.585  1.216  2.930  6.430 
 #> 
 #> ── Gap Distance Scores ────────────────────────────────────────────────
-#>    k=2   k=3*    k=4    k=5    k=6    k=7    k=8    k=9 
-#> -25.76  25.76 -11.17   4.89  -6.82   3.05  -2.93   2.93 
+#>     k=2   ★k=3★     k=4     k=5     k=6     k=7     k=8     k=9 
+#> -19.367  19.367  -6.464   3.913  -4.502   0.622  -4.341   4.341 
 #> ═══════════════════════════════════════════════════════════════════════
 
 # Test progeny clustering on iris data set
-# Doesn't work quite as well as the simulated data set
-clust_iris <- withr::with_seed(99,
-  progeny_cluster(iris[, -5L], clust_iter = 2:5L, size = 6L, iter = 50)
-)
+# Doesn't work as well as the simulated data set
+clust_iris <- progeny_cluster(iris[, -5L], clust_iter = 2:5L,
+                              size = 6L, n_iter = 250)  # pass `...`
 #> Warning: did not converge in 20 iterations
 #> Warning: did not converge in 20 iterations
-clust_iris    # true n clusters = 3
-#> ══ Progeny Cluster Object ═════════════════════════════════════════════
-#>    Call                     progeny_cluster(data = iris[, -5L], clust_iter = 2:5L, size = 6L, iter = 50)
-#>    Progeny Size             6
-#>    No. of Iterations        50
-#>    K Iterations             2 3 4 5
+#> Warning: did not converge in 20 iterations
+#> Warning: did not converge in 20 iterations
+#> Warning: did not converge in 20 iterations
+#> Warning: did not converge in 20 iterations
+#> Warning: did not converge in 20 iterations
+#> Warning: did not converge in 20 iterations
+#> Warning: did not converge in 20 iterations
+#> Warning: did not converge in 20 iterations
+
+# true n_clusters = 3
+clust_iris
+#> ══ Progeny Clustering ═════════════════════════════════════════════════
+#> • Call              'progeny_cluster(data = iris[, -5L], clust_iter = 2:5L, size = 6L, n_iter = 250)'
+#> • Progeny Size      6
+#> • K iterations      '2 → 5'
+#> • No. iterations    250
+#> • No. repeats       10
 #> 
 #> ── Mean & CI95 Stability Scores ───────────────────────────────────────
-#>       k=2*   k=3  k=4  k=5
-#> 2.5%   299  51.2 21.9 41.0
-#>        299  82.9 27.6 51.4
-#> 97.5%  299 194.9 39.4 72.8
+#>       ★k=2★  k=3  k=4  k=5
+#> 2.5%    396 50.2 26.6 43.6
+#> mean   1015 56.7 27.9 48.0
+#> 97.5%  1499 65.1 30.3 52.5
 #> 
 #> ── Maximum Distance Scores ────────────────────────────────────────────
-#>  k=2*   k=3   k=4   k=5 
-#> 292.2  73.9  17.3  39.2 
+#> ★k=2★   k=3   k=4   k=5 
+#> 969.3  48.7  19.6  38.3 
 #> 
 #> ── Gap Distance Scores ────────────────────────────────────────────────
-#> k=2*  k=3  k=4  k=5 
-#>  176 -176  -79   79 
+#>  ★k=2★    k=3    k=4    k=5 
+#>  927.7 -927.7  -48.9   48.9 
 #> ═══════════════════════════════════════════════════════════════════════
 
 # Test for class `pclust`

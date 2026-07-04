@@ -8,13 +8,13 @@
 ## Citation
 
 Field S (2026). *stabilityselectr: R Package to Perform Stability and
-Cluster Selection*. R package version 0.0.2.9000,
+Cluster Selection*. R package version 0.0.2.9001,
 <https://stufield.github.io/stabilityselectr>.
 
     @Manual{,
       title = {stabilityselectr: R Package to Perform Stability and Cluster Selection},
       author = {Stu Field},
       year = {2026},
-      note = {R package version 0.0.2.9000},
+      note = {R package version 0.0.2.9001},
       url = {https://stufield.github.io/stabilityselectr},
     }

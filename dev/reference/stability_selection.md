@@ -5,7 +5,7 @@ response variable. Stability selection is performed using a
 user-specified kernel. For classification problems the `l1-logistic`
 kernel should be used and the response should be a vector or factor of
 with two class labels. For lasso the response column should be a numeric
-vector. For "Cox" the response is a *two column matrix* containing the
+vector. For "cox" the response is a *two column matrix* containing the
 event time in the first column and the censoring indicator in the second
 column. The randomized lasso is used if the `alpha` parameter is set to
 a value less than 1. In a randomized Lasso the model coefficients are
@@ -26,13 +26,13 @@ The `is_stab_sel()` function checks whether an object is class
 stability_selection(
   x,
   y = NULL,
-  kernel = c("l1-logistic", "lasso", "ridge", "Cox", "pca.sd", "pca.thresh",
+  kernel = c("l1-logistic", "lasso", "ridge", "cox", "pca.sd", "pca.thresh",
     "multinomial"),
-  num_iter = 100,
+  n_iter = 100,
   parallel = FALSE,
   alpha = 0.8,
   Pw = 0.5,
-  num_perms = 0,
+  n_perm = 0,
   standardize = TRUE,
   lambda_min_ratio = 0.1,
   beta_threshold = 0L,
@@ -40,8 +40,7 @@ stability_selection(
   lambda_pad = 20,
   impute_outliers = FALSE,
   impute_n_sigma = 3,
-  r_seed = sample(1000, 1),
-  ...
+  r_seed = 1234
 )
 
 is_stab_sel(x)
@@ -50,7 +49,7 @@ is_stab_sel(x)
 print(x, ...)
 
 # S3 method for class 'stab_sel'
-summary(object, ..., thresh)
+summary(object, thresh = NULL, ...)
 
 # S3 method for class 'stab_sel'
 plot(
@@ -59,7 +58,7 @@ plot(
   custom_labels = NULL,
   main = NULL,
   sort_by_AUC = TRUE,
-  ln_cols = unlist(col_palette),
+  ln_cols = col_palette,
   add_perm = FALSE,
   emp_thresh = seq(1, 0.1, by = -0.01),
   ...
@@ -70,29 +69,30 @@ plot(
 
 - x:
 
-  A numeric \\n x p\\ matrix of predictive features containing `n`
+  A numeric \\n \times p\\ matrix of predictive features containing `n`
   observation rows and `p` feature columns. Alternatively, a `stab_sel`
   class object if passing to one of the S3 generic methods.
 
 - y:
 
-  The response variable. If kernel is "l1-logistic" then a vector of
-  binary class labels. If kernel is "Cox" then it is a two column matrix
-  with the event time in the first column and the censoring indicator (1
-  = event, 0 = censored) in the second column.
+  The response variable. If kernel is "l1-logistic", see
+  [`glmnet::glmnet()`](https://glmnet.stanford.edu/reference/glmnet.html)
+  for options. If kernel is "cox", a two column matrix with the event
+  time in the first column and the censoring indicator (1 = event, 0 =
+  censored) in the second column.
 
 - kernel:
 
   `character(1)`. A string describing the underlying model used for
-  selection. Options are:
+  selection. Current options are:
 
   - "l1-logistic" (default)
 
   - "lasso"
 
-  - "Cox"
-
   - "ridge"
+
+  - "cox"
 
   - "multinomial"
 
@@ -100,16 +100,16 @@ plot(
 
   - "pca.thresh"
 
-- num_iter:
+- n_iter:
 
-  `integer(1)`. Defining the number of sub-sampling iterations for the
-  stability selection.
+  `integer(1)`. Defining the number of sub-sampling iterations during
+  each selection.
 
 - parallel:
 
   `logical(1)`. Should parallel processing via multiple cores be
-  implemented? Must be on a Linux platform and have the parallel package
-  installed. Otherwise defaults to 1 core.
+  implemented? Must be on Linux or MacOS platform and have the parallel
+  package installed. Otherwise defaults to 1 core.
 
 - alpha:
 
@@ -123,14 +123,16 @@ plot(
   `alpha`. If `Pw = NA` then the coefficient weights are sampled
   uniformly from `alpha` to 1.
 
-- num_perms:
+- n_perm:
 
   `integer(1)`. The number of permutations to use in calculating the
   empirical false positive rate.
 
 - standardize:
 
-  `logical(1)`. Whether the data should be centered and scaled.
+  `logical(1)`. Whether the data should be centered and scaled. Passed
+  to
+  [`glmnet::glmnet()`](https://glmnet.stanford.edu/reference/glmnet.html).
 
 - lambda_min_ratio:
 
@@ -148,36 +150,35 @@ plot(
 
 - elastic_alpha:
 
-  `numeric(1)`. Floating point value between 0 and 1. When 0, the
-  results of
+  `numeric(1)`. A value in `[0, 1]`. When 0, the results of
   [`glmnet::glmnet()`](https://glmnet.stanford.edu/reference/glmnet.html)
   are equivalent to Ridge regression. When 1, the results are equivalent
-  to Lasso. Any value between 0 and 1 creates a compromise between L1
-  and L2 penalty.
+  to Lasso. Any value between 0 and 1 creates a compromise between the
+  L1 and L2 penalty.
 
 - lambda_pad:
 
-  The lambda path is padded with high values of lambda in order to
-  produce a more appealing plot. Occasionally, the degree of padding
-  needs to be adjusted in order to produce better resolution at low
-  values of lambda. Typical values for this parameter are 20 (default),
-  15, 10, or 5.
+  `numeric(1)`. The lambda path is padded with high lambda values to
+  produce more appealing stability paths for plotting. Occasionally, the
+  degree of padding needs adjustment to produce better resolution at
+  lower lambda. Typical values are: 20 (default), 15, 10, or 5.
 
 - impute_outliers:
 
-  `logical(1)`. Should statistical outliers (\\3 \* \sigma\\) be imputed
-  to approximate a Gaussian distribution during stability selection? See
+  `logical(1)`. Should statistical outliers (\\3 \times \sigma\\) be
+  imputed to approximate a Gaussian distribution during stability
+  selection? See
   [`wranglr::impute_outliers()`](https://stufield.github.io/wranglr/reference/impute_outliers.html).
 
 - impute_n_sigma:
 
-  `numeric(1)`. Standard deviation outlier threshold for imputing
-  outliers if `impute_outliers = TRUE`, ignored otherwise.
+  `numeric(1)`. Threshold standard deviation for outlier detection when
+  imputing outliers. Ignored if `impute_outliers = FALSE`.
 
 - r_seed:
 
-  `integer(1)`. Seed for the random number generator, allowing for
-  reproducibility of results.
+  `integer(1)`. Seed for the random number generator, for
+  reproducibility.
 
 - ...:
 
@@ -192,12 +193,14 @@ plot(
 
 - object:
 
-  An `stab_sel` class object.
+  A `stab_sel` class object.
 
 - thresh:
 
-  A numeric minimum selection probability threshold. This value can also
-  be a vector of values in `[0, 1]`, but ideally greater than 0.50.
+  `numeric(1)` in `[0, 1]`. the minimum selection probability threshold.
+  In some instances this value can also be a vector, but is generally a
+  scalar \> 0.50 for
+  [`get_stable_features()`](https://stufield.github.io/stabilityselectr/dev/reference/get_stable_features.md).
 
 - custom_labels:
 
@@ -236,7 +239,7 @@ A `stab_sel` class object:
 
 - stabpath_matrix:
 
-  A matrix of \\features x lambda_seq\\ containing stability selection
+  A matrix of \\p \times lambda\\seq\\ containing stability selection
   probabilities. A row in this matrix corresponds to a stability
   selection path for a single feature.
 
@@ -255,9 +258,9 @@ A `stab_sel` class object:
 
 - kernel:
 
-  the kernel used (e.g. l1-logistic).
+  the kernel used (e.g. `l1-logistic`).
 
-- num_iter:
+- n_iter:
 
   The number of iterations used in computing the stability paths.
 
@@ -288,7 +291,8 @@ A `stab_sel` class object:
 
 - beta:
 
-  A matrix of the betas calculated during the selection process.
+  A matrix of the estimated betas calculated during the selection
+  process.
 
 - r_seed:
 
@@ -312,7 +316,7 @@ The S3 print method returns:
 
 - Number of Iterations:
 
-  Number of iterations in the selection (`num_iter =` argument).
+  Number of iterations in the selection (`n_iter =` argument).
 
 - Standardized:
 
@@ -339,10 +343,10 @@ A `ggplot`.
 
 ## Details
 
-Stability selection can be performed on multiple cores by setting
-`parallel = TRUE`. This functionality requires
+Stability selection can be run in parallel using multiple forked
+processes by setting `parallel = TRUE`. This requires
 [`parallel::mclapply()`](https://rdrr.io/r/parallel/mclapply.html) from
-the parallel package. This is *not* available for Windows based OS.
+the parallel package. This is *not* available for Windows OS.
 
 ## Functions
 
@@ -389,434 +393,32 @@ the Royal Statistical Society: Series B (Statistical Methodology), 72:
 
 ## Author
 
-Michael R. Mehan, Stu Field, and Robert Kirk DeLisle
+Stu Field, Michael R. Mehan, and Robert Kirk DeLisle
 
 ## Examples
 
 ``` r
 # l1-logistic
-withr::with_seed(101, {
-  n_feat      <- 10
-  n_samp      <- 25
-  x           <- matrix(rnorm(n_samp * n_feat), n_samp, n_feat)
-  colnames(x) <- paste0("feat", "_", head(letters, n_feat))
-  y           <- sample(1:2, n_samp, replace = TRUE)
-  stab_sel    <- stability_selection(x, y, kernel = "l1-logistic", r_seed = 101)
-})
+n_feat      <- 20L
+n_samp      <- 2500L
+x           <- matrix(rnorm(n_samp * n_feat), n_samp, n_feat)
+colnames(x) <- paste0("feat", "_", head(letters, n_feat))
+y           <- sample(1:2, n_samp, replace = TRUE)
+stab_sel    <- stability_selection(x, y)
 #> ✓ Using kernel: 'l1-logistic' and 1 core (serial)
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
-#> Warning: one multinomial or binomial class has fewer than 8  observations; dangerous ground
+#> ✓ Stablity path run time: 1.783
 
 # Cox
 xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
 
 # Note: this works because colnames are already "time" and "status".
-#   In 'real' datasets, you may need to rename the final matrix as
-#   "time" and "status".
+#   In 'real' datasets, you may need to rename the final matrix to
+#   `time` and `status`.
 
-ycox <- select(simdata, time, status) |> as.matrix()
-stab_sel_cox <- stability_selection(xcox, ycox, kernel = "Cox", r_seed = 3)
-#> ✓ Using kernel: 'Cox' and 1 core (serial)
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
-#> Warning: Starting in glmnet 5.1, the default Cox tie-handling method will change from 'breslow' to 'efron' (matching survival::coxph). To silence this message and lock in the v5.0 default, pass cox.ties = 'breslow' explicitly. To preview the v5.1 behavior, pass cox.ties = 'efron'.
+ycox <- data.matrix(select(simdata, time, status))
+stab_sel_cox <- stability_selection(xcox, ycox, kernel = "cox", r_seed = 3)
+#> ✓ Using kernel: 'cox' and 1 core (serial)
+#> ✓ Stablity path run time: 0.297
 # Test for class `stab_sel`
 is_stab_sel(stab_sel)
 #> [1] TRUE
@@ -829,34 +431,61 @@ stab_sel
 #> • Number of Iterations        100
 #> • Standardized                'Yes'
 #> • Imputed Outliers            'No'
-#> • Lambda Max                  0.244
+#> • Lambda Max                  0.0308
 #> • Lambda Min Ratio            0.1
 #> • Permuted Data               'No'
-#> • Random Seed                 101
+#> • Random Seed                 1234
 #> ═══════════════════════════════════════════════════════════════════════
 
 # S3 summary method
 summary(stab_sel, thresh = 0.6)
-#> # A tibble: 10 × 4
+#> # A tibble: 20 × 4
 #>    feature MaxSelectProb   AUC FDRbound
 #>    <chr>           <dbl> <dbl>    <dbl>
-#>  1 feat_d          0.845 0.410     0.05
-#>  2 feat_h          0.805 0.349     0.1 
-#>  3 feat_b          0.715 0.256     0.15
-#>  4 feat_a          0.68  0.291     0.2 
-#>  5 feat_j          0.67  0.235     0.25
-#>  6 feat_e          0.645 0.247     0.3 
-#>  7 feat_c          0.625 0.255     0.35
-#>  8 feat_g          0.625 0.253     0.4 
-#>  9 feat_i          0.62  0.233     0.45
-#> 10 feat_f          0.605 0.212     0.5 
+#>  1 feat_m          0.975 0.460   0.0125
+#>  2 feat_t          0.95  0.468   0.025 
+#>  3 feat_d          0.945 0.383   0.0375
+#>  4 feat_e          0.925 0.433   0.05  
+#>  5 feat_b          0.915 0.383   0.0625
+#>  6 feat_i          0.91  0.358   0.075 
+#>  7 feat_s          0.9   0.345   0.0875
+#>  8 feat_r          0.89  0.340   0.1   
+#>  9 feat_a          0.87  0.315   0.113 
+#> 10 feat_f          0.87  0.264   0.125 
+#> 11 feat_g          0.87  0.288   0.138 
+#> 12 feat_q          0.87  0.330   0.15  
+#> 13 feat_h          0.85  0.292   0.163 
+#> 14 feat_l          0.84  0.302   0.175 
+#> 15 feat_o          0.84  0.273   0.188 
+#> 16 feat_p          0.835 0.240   0.2   
+#> 17 feat_c          0.825 0.274   0.213 
+#> 18 feat_k          0.82  0.238   0.225 
+#> 19 feat_n          0.785 0.238   0.238 
+#> 20 feat_j          0.78  0.237   0.25  
+
 summary(stab_sel, thresh = 0.8, add_features = "feat_c")   # force feat_c into table
-#> # A tibble: 3 × 4
-#>   feature MaxSelectProb   AUC FDRbound
-#>   <chr>           <dbl> <dbl>    <dbl>
-#> 1 feat_d          0.845 0.410   0.0167
-#> 2 feat_h          0.805 0.349   0.0333
-#> 3 feat_c          0.625 0.255   0.05  
+#> # A tibble: 18 × 4
+#>    feature MaxSelectProb   AUC FDRbound
+#>    <chr>           <dbl> <dbl>    <dbl>
+#>  1 feat_m          0.975 0.460  0.00417
+#>  2 feat_t          0.95  0.468  0.00833
+#>  3 feat_d          0.945 0.383  0.0125 
+#>  4 feat_e          0.925 0.433  0.0167 
+#>  5 feat_b          0.915 0.383  0.0208 
+#>  6 feat_i          0.91  0.358  0.025  
+#>  7 feat_s          0.9   0.345  0.0292 
+#>  8 feat_r          0.89  0.340  0.0333 
+#>  9 feat_a          0.87  0.315  0.0375 
+#> 10 feat_f          0.87  0.264  0.0417 
+#> 11 feat_g          0.87  0.288  0.0458 
+#> 12 feat_q          0.87  0.330  0.05   
+#> 13 feat_h          0.85  0.292  0.0542 
+#> 14 feat_l          0.84  0.302  0.0583 
+#> 15 feat_o          0.84  0.273  0.0625 
+#> 16 feat_p          0.835 0.240  0.0667 
+#> 17 feat_c          0.825 0.274  0.0708 
+#> 18 feat_k          0.82  0.238  0.075  
+
 # S3 plot method
 plot(stab_sel, thresh = 0.8)
 

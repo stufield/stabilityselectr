@@ -17,25 +17,27 @@ Calculate the empirical false discovery rates (FDR) via permutations of
 the `NULL` model (randomized permutations).
 
 - [`calc_emp_fdr()`](https://stufield.github.io/stabilityselectr/dev/reference/calc_emp_fdr.md)
+  [`calc_emp_fdr_breaks()`](https://stufield.github.io/stabilityselectr/dev/reference/calc_emp_fdr.md)
+  [`plot_emp_fdr()`](https://stufield.github.io/stabilityselectr/dev/reference/calc_emp_fdr.md)
+  [`plot_permuted_data()`](https://stufield.github.io/stabilityselectr/dev/reference/calc_emp_fdr.md)
   : Calculate Empirical Number of False Positives
-- [`calc_emp_fdr_breaks()`](https://stufield.github.io/stabilityselectr/dev/reference/calc_emp_fdr_breaks.md)
-  : Calculate Empirical FDR Break Points
 
 ## Stable Features
 
 Return the stable features at various probability thresholds.
 
 - [`get_stable_features()`](https://stufield.github.io/stabilityselectr/dev/reference/get_stable_features.md)
-  [`get_threshold_features()`](https://stufield.github.io/stabilityselectr/dev/reference/get_stable_features.md)
   : Calculate Stable Features
 
 ## Plotting Routines
 
 Various plot traces of stability paths or cluster plots.
 
-- [`plot_emp_fdr()`](https://stufield.github.io/stabilityselectr/dev/reference/plot_emp_fdr.md)
-  [`plot_permuted_data()`](https://stufield.github.io/stabilityselectr/dev/reference/plot_emp_fdr.md)
-  : Plot Empirical FDR
+- [`calc_emp_fdr()`](https://stufield.github.io/stabilityselectr/dev/reference/calc_emp_fdr.md)
+  [`calc_emp_fdr_breaks()`](https://stufield.github.io/stabilityselectr/dev/reference/calc_emp_fdr.md)
+  [`plot_emp_fdr()`](https://stufield.github.io/stabilityselectr/dev/reference/calc_emp_fdr.md)
+  [`plot_permuted_data()`](https://stufield.github.io/stabilityselectr/dev/reference/calc_emp_fdr.md)
+  : Calculate Empirical Number of False Positives
 - [`progeny_cluster()`](https://stufield.github.io/stabilityselectr/dev/reference/progeny_cluster.md)
   [`is_pclust()`](https://stufield.github.io/stabilityselectr/dev/reference/progeny_cluster.md)
   [`plot(`*`<pclust>`*`)`](https://stufield.github.io/stabilityselectr/dev/reference/progeny_cluster.md)
