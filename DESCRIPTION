@@ -37,7 +37,10 @@ Suggests:
     survival,
     testthat,
     tidyr
-VignetteBuilder: 
+Remotes:
+    stufield/helpr,
+    stufield/wranglr
+VignetteBuilder:
     knitr
 Encoding: UTF-8
 Language: en-US
