@@ -16,7 +16,7 @@ calc_emp_fdr_breaks(
   fdr_breaks = c(0.5, 1, 2, 3, 5)
 )
 
-plot_emp_fdr(x, thresh_seq = seq(1, 0.1, by = -0.01))
+plot_emp_fdr(x, ...)
 
 plot_permuted_data(x, which = NULL, ...)
 ```
@@ -46,15 +46,16 @@ plot_permuted_data(x, which = NULL, ...)
 
   `numeric(n)`. A vector specifying the
 
+- ...:
+
+  Additional arguments passed to either `calc_emp_fdr_breaks()` (i.e.
+  `thresh_seq` and `fdr_breaks`) or
+  [`plot.stab_sel()`](https://stufield.github.io/stabilityselectr/reference/stability_selection.md).
+
 - which:
 
   `integer(1)`. Which of the null hypothesis permuted stability paths to
   plot.
-
-- ...:
-
-  Additional arguments passed to
-  [`plot.stab_sel()`](https://stufield.github.io/stabilityselectr/reference/stability_selection.md).
 
 ## Value
 
@@ -122,8 +123,8 @@ y           <- sample(1:2, n_samples, replace = TRUE)
 ss <- stability_selection(x, y, n_iter = 25, n_perm = 50,
                           r_seed = 101, parallel = TRUE)
 #> ✓ Using kernel: 'binomial' and 1 core (serial)
-#> ✓ Stablity path run time: 0.103
-#> ✓ Perm path run time: 4.077
+#> ✓ Stablity path run time: 0.099
+#> ✓ Perm path run time: 2.576
 calc_emp_fdr(ss, seq(0.5, 0.9, 0.1))
 #> thresh_0.5 thresh_0.6 thresh_0.7 thresh_0.8 thresh_0.9 
 #>      20.00      19.82      17.36       9.94       2.80 
@@ -159,11 +160,6 @@ calc_emp_fdr_breaks(ss)
 
 # plot the FDR
 plot_emp_fdr(ss)  # typically set permutations > 75
-#> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-#> ℹ Please use `linewidth` instead.
-#> ℹ The deprecated feature was likely used in the stabilityselectr
-#>   package.
-#>   Please report the issue to the authors.
 
 
 # Plot the permuted data individually
