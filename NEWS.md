@@ -1,6 +1,10 @@
-# stabilityselectr 0.0.2.9001 (devel)
+# stabilityselectr 0.1.0
 
-* Ongoing development ...
+* Development ...
+  - major structural changes
+  - speed improvement
+  - converge params
+  - general improved user experience
 
 # stabilityselectr 0.0.2
 
