@@ -26,10 +26,7 @@
 #' @export
 plot_emp_fdr <- function(x, ...) {
 
-  stopifnot(
-    "`x` must be a `stab_sel` object." = is_stab_sel(x),
-    "`x` must be creted with `n_perm = TRUE`." = x$perm_data
-  )
+  .check_perm(x)
 
   L <- length(x$permpath_list)
   emp_breaks <- calc_emp_fdr_breaks(x, ...)

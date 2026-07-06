@@ -1,4 +1,12 @@
 
+.check_perm <- function(x) {
+  stopifnot(
+    "`x` must be a `stab_sel` object."         = is_stab_sel(x),
+    "`x` must be creted with `n_perm = TRUE`." = x$perm_data,
+    "`x` is missing permuted (null) data."     = !is.null(x$permpath_list)
+  )
+}
+
 #' @importFrom stats runif
 #' @noRd
 .calcW <- function(p, alpha, Pw, kernel) {

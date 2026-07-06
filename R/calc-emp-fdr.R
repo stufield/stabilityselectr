@@ -34,23 +34,16 @@
 #'
 #' ss <- stability_selection(x, y, n_iter = 25, n_perm = 50,
 #'                           r_seed = 101, parallel = TRUE)
+#'
 #' calc_emp_fdr(ss, seq(0.5, 0.9, 0.1))
 #'
 #' @export
 calc_emp_fdr <- function(x, thresh_seq, warn = TRUE) {
 
-  if ( !is_stab_sel(x) ) {
-    stop("`x` argument *must* be class `stab_sel`.", call. = FALSE)
-  }
+  .check_perm(x)
 
   if ( missing(thresh_seq) ) {
     stop("Must pass `thresh_seq =` param", call. = FALSE)
-  }
-
-  if ( !x$perm_data || is.null(x$permpath_list) ) {
-    stop("No permuted data ...\n",
-         "Please set `n_perm > 0` in `stability_selection()`",
-         call. = FALSE)
   }
 
   # count FP counts at various thresholds
@@ -60,8 +53,9 @@ calc_emp_fdr <- function(x, thresh_seq, warn = TRUE) {
     }) |> data.frame() # keeps rownames; `map_df()` does not
 
   if ( ncol(perm_path_n) < 5L && warn ) {
-    signal_info(
-      "Returning mean of < 5 permutations ...", call. = FALSE)
+    signal_info("Returning mean of < 5 permutations ...",
+                call. = FALSE)
   }
-  apply(perm_path_n, 1, mean)
+
+  apply(perm_path_n, 1L, mean)
 }
