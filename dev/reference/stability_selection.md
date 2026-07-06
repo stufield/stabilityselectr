@@ -2,11 +2,11 @@
 
 Performs stability selection on a set of predictive features and a
 response variable. Stability selection is performed using a
-user-specified kernel. For classification problems the `l1-logistic`
-kernel should be used and the response should be a vector or factor of
-with two class labels. For lasso the response column should be a numeric
-vector. For "cox" the response is a *two column matrix* containing the
-event time in the first column and the censoring indicator in the second
+user-specified kernel. For classification problems the `binomial` kernel
+should be used and the response should be a vector or factor of with two
+class labels. For lasso the response column should be a numeric vector.
+For "cox" the response is a *two column matrix* containing the event
+time in the first column and the censoring indicator in the second
 column. The randomized lasso is used if the `alpha` parameter is set to
 a value less than 1. In a randomized Lasso the model coefficients are
 randomly re-weighted when calculating the regularization term. This
@@ -26,8 +26,7 @@ The `is_stab_sel()` function checks whether an object is class
 stability_selection(
   x,
   y = NULL,
-  kernel = c("l1-logistic", "lasso", "ridge", "cox", "pca.sd", "pca.thresh",
-    "multinomial"),
+  kernel = c("binomial", "lasso", "ridge", "cox", "multinomial", "pca.sd", "pca.thresh"),
   n_iter = 100,
   parallel = FALSE,
   alpha = 0.8,
@@ -75,7 +74,7 @@ plot(
 
 - y:
 
-  The response variable. If kernel is "l1-logistic", see
+  The response variable. If kernel is "binomial", see
   [`glmnet::glmnet()`](https://glmnet.stanford.edu/reference/glmnet.html)
   for options. If kernel is "cox", a two column matrix with the event
   time in the first column and the censoring indicator (1 = event, 0 =
@@ -86,7 +85,7 @@ plot(
   `character(1)`. A string describing the underlying model used for
   selection. Current options are:
 
-  - "l1-logistic" (default)
+  - "binomial" (logistic)
 
   - "lasso"
 
@@ -258,7 +257,7 @@ A `stab_sel` class object:
 
 - kernel:
 
-  the kernel used (e.g. `l1-logistic`).
+  the kernel used (e.g. `binomial`).
 
 - n_iter:
 
@@ -398,15 +397,15 @@ Stu Field, Michael R. Mehan, and Robert Kirk DeLisle
 ## Examples
 
 ``` r
-# l1-logistic
+# logistic regression
 n_feat      <- 20L
 n_samp      <- 2500L
 x           <- matrix(rnorm(n_samp * n_feat), n_samp, n_feat)
 colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 y           <- sample(1:2, n_samp, replace = TRUE)
 stab_sel    <- stability_selection(x, y)
-#> ✓ Using kernel: 'l1-logistic' and 1 core (serial)
-#> ✓ Stablity path run time: 1.783
+#> ✓ Using kernel: 'binomial' and 1 core (serial)
+#> ✓ Stablity path run time: 1.898
 
 # Cox
 xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
@@ -418,14 +417,14 @@ xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
 ycox <- data.matrix(select(simdata, time, status))
 stab_sel_cox <- stability_selection(xcox, ycox, kernel = "cox", r_seed = 3)
 #> ✓ Using kernel: 'cox' and 1 core (serial)
-#> ✓ Stablity path run time: 0.297
+#> ✓ Stablity path run time: 0.435
 # Test for class `stab_sel`
 is_stab_sel(stab_sel)
 #> [1] TRUE
 
 # S3 print method
 stab_sel
-#> ══ Stability Selection (Kernel: l1-logistic) ══════
+#> ══ Stability Selection (Kernel: binomial) ═════════
 #> • Weakness (alpha)            0.8
 #> • Weakness Probability (Pw)   0.5
 #> • Number of Iterations        100

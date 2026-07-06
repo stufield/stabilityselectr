@@ -1,8 +1,16 @@
 # Changelog
 
-## stabilityselectr 0.0.2.9001 (devel)
+## stabilityselectr (development version)
 
-- Ongoing development …
+- 
+
+## stabilityselectr 0.1.0
+
+- Development …
+  - major structural changes
+  - speed improvement
+  - converge params
+  - general improved user experience
 
 ## stabilityselectr 0.0.2
 

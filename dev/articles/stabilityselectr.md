@@ -37,13 +37,13 @@ n_samples   <- 100L
 x           <- matrix(rnorm(n_feat * n_samples), n_samples, n_feat)
 colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 y           <- sample(1:2, n_samples, replace = TRUE)
-stab_sel    <- stability_selection(x, y, "l1-logistic", n_iter = 500L)
-#> ✓ Using kernel: 'l1-logistic' and 1 core (serial)
-#> ✓ Stablity path run time: 1.285
+stab_sel    <- stability_selection(x, y, "binomial", n_iter = 500L)
+#> ✓ Using kernel: 'binomial' and 1 core (serial)
+#> ✓ Stablity path run time: 1.844
 is_stab_sel(stab_sel)
 #> [1] TRUE
 stab_sel
-#> ══ Stability Selection (Kernel: l1-logistic) ══════════════════════════
+#> ══ Stability Selection (Kernel: binomial) ═════════════════════════════
 #> • Weakness (alpha)            0.8
 #> • Weakness Probability (Pw)   0.5
 #> • Number of Iterations        500

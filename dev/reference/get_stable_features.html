@@ -9,7 +9,7 @@ selection probability greater than a minimum threshold."><meta name="robots" con
 
     <a class="navbar-brand me-2" href="../index.html">stabilityselectr</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.0.2.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -110,7 +110,7 @@ user a control mechanism for the output behavior.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># l1-logistic</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># logistic regression</span></span></span>
 <span class="r-in"><span><span class="va">n_feat</span>      <span class="op">&lt;-</span> <span class="fl">20</span></span></span>
 <span class="r-in"><span><span class="va">n_samples</span>   <span class="op">&lt;-</span> <span class="fl">100</span></span></span>
 <span class="r-in"><span><span class="va">x</span>           <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n_feat</span> <span class="op">*</span> <span class="va">n_samples</span><span class="op">)</span>, <span class="va">n_samples</span>, <span class="va">n_feat</span><span class="op">)</span></span></span>
@@ -118,7 +118,7 @@ user a control mechanism for the output behavior.</p>
 <span class="r-in"><span><span class="va">y</span>           <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="va">n_samples</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">stab_sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="stability_selection.html">stability_selection</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, r_seed <span class="op">=</span> <span class="fl">101</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Using kernel: <span style="color: #0000BB;">'l1-logistic'</span> and <span style="color: #0000BB;">1</span> core (serial)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Using kernel: <span style="color: #0000BB;">'binomial'</span> and <span style="color: #0000BB;">1</span> core (serial)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Stablity path run time: <span style="color: #0000BB;">0.285</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Stable features at `thresh =`</span></span></span>

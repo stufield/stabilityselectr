@@ -66,7 +66,7 @@ Stu Field
 ## Examples
 
 ``` r
-# l1-logistic
+# logistic regression
 n_feat      <- 20
 n_samples   <- 100
 x           <- matrix(rnorm(n_feat * n_samples), n_samples, n_feat)
@@ -74,7 +74,7 @@ colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 y           <- sample(1:2, n_samples, replace = TRUE)
 
 stab_sel <- stability_selection(x, y, r_seed = 101)
-#> ✓ Using kernel: 'l1-logistic' and 1 core (serial)
+#> ✓ Using kernel: 'binomial' and 1 core (serial)
 #> ✓ Stablity path run time: 0.285
 
 # Stable features at `thresh =`
