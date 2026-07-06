@@ -123,45 +123,21 @@ y           <- sample(1:2, n_samples, replace = TRUE)
 ss <- stability_selection(x, y, n_iter = 25, n_perm = 50,
                           r_seed = 101, parallel = TRUE)
 #> ✓ Using kernel: 'binomial' and 1 core (serial)
-#> ✓ Stablity path run time: 0.099
-#> ✓ Perm path run time: 2.576
+#> ✓ Stablity path run time: 0.088
+#> ✓ Perm path run time: 2.588
+
 calc_emp_fdr(ss, seq(0.5, 0.9, 0.1))
-#> thresh_0.5 thresh_0.6 thresh_0.7 thresh_0.8 thresh_0.9 
-#>      20.00      19.82      17.36       9.94       2.80 
+#> Error in .check_perm(x): `x` is missing permuted (null) data.
 
 # calculate the FDR break points
 calc_emp_fdr_breaks(ss)
-#> $fdr_data
-#> # A tibble: 91 × 3
-#>    MeanFPs n_selected piThresh
-#>      <dbl>      <int>    <dbl>
-#>  1    0.16          1     1   
-#>  2    0.16          1     0.99
-#>  3    0.48          1     0.98
-#>  4    0.48          1     0.97
-#>  5    0.94          2     0.96
-#>  6    0.94          2     0.95
-#>  7    1.48          3     0.94
-#>  8    1.48          3     0.93
-#>  9    2.12          3     0.92
-#> 10    2.12          3     0.91
-#> # ℹ 81 more rows
-#> 
-#> $breaks
-#> # A tibble: 5 × 4
-#>   FDR_breaks MeanFPs n_selected piThresh
-#>        <dbl>   <dbl>      <int>    <dbl>
-#> 1        0.5    0.94          2     0.96
-#> 2        1      1.48          3     0.94
-#> 3        2      2.12          3     0.92
-#> 4        3      3.94          6     0.88
-#> 5        5      5.02          6     0.86
-#> 
+#> Error in .check_perm(x): `x` is missing permuted (null) data.
 
 # plot the FDR
 plot_emp_fdr(ss)  # typically set permutations > 75
-
+#> Error in .check_perm(x): `x` is missing permuted (null) data.
 
 # Plot the permuted data individually
 plot_permuted_data(ss, 3L)   # choose 3rd permutation
+#> Error in .check_perm(x): `x` is missing permuted (null) data.
 ```

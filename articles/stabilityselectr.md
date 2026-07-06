@@ -39,7 +39,7 @@ colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 y           <- sample(1:2, n_samples, replace = TRUE)
 stab_sel    <- stability_selection(x, y, "binomial", n_iter = 500L)
 #> ✓ Using kernel: 'binomial' and 1 core (serial)
-#> ✓ Stablity path run time: 1.604
+#> ✓ Stablity path run time: 1.709
 is_stab_sel(stab_sel)
 #> [1] TRUE
 stab_sel
