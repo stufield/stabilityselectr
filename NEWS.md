@@ -1,3 +1,7 @@
+# stabilityselectr (development version)
+
+*
+
 # stabilityselectr 0.1.0
 
 * Development ...
