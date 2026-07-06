@@ -16,7 +16,7 @@ calc_emp_fdr_breaks(
   fdr_breaks = c(0.5, 1, 2, 3, 5)
 )
 
-plot_emp_fdr(x, thresh_seq = seq(1, 0.1, by = -0.01))
+plot_emp_fdr(x, ...)
 
 plot_permuted_data(x, which = NULL, ...)
 }
@@ -37,10 +37,12 @@ to calculate various thresholds.
 
 \code{numeric(n)}. A vector specifying the}
 
+\item{...}{Additional arguments passed to either
+\code{\link[=calc_emp_fdr_breaks]{calc_emp_fdr_breaks()}} (i.e. \code{thresh_seq} and \code{fdr_breaks})
+or \code{\link[=plot.stab_sel]{plot.stab_sel()}}.}
+
 \item{which}{\code{integer(1)}. Which of the null hypothesis
 permuted stability paths to plot.}
-
-\item{...}{Additional arguments passed to \code{\link[=plot.stab_sel]{plot.stab_sel()}}.}
 }
 \value{
 A named vector indicating the average number
