@@ -28,7 +28,7 @@
 #'                              penalty.factor = stats::runif(ncol(x)))$lambda
 #'
 #' path_matrix <- withr::with_seed(101,
-#'   calc_stability_paths(x, y, kernel = "l1-logistic", standardize = TRUE,
+#'   calc_stability_paths(x, y, kernel = "binomial", standardize = TRUE,
 #'                        alpha = 0.8, Pw = 0.8, lambda_seq = lambda_vec))
 #'
 #' # Cox kernel example
@@ -79,7 +79,7 @@ calc_stability_paths <- function(x, y = NULL, kernel,
   # nolint end
 
   .stab_path_type <- switch(kernel,
-    "l1-logistic" = .calc_l1,
+    "binomial"    = .calc_l1,
     "lasso"       = .calc_lasso,
     "multinomial" = .calc_multinomial,
     "pca.sd"      = .calc_pca_sd,

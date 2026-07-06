@@ -49,7 +49,7 @@ time and is not always desired, so this method offers the
 user a control mechanism for the output behavior.
 }
 \examples{
-# l1-logistic
+# logistic regression
 n_feat      <- 20
 n_samples   <- 100
 x           <- matrix(rnorm(n_feat * n_samples), n_samples, n_feat)

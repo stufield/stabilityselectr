@@ -32,8 +32,8 @@
 #' colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 #' y           <- sample(1:2, n_samples, replace = TRUE)
 #'
-#' ss <- stability_selection(x, y, "l1-logistic", n_iter = 25,
-#'                           n_perm = 50, r_seed = 101, parallel = TRUE)
+#' ss <- stability_selection(x, y, n_iter = 25, n_perm = 50,
+#'                           r_seed = 101, parallel = TRUE)
 #' calc_emp_fdr(ss, seq(0.5, 0.9, 0.1))
 #'
 #' @export

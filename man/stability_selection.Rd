@@ -11,8 +11,7 @@
 stability_selection(
   x,
   y = NULL,
-  kernel = c("l1-logistic", "lasso", "ridge", "cox", "pca.sd", "pca.thresh",
-    "multinomial"),
+  kernel = c("binomial", "lasso", "ridge", "cox", "multinomial", "pca.sd", "pca.thresh"),
   n_iter = 100,
   parallel = FALSE,
   alpha = 0.8,
@@ -52,7 +51,7 @@ containing \code{n} observation rows and \code{p} feature columns.
 Alternatively, a \code{stab_sel} class object if passing to one of
 the S3 generic methods.}
 
-\item{y}{The response variable. If kernel is "l1-logistic", see
+\item{y}{The response variable. If kernel is "binomial", see
 \code{\link[glmnet:glmnet]{glmnet::glmnet()}} for options. If kernel is "cox", a two column
 matrix with the event time in the first column and the censoring
 indicator (1 = event, 0 = censored) in the second column.}
@@ -60,7 +59,7 @@ indicator (1 = event, 0 = censored) in the second column.}
 \item{kernel}{\code{character(1)}. A string describing the underlying
 model used for selection. Current options are:
 \itemize{
-\item "l1-logistic" (default)
+\item "binomial" (logistic)
 \item "lasso"
 \item "ridge"
 \item "cox"
@@ -172,7 +171,7 @@ matrix corresponds to a stability selection path for a single feature.}
 correspond to the columns of \code{stabpath_matrix}.}
 \item{alpha}{the weakness parameter provided in the call.}
 \item{Pw}{the weak weight probability provided in the call.}
-\item{kernel}{the kernel used (e.g. \code{l1-logistic}).}
+\item{kernel}{the kernel used (e.g. \code{binomial}).}
 \item{n_iter}{The number of iterations used in computing
 the stability paths.}
 \item{standardize}{should the data be standardized prior to analysis?}
@@ -218,7 +217,7 @@ A \code{ggplot}.
 Performs stability selection on a set of predictive features
 and a response variable. Stability selection is performed using
 a user-specified kernel. For classification problems the
-\code{l1-logistic} kernel should be used and the response should be
+\code{binomial} kernel should be used and the response should be
 a vector or factor of with two class labels. For lasso the
 response column should be a numeric vector. For "cox" the
 response is a \emph{two column matrix} containing the event time in
@@ -278,7 +277,7 @@ Additional features can be passed as strings to the
 summary method via the \code{add_features} argument.
 }
 \examples{
-# l1-logistic
+# logistic regression
 n_feat      <- 20L
 n_samp      <- 2500L
 x           <- matrix(rnorm(n_samp * n_feat), n_samp, n_feat)

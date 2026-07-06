@@ -128,7 +128,7 @@
 
 # `stab_sel` S3 print method returns expected known output
 
-    == Stability Selection (Kernel: l1-logistic) ===================================
+    == Stability Selection (Kernel: binomial) ======================================
     * Weakness (alpha)            0.8
     * Weakness Probability (Pw)   0.5
     * Number of Iterations        100

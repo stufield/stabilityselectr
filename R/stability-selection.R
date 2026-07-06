@@ -3,7 +3,7 @@
 #' Performs stability selection on a set of predictive features
 #'   and a response variable. Stability selection is performed using
 #'   a user-specified kernel. For classification problems the
-#'   `l1-logistic` kernel should be used and the response should be
+#'   `binomial` kernel should be used and the response should be
 #'   a vector or factor of with two class labels. For lasso the
 #'   response column should be a numeric vector. For "cox" the
 #'   response is a *two column matrix* containing the event time in
@@ -33,7 +33,7 @@
 #'   Alternatively, a `stab_sel` class object if passing to one of
 #'   the S3 generic methods.
 #'
-#' @param y The response variable. If kernel is "l1-logistic", see
+#' @param y The response variable. If kernel is "binomial", see
 #'   [glmnet::glmnet()] for options. If kernel is "cox", a two column
 #'   matrix with the event time in the first column and the censoring
 #'   indicator (1 = event, 0 = censored) in the second column.
@@ -41,7 +41,7 @@
 #' @param kernel `character(1)`. A string describing the underlying
 #'   model used for selection. Current options are:
 #'   \itemize{
-#'     \item "l1-logistic" (default)
+#'     \item "binomial" (logistic)
 #'     \item "lasso"
 #'     \item "ridge"
 #'     \item "cox"
@@ -122,7 +122,7 @@
 #'     correspond to the columns of `stabpath_matrix`.}
 #'   \item{alpha}{the weakness parameter provided in the call.}
 #'   \item{Pw}{the weak weight probability provided in the call.}
-#'   \item{kernel}{the kernel used (e.g. `l1-logistic`).}
+#'   \item{kernel}{the kernel used (e.g. `binomial`).}
 #'   \item{n_iter}{The number of iterations used in computing
 #'     the stability paths.}
 #'   \item{standardize}{should the data be standardized prior to analysis?}
@@ -144,7 +144,7 @@
 #'   Methodology), 72: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
 #'
 #' @examples
-#' # l1-logistic
+#' # logistic regression
 #' n_feat      <- 20L
 #' n_samp      <- 2500L
 #' x           <- matrix(rnorm(n_samp * n_feat), n_samp, n_feat)
@@ -167,9 +167,9 @@
 #' @importFrom tibble tibble as_tibble
 #' @export
 stability_selection <- function(x, y = NULL,
-                                kernel = c("l1-logistic", "lasso", "ridge",
-                                           "cox", "pca.sd", "pca.thresh",
-                                           "multinomial"),
+                                kernel = c("binomial", "lasso", "ridge",
+                                           "cox", "multinomial",
+                                           "pca.sd", "pca.thresh"),
                                 n_iter = 100, parallel = FALSE,
                                 alpha = 0.8, Pw = 0.5,
                                 n_perm = 0, standardize = TRUE,
@@ -310,11 +310,11 @@ stability_selection <- function(x, y = NULL,
   )
 
   glmnet_args <- switch(kernel,
-    "l1-logistic" = {
-      glmnet_args$family  = "binomial"
+    "binomial" = {
+      glmnet_args$family  = kernel
       glmnet_args},
     "multinomial" = {
-      glmnet_args$family  = "multinomial"
+      glmnet_args$family  = kernel
       glmnet_args},
     "lasso"       = {
       glmnet_args$family = "gaussian"
@@ -325,7 +325,7 @@ stability_selection <- function(x, y = NULL,
       glmnet_args$alpha  = 0
       glmnet_args},
     "cox"         = {
-      glmnet_args$family   = "cox"
+      glmnet_args$family   = kernel
       glmnet_args$nlambda  = 100   # nsteps
       glmnet_args$cox.ties = "efron"
       glmnet_args},

@@ -22,7 +22,7 @@ test_that("`stability_selection()` generates correct object", {
   expect_length(ss$lambda, 120L)
   expect_equal(ss$r_seed, 101)
   expect_equal(ss$alpha, 0.8)
-  expect_equal(ss$kernel, "l1-logistic")
+  expect_equal(ss$kernel, "binomial")
   expect_false(ss$perm_data)
   expect_null(ss$permpath_list)
   expect_s3_class(ss$permpath_max, "tbl_df")
@@ -56,8 +56,7 @@ test_that("`stability_selection()` generates the correct values", {
 
 # Testing outlier imputation ----
 test_that("the `stab_select` object is created correctly when imputing outliers", {
-  ss1 <- stability_selection(x, y, kernel = "l1-logistic",
-                            impute_outliers = TRUE, r_seed = 101)
+  ss1 <- stability_selection(x, y, impute_outliers = TRUE, r_seed = 101)
   expect_s3_class(ss1, "stab_sel")
   expect_equal(dim(ss1$stabpath_matrix), dim(ss$stabpath_matrix))
   expect_true(ss1$impute_outliers)

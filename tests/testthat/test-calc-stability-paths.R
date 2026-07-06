@@ -1,14 +1,14 @@
 
 # Testing ----
 # L1-logistic ----
-test_that("`calc_stability_paths()` generates expected matrix for `l1-logistic`", {
+test_that("`calc_stability_paths()` generates expected matrix for `binomial`", {
   withr::with_seed(101, {
     tmp_lambda <- glmnet::glmnet(
       x, y, family = "binomial", standardize = TRUE,
       lambda.min.ratio = 0.1,
       penalty.factor = stats::runif(p))$lambda
     path_matrix <- calc_stability_paths(
-      x, y, kernel = "l1-logistic",
+      x, y, kernel = "binomial",
       lambda_seq = tmp_lambda,
       alpha = 0.8, Pw = 0.5,
       standardize = TRUE

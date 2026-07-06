@@ -42,7 +42,7 @@
 #' @author Stu Field
 #'
 #' @examples
-#' # l1-logistic
+#' # logistic regression
 #' n_feat      <- 20
 #' n_samples   <- 100
 #' x           <- matrix(rnorm(n_feat * n_samples), n_samples, n_feat)

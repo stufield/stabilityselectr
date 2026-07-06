@@ -6,17 +6,17 @@
 .get_lambda_seq <- function(x, y, kernel, Pw, standardize, alpha, W,
                             elastic_alpha, lambda_min_ratio, lambda_pad) {
 
-  if ( kernel == "l1-logistic" ) {
+  if ( kernel == "binomial" ) {
 
     lambda_seq <- glmnet::glmnet(
-      x, y, family = "binomial", standardize = standardize,
+      x, y, family = kernel, standardize = standardize,
       lambda.min.ratio = lambda_min_ratio,
       penalty.factor = W)$lambda
 
   } else if ( kernel == "multinomial") {
 
     lambda_seq <- glmnet::glmnet(
-      x, y, family = "multinomial", standardize = standardize,
+      x, y, family = kernel, standardize = standardize,
       lambda.min.ratio = lambda_min_ratio,
       penalty.factor = W)$lambda
 
@@ -76,7 +76,7 @@
     )
 
     lambda_seq <- glmnet::glmnet(
-      x, y, nlambda = 100, family = "cox", standardize = standardize,
+      x, y, nlambda = 100, family = kernel, standardize = standardize,
       cox.ties = "efron", # penalty.factor = W, (this differs from others)
       lambda.min.ratio = lambda_min_ratio)$lambda
 
