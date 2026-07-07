@@ -2,7 +2,7 @@
 #'
 #' @describeIn calc_emp_fdr
 #'   plots the mean number of false positives (FPs)
-#'   versus the numberof selected features by a sequence of
+#'   versus the number of selected features by a sequence of
 #'   selection probability thresholds. For this to be possible,
 #'   the `stab_sel` object *must* have permuted data in order to
 #'   calculate empirical false discovery rates. The area in the
