@@ -20,7 +20,7 @@ example, named "F1" and "F2", and containing 20 observations.
 
 ## Source
 
-`clust_data`: Hu, et. al.
+`clust_data`: Hu, *et al*. (2015).
 
 `progeny_data`: Stu Field
 
@@ -36,9 +36,9 @@ example, named "F1" and "F2", and containing 20 observations.
 
 ## References
 
-`clust_data`: Hu, C.W., Kornblau, S.M., Slater, J.H. and A.A. Qutub
-(*2015*). Progeny Clustering: A Method to Identify Biological
-Phenotypes. Scientific Reports, **5**:12894. pg. 3.
+`clust_data`: Hu, CW, Kornblau, SM, Slater, JH and AA Qutub (2015).
+Progeny Clustering: A Method to Identify Biological Phenotypes.
+Scientific Reports, **5**:12894. pg. 3.
 <http://www.nature.com/articles/srep12894>
 
 ## See also
@@ -59,5 +59,5 @@ head(clust_data)
 
 plot(progeny_data, col = rep(2:4, each = 50L),
      pch = rep(16:18, each = 50L), cex = 1.75,
-     main = "Simulated 3 Cluster Data")
+     main = "Original Simulated 3 Cluster Data")
 ```

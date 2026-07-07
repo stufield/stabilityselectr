@@ -18,7 +18,7 @@ clustering analyses.
 remotes::install_github("stufield/stabilityselectr")
 
 # or a specific version
-remotes::install_github("stufield/stabilityselectr@v0.0.2")
+remotes::install_github("stufield/stabilityselectr@v0.1.0")
 ```
 
 ------------------------------------------------------------------------

@@ -405,7 +405,7 @@ colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 y           <- sample(1:2, n_samp, replace = TRUE)
 stab_sel    <- stability_selection(x, y)
 #> ✓ Using kernel: 'binomial' and 1 core (serial)
-#> ✓ Stablity path run time: 1.955s
+#> ✓ Stablity path run time: 2.257s
 
 # Cox
 xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
@@ -417,7 +417,7 @@ xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
 ycox <- data.matrix(select(simdata, time, status))
 stab_sel_cox <- stability_selection(xcox, ycox, kernel = "cox", r_seed = 3)
 #> ✓ Using kernel: 'cox' and 1 core (serial)
-#> ✓ Stablity path run time: 0.395s
+#> ✓ Stablity path run time: 0.488s
 # Test for class `stab_sel`
 is_stab_sel(stab_sel)
 #> [1] TRUE

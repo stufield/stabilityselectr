@@ -114,9 +114,9 @@ A `pclust` class object, a list containing:
 
 ## References
 
-Hu, C.W., Kornblau, S.M., Slater, J.H. and A.A. Qutub (2015). Progeny
+Hu, CW, Kornblau, SM, Slater, JH and AA Qutub (2015). Progeny
 Clustering: A Method to Identify Biological Phenotypes. Scientific
-Reports, 5:12894. <http://www.nature.com/articles/srep12894>
+Reports, **5**:12894. <http://www.nature.com/articles/srep12894>
 
 ## See also
 
