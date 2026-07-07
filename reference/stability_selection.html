@@ -12,11 +12,11 @@ a value less than 1. In a randomized Lasso the model
 coefficients are randomly re-weighted when calculating the
 regularization term. This weighting can be performed in two
 different ways. If Pw = NA then these random weights are
-sampled uniformly between alpha and 1. If Pw is supplied,
+sampled uniformly between alpha and 1.0. If Pw is supplied,
 then the random weights are chosen to be alpha with
-probability Pw and 1 otherwise. The latter choice is used
-in Theorem 2 in Meinshausen and Buhlmann. Recommended values
-of alpha and Pw are [0.5, 0.2].
+probability Pw and 1.0 otherwise. The latter choice is used
+in Theorem 2 in Meinshausen and Buhlmann (2010). Recommended
+values of alpha and Pw are [0.5, 0.2] respectively.
 The is_stab_sel() function checks whether
 an object is class stab_sel. See inherits().'><meta property="og:description" content='Performs stability selection on a set of predictive features
 and a response variable. Stability selection is performed using
@@ -31,11 +31,11 @@ a value less than 1. In a randomized Lasso the model
 coefficients are randomly re-weighted when calculating the
 regularization term. This weighting can be performed in two
 different ways. If Pw = NA then these random weights are
-sampled uniformly between alpha and 1. If Pw is supplied,
+sampled uniformly between alpha and 1.0. If Pw is supplied,
 then the random weights are chosen to be alpha with
-probability Pw and 1 otherwise. The latter choice is used
-in Theorem 2 in Meinshausen and Buhlmann. Recommended values
-of alpha and Pw are [0.5, 0.2].
+probability Pw and 1.0 otherwise. The latter choice is used
+in Theorem 2 in Meinshausen and Buhlmann (2010). Recommended
+values of alpha and Pw are [0.5, 0.2] respectively.
 The is_stab_sel() function checks whether
 an object is class stab_sel. See inherits().'></head><body>
     <a href="#container" class="visually-hidden-focusable">Skip to content</a>
@@ -89,11 +89,11 @@ a value less than 1. In a randomized Lasso the model
 coefficients are randomly re-weighted when calculating the
 regularization term. This weighting can be performed in two
 different ways. If <code>Pw = NA</code> then these random weights are
-sampled uniformly between <code>alpha</code> and 1. If <code>Pw</code> is supplied,
+sampled uniformly between <code>alpha</code> and <code>1.0</code>. If <code>Pw</code> is supplied,
 then the random weights are chosen to be <code>alpha</code> with
-probability <code>Pw</code> and 1 otherwise. The latter choice is used
-in Theorem 2 in Meinshausen and Buhlmann. Recommended values
-of <code>alpha</code> and <code>Pw</code> are <code>[0.5, 0.2]</code>.</p>
+probability <code>Pw</code> and <code>1.0</code> otherwise. The latter choice is used
+in Theorem 2 in Meinshausen and Buhlmann (2010). Recommended
+values of <code>alpha</code> and <code>Pw</code> are <code>[0.5, 0.2]</code> respectively.</p>
 <p>The <code>is_stab_sel()</code> function checks whether
 an object is class <code>stab_sel</code>. See <code><a href="https://rdrr.io/r/base/class.html" class="external-link">inherits()</a></code>.</p>
     </div>
@@ -106,8 +106,8 @@ an object is class <code>stab_sel</code>. See <code><a href="https://rdrr.io/r/b
 <span>  kernel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"binomial"</span>, <span class="st">"lasso"</span>, <span class="st">"ridge"</span>, <span class="st">"cox"</span>, <span class="st">"multinomial"</span>, <span class="st">"pca.sd"</span>, <span class="st">"pca.thresh"</span><span class="op">)</span>,</span>
 <span>  n_iter <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  alpha <span class="op">=</span> <span class="fl">0.8</span>,</span>
-<span>  Pw <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  Pw <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>  n_perm <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  lambda_min_ratio <span class="op">=</span> <span class="fl">0.1</span>,</span>
@@ -149,7 +149,7 @@ an object is class <code>stab_sel</code>. See <code><a href="https://rdrr.io/r/b
 <dd><p>A numeric \(n \times p\) matrix of predictive features
 containing <code>n</code> observation rows and <code>p</code> feature columns.
 Alternatively, a <code>stab_sel</code> class object if passing to one of
-the S3 generic methods.</p></dd>
+its generic S3 methods.</p></dd>
 
 
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
@@ -193,7 +193,7 @@ beta coefficient in the regularization.</p></dd>
 <dt id="arg-pw">Pw<a class="anchor" aria-label="anchor" href="#arg-pw"></a></dt>
 <dd><p><code>numeric(1)</code>. Value defining probability of
 a weak weight, see <code>alpha</code>. If <code>Pw = NA</code> then the
-coefficient weights are sampled uniformly from <code>alpha</code> to 1.</p></dd>
+coefficient weights are sampled uniformly from <code>alpha</code> to <code>1.0</code>.</p></dd>
 
 
 <dt id="arg-n-perm">n_perm<a class="anchor" aria-label="anchor" href="#arg-n-perm"></a></dt>
@@ -408,8 +408,7 @@ for subset selection.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Stability selection can be run in parallel using multiple forked
 processes by setting <code>parallel = TRUE</code>. This requires
-<code><a href="https://rdrr.io/r/parallel/mclapply.html" class="external-link">parallel::mclapply()</a></code> from the <span class="pkg">parallel</span> package.
-This is <em>not</em> available for Windows OS.</p>
+<code><a href="https://rdrr.io/r/parallel/mclapply.html" class="external-link">parallel::mclapply()</a></code> and is <em>not</em> available for Windows.</p>
     </div>
     <div class="section level2">
     <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a></h2>
@@ -445,7 +444,7 @@ summary method via the <code>add_features</code> argument.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>Meinshausen, N. and Buhlmann, P. (2010). Stability selection.
+    <p>Meinshausen, N and P Buhlmann. (2010). Stability selection.
 Journal of the Royal Statistical Society: Series B (Statistical
 Methodology), <strong>72</strong>: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x</p>
     </div>
@@ -464,11 +463,12 @@ Methodology), <strong>72</strong>: 417-473. doi: 10.1111/j.1467-9868.2010.00740.
 <span class="r-in"><span><span class="va">n_feat</span>      <span class="op">&lt;-</span> <span class="fl">20L</span></span></span>
 <span class="r-in"><span><span class="va">n_samp</span>      <span class="op">&lt;-</span> <span class="fl">2500L</span></span></span>
 <span class="r-in"><span><span class="va">x</span>           <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n_samp</span> <span class="op">*</span> <span class="va">n_feat</span><span class="op">)</span>, <span class="va">n_samp</span>, <span class="va">n_feat</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"feat"</span>, <span class="st">"_"</span>, <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">letters</span>, <span class="va">n_feat</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">letters</span>, <span class="fl">4L</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="va">n_feat</span>, <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"f_"</span>, <span class="fu">fn</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">y</span>           <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="va">n_samp</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">stab_sel</span>    <span class="op">&lt;-</span> <span class="fu">stability_selection</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Using kernel: <span style="color: #0000BB;">'binomial'</span> and <span style="color: #0000BB;">1</span> core (serial)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Stablity path run time: <span style="color: #0000BB;">2.063</span>s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Stablity path run time: <span style="color: #0000BB;">2.745</span>s</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Cox</span></span></span>
 <span class="r-in"><span><span class="va">xcox</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://stufield.github.io/wranglr/reference/feature_matrix.html" class="external-link">feature_matrix</a></span><span class="op">(</span><span class="fu">stabilityselectr</span><span class="fu">:::</span><span class="fu">log_rfu</span><span class="op">(</span><span class="va">simdata</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -480,7 +480,7 @@ Methodology), <strong>72</strong>: 417-473. doi: 10.1111/j.1467-9868.2010.00740.
 <span class="r-in"><span><span class="va">ycox</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.matrix.html" class="external-link">data.matrix</a></span><span class="op">(</span><span class="fu">select</span><span class="op">(</span><span class="va">simdata</span>, <span class="va">time</span>, <span class="va">status</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">stab_sel_cox</span> <span class="op">&lt;-</span> <span class="fu">stability_selection</span><span class="op">(</span><span class="va">xcox</span>, <span class="va">ycox</span>, kernel <span class="op">=</span> <span class="st">"cox"</span>, r_seed <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Using kernel: <span style="color: #0000BB;">'cox'</span> and <span style="color: #0000BB;">1</span> core (serial)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Stablity path run time: <span style="color: #0000BB;">0.364</span>s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Stablity path run time: <span style="color: #0000BB;">0.713</span>s</span>
 <span class="r-in"><span><span class="co"># Test for class `stab_sel`</span></span></span>
 <span class="r-in"><span><span class="fu">is_stab_sel</span><span class="op">(</span><span class="va">stab_sel</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
@@ -488,12 +488,12 @@ Methodology), <strong>72</strong>: 417-473. doi: 10.1111/j.1467-9868.2010.00740.
 <span class="r-in"><span><span class="co"># S3 print method</span></span></span>
 <span class="r-in"><span><span class="va">stab_sel</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">══</span> Stability Selection (<span style="color: #00BBBB;">Kernel</span>: <span style="color: #00BB00;">binomial</span>) <span style="color: #0000BB;">═════════</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> Weakness (alpha)            <span style="color: #0000BB;">0.8</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> Weakness Probability (Pw)   <span style="color: #0000BB;">0.5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> Weakness (alpha)            <span style="color: #0000BB;">0.5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> Weakness Probability (Pw)   <span style="color: #0000BB;">0.2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> Number of Iterations        <span style="color: #0000BB;">100</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> Standardized                <span style="color: #0000BB;">'Yes'</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> Imputed Outliers            <span style="color: #0000BB;">'No'</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> Lambda Max                  <span style="color: #0000BB;">0.0359</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> Lambda Max                  <span style="color: #0000BB;">0.0418</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> Lambda Min Ratio            <span style="color: #0000BB;">0.1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> Permuted Data               <span style="color: #0000BB;">'No'</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> Random Seed                 <span style="color: #0000BB;">1234</span></span>
@@ -504,50 +504,45 @@ Methodology), <strong>72</strong>: 417-473. doi: 10.1111/j.1467-9868.2010.00740.
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    feature MaxSelectProb   AUC FDRbound</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> feat_r          0.985 0.513   0.012<span style="text-decoration: underline;">5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> feat_f          0.98  0.479   0.025 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> feat_h          0.93  0.410   0.037<span style="text-decoration: underline;">5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> feat_b          0.925 0.387   0.05  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> feat_s          0.92  0.367   0.062<span style="text-decoration: underline;">5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> feat_p          0.915 0.331   0.075 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> feat_c          0.89  0.329   0.087<span style="text-decoration: underline;">5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> feat_l          0.885 0.240   0.1   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> feat_k          0.875 0.277   0.113 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> feat_j          0.87  0.255   0.125 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> feat_m          0.86  0.224   0.138 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> feat_a          0.855 0.276   0.15  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> feat_e          0.85  0.243   0.163 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> feat_t          0.845 0.257   0.175 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> feat_d          0.84  0.224   0.188 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> feat_g          0.83  0.226   0.2   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span> feat_n          0.825 0.224   0.213 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span> feat_q          0.805 0.214   0.225 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">19</span> feat_i          0.8   0.191   0.238 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">20</span> feat_o          0.78  0.217   0.25  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> f_xfwc          1     0.483   0.012<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> f_vemo          0.93  0.345   0.025 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> f_jpmk          0.9   0.285   0.037<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> f_mvky          0.89  0.279   0.05  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> f_qkhp          0.885 0.282   0.062<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> f_iefg          0.865 0.282   0.075 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> f_wyng          0.86  0.257   0.087<span style="text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> f_ytqs          0.83  0.235   0.1   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> f_jdip          0.83  0.254   0.113 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> f_dlxf          0.82  0.198   0.125 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> f_joxm          0.805 0.214   0.138 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> f_uzmr          0.805 0.203   0.15  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> f_pyab          0.8   0.167   0.163 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> f_jxrn          0.8   0.172   0.175 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> f_efpn          0.795 0.209   0.188 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> f_nwov          0.78  0.175   0.2   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span> f_xdiy          0.765 0.229   0.213 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span> f_gsac          0.755 0.182   0.225 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">19</span> f_fbxn          0.755 0.185   0.238 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">20</span> f_lgtk          0.735 0.168   0.25  </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">stab_sel</span>, thresh <span class="op">=</span> <span class="fl">0.8</span>, add_features <span class="op">=</span> <span class="st">"feat_c"</span><span class="op">)</span>   <span class="co"># force feat_c into table</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 19 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 14 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    feature MaxSelectProb   AUC FDRbound</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> feat_r          0.985 0.513  0.004<span style="text-decoration: underline;">17</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> feat_f          0.98  0.479  0.008<span style="text-decoration: underline;">33</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> feat_h          0.93  0.410  0.012<span style="text-decoration: underline;">5</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> feat_b          0.925 0.387  0.016<span style="text-decoration: underline;">7</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> feat_s          0.92  0.367  0.020<span style="text-decoration: underline;">8</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> feat_p          0.915 0.331  0.025  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> feat_c          0.89  0.329  0.029<span style="text-decoration: underline;">2</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> feat_l          0.885 0.240  0.033<span style="text-decoration: underline;">3</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> feat_k          0.875 0.277  0.037<span style="text-decoration: underline;">5</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> feat_j          0.87  0.255  0.041<span style="text-decoration: underline;">7</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> feat_m          0.86  0.224  0.045<span style="text-decoration: underline;">8</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> feat_a          0.855 0.276  0.05   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> feat_e          0.85  0.243  0.054<span style="text-decoration: underline;">2</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> feat_t          0.845 0.257  0.058<span style="text-decoration: underline;">3</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> feat_d          0.84  0.224  0.062<span style="text-decoration: underline;">5</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> feat_g          0.83  0.226  0.066<span style="text-decoration: underline;">7</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span> feat_n          0.825 0.224  0.070<span style="text-decoration: underline;">8</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span> feat_q          0.805 0.214  0.075  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">19</span> feat_i          0.8   0.191  0.079<span style="text-decoration: underline;">2</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> f_xfwc          1     0.483  0.004<span style="text-decoration: underline;">17</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> f_vemo          0.93  0.345  0.008<span style="text-decoration: underline;">33</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> f_jpmk          0.9   0.285  0.012<span style="text-decoration: underline;">5</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> f_mvky          0.89  0.279  0.016<span style="text-decoration: underline;">7</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> f_qkhp          0.885 0.282  0.020<span style="text-decoration: underline;">8</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> f_iefg          0.865 0.282  0.025  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> f_wyng          0.86  0.257  0.029<span style="text-decoration: underline;">2</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> f_ytqs          0.83  0.235  0.033<span style="text-decoration: underline;">3</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> f_jdip          0.83  0.254  0.037<span style="text-decoration: underline;">5</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> f_dlxf          0.82  0.198  0.041<span style="text-decoration: underline;">7</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> f_joxm          0.805 0.214  0.045<span style="text-decoration: underline;">8</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> f_uzmr          0.805 0.203  0.05   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> f_pyab          0.8   0.167  0.054<span style="text-decoration: underline;">2</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> f_jxrn          0.8   0.172  0.058<span style="text-decoration: underline;">3</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># S3 plot method</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">stab_sel</span>, thresh <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></span>

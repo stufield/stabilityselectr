@@ -11,11 +11,11 @@ column. The randomized lasso is used if the `alpha` parameter is set to
 a value less than 1. In a randomized Lasso the model coefficients are
 randomly re-weighted when calculating the regularization term. This
 weighting can be performed in two different ways. If `Pw = NA` then
-these random weights are sampled uniformly between `alpha` and 1. If
+these random weights are sampled uniformly between `alpha` and `1.0`. If
 `Pw` is supplied, then the random weights are chosen to be `alpha` with
-probability `Pw` and 1 otherwise. The latter choice is used in Theorem 2
-in Meinshausen and Buhlmann. Recommended values of `alpha` and `Pw` are
-`[0.5, 0.2]`.
+probability `Pw` and `1.0` otherwise. The latter choice is used in
+Theorem 2 in Meinshausen and Buhlmann (2010). Recommended values of
+`alpha` and `Pw` are `[0.5, 0.2]` respectively.
 
 The `is_stab_sel()` function checks whether an object is class
 `stab_sel`. See [`inherits()`](https://rdrr.io/r/base/class.html).
@@ -29,8 +29,8 @@ stability_selection(
   kernel = c("binomial", "lasso", "ridge", "cox", "multinomial", "pca.sd", "pca.thresh"),
   n_iter = 100,
   parallel = FALSE,
-  alpha = 0.8,
-  Pw = 0.5,
+  alpha = 0.5,
+  Pw = 0.2,
   n_perm = 0,
   standardize = TRUE,
   lambda_min_ratio = 0.1,
@@ -70,7 +70,7 @@ plot(
 
   A numeric \\n \times p\\ matrix of predictive features containing `n`
   observation rows and `p` feature columns. Alternatively, a `stab_sel`
-  class object if passing to one of the S3 generic methods.
+  class object if passing to one of its generic S3 methods.
 
 - y:
 
@@ -120,7 +120,7 @@ plot(
 
   `numeric(1)`. Value defining probability of a weak weight, see
   `alpha`. If `Pw = NA` then the coefficient weights are sampled
-  uniformly from `alpha` to 1.
+  uniformly from `alpha` to `1.0`.
 
 - n_perm:
 
@@ -344,8 +344,8 @@ A `ggplot`.
 
 Stability selection can be run in parallel using multiple forked
 processes by setting `parallel = TRUE`. This requires
-[`parallel::mclapply()`](https://rdrr.io/r/parallel/mclapply.html) from
-the parallel package. This is *not* available for Windows OS.
+[`parallel::mclapply()`](https://rdrr.io/r/parallel/mclapply.html) and
+is *not* available for Windows.
 
 ## Functions
 
@@ -381,7 +381,7 @@ the `add_features` argument.
 
 ## References
 
-Meinshausen, N. and Buhlmann, P. (2010). Stability selection. Journal of
+Meinshausen, N and P Buhlmann. (2010). Stability selection. Journal of
 the Royal Statistical Society: Series B (Statistical Methodology),
 **72**: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
 
@@ -401,11 +401,12 @@ Stu Field, Michael R. Mehan, and Robert Kirk DeLisle
 n_feat      <- 20L
 n_samp      <- 2500L
 x           <- matrix(rnorm(n_samp * n_feat), n_samp, n_feat)
-colnames(x) <- paste0("feat", "_", head(letters, n_feat))
+fn <- function() paste0(sample(letters, 4L), collapse = "")
+colnames(x) <- replicate(n_feat, paste0("f_", fn()))
 y           <- sample(1:2, n_samp, replace = TRUE)
 stab_sel    <- stability_selection(x, y)
 #> ✓ Using kernel: 'binomial' and 1 core (serial)
-#> ✓ Stablity path run time: 2.063s
+#> ✓ Stablity path run time: 2.745s
 
 # Cox
 xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
@@ -417,7 +418,7 @@ xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
 ycox <- data.matrix(select(simdata, time, status))
 stab_sel_cox <- stability_selection(xcox, ycox, kernel = "cox", r_seed = 3)
 #> ✓ Using kernel: 'cox' and 1 core (serial)
-#> ✓ Stablity path run time: 0.364s
+#> ✓ Stablity path run time: 0.713s
 # Test for class `stab_sel`
 is_stab_sel(stab_sel)
 #> [1] TRUE
@@ -425,12 +426,12 @@ is_stab_sel(stab_sel)
 # S3 print method
 stab_sel
 #> ══ Stability Selection (Kernel: binomial) ═════════
-#> • Weakness (alpha)            0.8
-#> • Weakness Probability (Pw)   0.5
+#> • Weakness (alpha)            0.5
+#> • Weakness Probability (Pw)   0.2
 #> • Number of Iterations        100
 #> • Standardized                'Yes'
 #> • Imputed Outliers            'No'
-#> • Lambda Max                  0.0359
+#> • Lambda Max                  0.0418
 #> • Lambda Min Ratio            0.1
 #> • Permuted Data               'No'
 #> • Random Seed                 1234
@@ -441,50 +442,45 @@ summary(stab_sel, thresh = 0.6)
 #> # A tibble: 20 × 4
 #>    feature MaxSelectProb   AUC FDRbound
 #>    <chr>           <dbl> <dbl>    <dbl>
-#>  1 feat_r          0.985 0.513   0.0125
-#>  2 feat_f          0.98  0.479   0.025 
-#>  3 feat_h          0.93  0.410   0.0375
-#>  4 feat_b          0.925 0.387   0.05  
-#>  5 feat_s          0.92  0.367   0.0625
-#>  6 feat_p          0.915 0.331   0.075 
-#>  7 feat_c          0.89  0.329   0.0875
-#>  8 feat_l          0.885 0.240   0.1   
-#>  9 feat_k          0.875 0.277   0.113 
-#> 10 feat_j          0.87  0.255   0.125 
-#> 11 feat_m          0.86  0.224   0.138 
-#> 12 feat_a          0.855 0.276   0.15  
-#> 13 feat_e          0.85  0.243   0.163 
-#> 14 feat_t          0.845 0.257   0.175 
-#> 15 feat_d          0.84  0.224   0.188 
-#> 16 feat_g          0.83  0.226   0.2   
-#> 17 feat_n          0.825 0.224   0.213 
-#> 18 feat_q          0.805 0.214   0.225 
-#> 19 feat_i          0.8   0.191   0.238 
-#> 20 feat_o          0.78  0.217   0.25  
+#>  1 f_xfwc          1     0.483   0.0125
+#>  2 f_vemo          0.93  0.345   0.025 
+#>  3 f_jpmk          0.9   0.285   0.0375
+#>  4 f_mvky          0.89  0.279   0.05  
+#>  5 f_qkhp          0.885 0.282   0.0625
+#>  6 f_iefg          0.865 0.282   0.075 
+#>  7 f_wyng          0.86  0.257   0.0875
+#>  8 f_ytqs          0.83  0.235   0.1   
+#>  9 f_jdip          0.83  0.254   0.113 
+#> 10 f_dlxf          0.82  0.198   0.125 
+#> 11 f_joxm          0.805 0.214   0.138 
+#> 12 f_uzmr          0.805 0.203   0.15  
+#> 13 f_pyab          0.8   0.167   0.163 
+#> 14 f_jxrn          0.8   0.172   0.175 
+#> 15 f_efpn          0.795 0.209   0.188 
+#> 16 f_nwov          0.78  0.175   0.2   
+#> 17 f_xdiy          0.765 0.229   0.213 
+#> 18 f_gsac          0.755 0.182   0.225 
+#> 19 f_fbxn          0.755 0.185   0.238 
+#> 20 f_lgtk          0.735 0.168   0.25  
 
 summary(stab_sel, thresh = 0.8, add_features = "feat_c")   # force feat_c into table
-#> # A tibble: 19 × 4
+#> # A tibble: 14 × 4
 #>    feature MaxSelectProb   AUC FDRbound
 #>    <chr>           <dbl> <dbl>    <dbl>
-#>  1 feat_r          0.985 0.513  0.00417
-#>  2 feat_f          0.98  0.479  0.00833
-#>  3 feat_h          0.93  0.410  0.0125 
-#>  4 feat_b          0.925 0.387  0.0167 
-#>  5 feat_s          0.92  0.367  0.0208 
-#>  6 feat_p          0.915 0.331  0.025  
-#>  7 feat_c          0.89  0.329  0.0292 
-#>  8 feat_l          0.885 0.240  0.0333 
-#>  9 feat_k          0.875 0.277  0.0375 
-#> 10 feat_j          0.87  0.255  0.0417 
-#> 11 feat_m          0.86  0.224  0.0458 
-#> 12 feat_a          0.855 0.276  0.05   
-#> 13 feat_e          0.85  0.243  0.0542 
-#> 14 feat_t          0.845 0.257  0.0583 
-#> 15 feat_d          0.84  0.224  0.0625 
-#> 16 feat_g          0.83  0.226  0.0667 
-#> 17 feat_n          0.825 0.224  0.0708 
-#> 18 feat_q          0.805 0.214  0.075  
-#> 19 feat_i          0.8   0.191  0.0792 
+#>  1 f_xfwc          1     0.483  0.00417
+#>  2 f_vemo          0.93  0.345  0.00833
+#>  3 f_jpmk          0.9   0.285  0.0125 
+#>  4 f_mvky          0.89  0.279  0.0167 
+#>  5 f_qkhp          0.885 0.282  0.0208 
+#>  6 f_iefg          0.865 0.282  0.025  
+#>  7 f_wyng          0.86  0.257  0.0292 
+#>  8 f_ytqs          0.83  0.235  0.0333 
+#>  9 f_jdip          0.83  0.254  0.0375 
+#> 10 f_dlxf          0.82  0.198  0.0417 
+#> 11 f_joxm          0.805 0.214  0.0458 
+#> 12 f_uzmr          0.805 0.203  0.05   
+#> 13 f_pyab          0.8   0.167  0.0542 
+#> 14 f_jxrn          0.8   0.172  0.0583 
 
 # S3 plot method
 plot(stab_sel, thresh = 0.8)
