@@ -406,7 +406,7 @@ colnames(x) <- replicate(n_feat, paste0("f_", fn()))
 y           <- sample(1:2, n_samp, replace = TRUE)
 stab_sel    <- stability_selection(x, y)
 #> ✓ Using kernel: 'binomial' and 1 core (serial)
-#> ✓ Stablity path run time: 2.745s
+#> ✓ Stablity path run time: 2.592s
 
 # Cox
 xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
@@ -418,7 +418,7 @@ xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
 ycox <- data.matrix(select(simdata, time, status))
 stab_sel_cox <- stability_selection(xcox, ycox, kernel = "cox", r_seed = 3)
 #> ✓ Using kernel: 'cox' and 1 core (serial)
-#> ✓ Stablity path run time: 0.713s
+#> ✓ Stablity path run time: 0.569s
 # Test for class `stab_sel`
 is_stab_sel(stab_sel)
 #> [1] TRUE
@@ -442,45 +442,45 @@ summary(stab_sel, thresh = 0.6)
 #> # A tibble: 20 × 4
 #>    feature MaxSelectProb   AUC FDRbound
 #>    <chr>           <dbl> <dbl>    <dbl>
-#>  1 f_xfwc          1     0.483   0.0125
-#>  2 f_vemo          0.93  0.345   0.025 
-#>  3 f_jpmk          0.9   0.285   0.0375
-#>  4 f_mvky          0.89  0.279   0.05  
-#>  5 f_qkhp          0.885 0.282   0.0625
-#>  6 f_iefg          0.865 0.282   0.075 
-#>  7 f_wyng          0.86  0.257   0.0875
-#>  8 f_ytqs          0.83  0.235   0.1   
-#>  9 f_jdip          0.83  0.254   0.113 
-#> 10 f_dlxf          0.82  0.198   0.125 
-#> 11 f_joxm          0.805 0.214   0.138 
-#> 12 f_uzmr          0.805 0.203   0.15  
-#> 13 f_pyab          0.8   0.167   0.163 
-#> 14 f_jxrn          0.8   0.172   0.175 
-#> 15 f_efpn          0.795 0.209   0.188 
-#> 16 f_nwov          0.78  0.175   0.2   
-#> 17 f_xdiy          0.765 0.229   0.213 
-#> 18 f_gsac          0.755 0.182   0.225 
-#> 19 f_fbxn          0.755 0.185   0.238 
-#> 20 f_lgtk          0.735 0.168   0.25  
+#>  1 f_xfwc          1     0.585   0.0125
+#>  2 f_vemo          0.93  0.297   0.025 
+#>  3 f_jpmk          0.9   0.259   0.0375
+#>  4 f_mvky          0.89  0.264   0.05  
+#>  5 f_qkhp          0.885 0.226   0.0625
+#>  6 f_iefg          0.865 0.232   0.075 
+#>  7 f_wyng          0.86  0.218   0.0875
+#>  8 f_ytqs          0.83  0.203   0.1   
+#>  9 f_jdip          0.83  0.207   0.113 
+#> 10 f_dlxf          0.82  0.161   0.125 
+#> 11 f_joxm          0.805 0.173   0.138 
+#> 12 f_uzmr          0.805 0.153   0.15  
+#> 13 f_pyab          0.8   0.117   0.163 
+#> 14 f_jxrn          0.8   0.122   0.175 
+#> 15 f_efpn          0.795 0.160   0.188 
+#> 16 f_nwov          0.78  0.126   0.2   
+#> 17 f_xdiy          0.765 0.186   0.213 
+#> 18 f_gsac          0.755 0.134   0.225 
+#> 19 f_fbxn          0.755 0.138   0.238 
+#> 20 f_lgtk          0.735 0.122   0.25  
 
 summary(stab_sel, thresh = 0.8, add_features = "feat_c")   # force feat_c into table
 #> # A tibble: 14 × 4
 #>    feature MaxSelectProb   AUC FDRbound
 #>    <chr>           <dbl> <dbl>    <dbl>
-#>  1 f_xfwc          1     0.483  0.00417
-#>  2 f_vemo          0.93  0.345  0.00833
-#>  3 f_jpmk          0.9   0.285  0.0125 
-#>  4 f_mvky          0.89  0.279  0.0167 
-#>  5 f_qkhp          0.885 0.282  0.0208 
-#>  6 f_iefg          0.865 0.282  0.025  
-#>  7 f_wyng          0.86  0.257  0.0292 
-#>  8 f_ytqs          0.83  0.235  0.0333 
-#>  9 f_jdip          0.83  0.254  0.0375 
-#> 10 f_dlxf          0.82  0.198  0.0417 
-#> 11 f_joxm          0.805 0.214  0.0458 
-#> 12 f_uzmr          0.805 0.203  0.05   
-#> 13 f_pyab          0.8   0.167  0.0542 
-#> 14 f_jxrn          0.8   0.172  0.0583 
+#>  1 f_xfwc          1     0.585  0.00417
+#>  2 f_vemo          0.93  0.297  0.00833
+#>  3 f_jpmk          0.9   0.259  0.0125 
+#>  4 f_mvky          0.89  0.264  0.0167 
+#>  5 f_qkhp          0.885 0.226  0.0208 
+#>  6 f_iefg          0.865 0.232  0.025  
+#>  7 f_wyng          0.86  0.218  0.0292 
+#>  8 f_ytqs          0.83  0.203  0.0333 
+#>  9 f_jdip          0.83  0.207  0.0375 
+#> 10 f_dlxf          0.82  0.161  0.0417 
+#> 11 f_joxm          0.805 0.173  0.0458 
+#> 12 f_uzmr          0.805 0.153  0.05   
+#> 13 f_pyab          0.8   0.117  0.0542 
+#> 14 f_jxrn          0.8   0.122  0.0583 
 
 # S3 plot method
 plot(stab_sel, thresh = 0.8)

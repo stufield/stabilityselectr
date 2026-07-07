@@ -75,7 +75,7 @@ y           <- sample(1:2, n_samples, replace = TRUE)
 
 stab_sel <- stability_selection(x, y, r_seed = 101)
 #> ✓ Using kernel: 'binomial' and 1 core (serial)
-#> ✓ Stablity path run time: 0.514s
+#> ✓ Stablity path run time: 0.517s
 
 # Stable features at `thresh =`
 get_stable_features(stab_sel, 0.75)
