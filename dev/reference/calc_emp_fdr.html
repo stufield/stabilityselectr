@@ -131,7 +131,7 @@ selected features for specified FDR break points.
 Relies on <code>calc_emp_fdr()</code> to calculate the mean false discovery
 based on permutations during the stability selection algorithm.</p></li>
 <li><p><code>plot_emp_fdr()</code>: plots the mean number of false positives (FPs)
-versus the numberof selected features by a sequence of
+versus the number of selected features by a sequence of
 selection probability thresholds. For this to be possible,
 the <code>stab_sel</code> object <em>must</em> have permuted data in order to
 calculate empirical false discovery rates. The area in the
@@ -165,12 +165,12 @@ of the <code>n</code> class scrambled permutations, i.e. the null.</p></li>
 <span class="r-in"><span><span class="va">ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="stability_selection.html">stability_selection</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, n_iter <span class="op">=</span> <span class="fl">25</span>, n_perm <span class="op">=</span> <span class="fl">50</span>,</span></span>
 <span class="r-in"><span>                          r_seed <span class="op">=</span> <span class="fl">101</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Using kernel: <span style="color: #0000BB;">'binomial'</span> and <span style="color: #0000BB;">1</span> core (serial)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Stablity path run time: <span style="color: #0000BB;">0.105</span>s</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Perm path run time: <span style="color: #0000BB;">3.505</span>s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Stablity path run time: <span style="color: #0000BB;">0.063</span>s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Perm path run time: <span style="color: #0000BB;">2.163</span>s</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">calc_emp_fdr</span><span class="op">(</span><span class="va">ss</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> thresh_0.5 thresh_0.6 thresh_0.7 thresh_0.8 thresh_0.9 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      20.00      19.74      17.22       9.78       2.78 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      20.00      19.70      17.50       9.64       2.48 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># calculate the FDR break points</span></span></span>
 <span class="r-in"><span><span class="fu">calc_emp_fdr_breaks</span><span class="op">(</span><span class="va">ss</span><span class="op">)</span></span></span>
@@ -178,27 +178,27 @@ of the <code>n</code> class scrambled permutations, i.e. the null.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 91 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    MeanFPs n_selected piThresh</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>    0.16          1     1   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>    0.16          1     0.99</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>    0.42          2     0.98</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>    0.42          2     0.97</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>    0.86          2     0.96</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>    0.86          2     0.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>    1.5           3     0.94</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>    1.5           3     0.93</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>    2.12          3     0.92</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>    2.12          3     0.91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>    0.24          1     1   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>    0.24          1     0.99</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>    0.5           2     0.98</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>    0.5           2     0.97</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>    0.82          3     0.96</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>    0.82          3     0.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>    1.2           3     0.94</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>    1.2           3     0.93</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>    1.68          3     0.92</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>    1.68          3     0.91</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 81 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $breaks</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   FDR_breaks MeanFPs n_selected piThresh</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>        0.5    0.86          2     0.96</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>        1      1.5           3     0.94</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>        2      2.12          3     0.92</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>        3      3.88          5     0.88</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>        5      5.02          5     0.86</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>        0.5    0.82          3     0.96</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>        1      1.2           3     0.94</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>        2      2.48          3     0.9 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>        3      3.44          4     0.88</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>        5      6.14          7     0.84</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot the FDR</span></span></span>

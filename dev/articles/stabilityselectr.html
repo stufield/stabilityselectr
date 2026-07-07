@@ -107,7 +107,7 @@ below.</p>
 <span><span class="va">y</span>           <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="va">n_samples</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">stab_sel</span>    <span class="op">&lt;-</span> <span class="fu"><a href="../reference/stability_selection.html">stability_selection</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="st">"binomial"</span>, n_iter <span class="op">=</span> <span class="fl">500L</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ✓ Using kernel: 'binomial' and 1 core (serial)</span></span>
-<span><span class="co">#&gt; ✓ Stablity path run time: 2.74s</span></span>
+<span><span class="co">#&gt; ✓ Stablity path run time: 1.158s</span></span>
 <span><span class="fu"><a href="../reference/stability_selection.html">is_stab_sel</a></span><span class="op">(</span><span class="va">stab_sel</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="va">stab_sel</span></span>
@@ -139,10 +139,10 @@ below.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 3</span></span></span>
 <span><span class="co">#&gt;   feature MaxSelectProb FDRbound</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> feat_d          0.907  0.003<span style="text-decoration: underline;">57</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> feat_t          0.892  0.007<span style="text-decoration: underline;">14</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> feat_m          0.883  0.010<span style="text-decoration: underline;">7</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> feat_j          0.877  0.014<span style="text-decoration: underline;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> feat_t          0.917  0.003<span style="text-decoration: underline;">57</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> feat_d          0.892  0.007<span style="text-decoration: underline;">14</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> feat_m          0.871  0.010<span style="text-decoration: underline;">7</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> feat_j          0.866  0.014<span style="text-decoration: underline;">3</span></span></span>
 <span></span>
 <span><span class="co"># at multiple thresholds</span></span>
 <span><span class="fu"><a href="../reference/get_stable_features.html">get_stable_features</a></span><span class="op">(</span><span class="va">stab_sel</span>, thresh <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.7</span>, <span class="fl">0.9</span>, <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span></span>
@@ -150,75 +150,74 @@ below.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 20 × 3</span></span></span>
 <span><span class="co">#&gt;    feature MaxSelectProb FDRbound</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> feat_d          0.907  0.006<span style="text-decoration: underline;">25</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> feat_t          0.892  0.012<span style="text-decoration: underline;">5</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> feat_m          0.883  0.018<span style="text-decoration: underline;">8</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> feat_j          0.877  0.025  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> feat_s          0.848  0.031<span style="text-decoration: underline;">3</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> feat_a          0.845  0.037<span style="text-decoration: underline;">5</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> feat_g          0.82   0.043<span style="text-decoration: underline;">8</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> feat_r          0.805  0.05   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> feat_c          0.791  0.056<span style="text-decoration: underline;">3</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> feat_h          0.789  0.062<span style="text-decoration: underline;">5</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> feat_n          0.787  0.068<span style="text-decoration: underline;">8</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> feat_e          0.779  0.075  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> feat_q          0.779  0.081<span style="text-decoration: underline;">3</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> feat_f          0.771  0.087<span style="text-decoration: underline;">5</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> feat_l          0.771  0.093<span style="text-decoration: underline;">8</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> feat_p          0.768  0.1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> feat_b          0.746  0.106  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span> feat_i          0.745  0.113  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span> feat_k          0.736  0.119  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">20</span> feat_o          0.724  0.125  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> feat_t          0.917  0.006<span style="text-decoration: underline;">25</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> feat_d          0.892  0.012<span style="text-decoration: underline;">5</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> feat_m          0.871  0.018<span style="text-decoration: underline;">8</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> feat_j          0.866  0.025  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> feat_s          0.846  0.031<span style="text-decoration: underline;">3</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> feat_a          0.824  0.037<span style="text-decoration: underline;">5</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> feat_g          0.823  0.043<span style="text-decoration: underline;">8</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> feat_r          0.806  0.05   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> feat_c          0.795  0.056<span style="text-decoration: underline;">3</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> feat_q          0.795  0.062<span style="text-decoration: underline;">5</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> feat_l          0.79   0.068<span style="text-decoration: underline;">8</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> feat_f          0.789  0.075  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> feat_n          0.787  0.081<span style="text-decoration: underline;">3</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> feat_e          0.761  0.087<span style="text-decoration: underline;">5</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> feat_h          0.751  0.093<span style="text-decoration: underline;">8</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> feat_b          0.747  0.1    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> feat_p          0.747  0.106  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span> feat_o          0.74   0.113  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span> feat_i          0.739  0.119  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">20</span> feat_k          0.718  0.125  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $thresh_0.75</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 16 × 3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 15 × 3</span></span></span>
 <span><span class="co">#&gt;    feature MaxSelectProb FDRbound</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> feat_d          0.907    0.005</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> feat_t          0.892    0.01 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> feat_m          0.883    0.015</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> feat_j          0.877    0.02 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> feat_s          0.848    0.025</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> feat_a          0.845    0.03 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> feat_g          0.82     0.035</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> feat_r          0.805    0.04 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> feat_c          0.791    0.045</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> feat_h          0.789    0.05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> feat_n          0.787    0.055</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> feat_e          0.779    0.06 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> feat_q          0.779    0.065</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> feat_f          0.771    0.07 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> feat_l          0.771    0.075</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> feat_p          0.768    0.08 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> feat_t          0.917    0.005</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> feat_d          0.892    0.01 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> feat_m          0.871    0.015</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> feat_j          0.866    0.02 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> feat_s          0.846    0.025</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> feat_a          0.824    0.03 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> feat_g          0.823    0.035</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> feat_r          0.806    0.04 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> feat_c          0.795    0.045</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> feat_q          0.795    0.05 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> feat_l          0.79     0.055</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> feat_f          0.789    0.06 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> feat_n          0.787    0.065</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> feat_e          0.761    0.07 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> feat_h          0.751    0.075</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $thresh_0.8</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 8 × 3</span></span></span>
 <span><span class="co">#&gt;   feature MaxSelectProb FDRbound</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> feat_d          0.907  0.004<span style="text-decoration: underline;">17</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> feat_t          0.892  0.008<span style="text-decoration: underline;">33</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> feat_m          0.883  0.012<span style="text-decoration: underline;">5</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> feat_j          0.877  0.016<span style="text-decoration: underline;">7</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> feat_s          0.848  0.020<span style="text-decoration: underline;">8</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> feat_a          0.845  0.025  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> feat_g          0.82   0.029<span style="text-decoration: underline;">2</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span> feat_r          0.805  0.033<span style="text-decoration: underline;">3</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> feat_t          0.917  0.004<span style="text-decoration: underline;">17</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> feat_d          0.892  0.008<span style="text-decoration: underline;">33</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> feat_m          0.871  0.012<span style="text-decoration: underline;">5</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> feat_j          0.866  0.016<span style="text-decoration: underline;">7</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> feat_s          0.846  0.020<span style="text-decoration: underline;">8</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> feat_a          0.824  0.025  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> feat_g          0.823  0.029<span style="text-decoration: underline;">2</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span> feat_r          0.806  0.033<span style="text-decoration: underline;">3</span> </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $thresh_0.85</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 3</span></span></span>
 <span><span class="co">#&gt;   feature MaxSelectProb FDRbound</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> feat_d          0.907  0.003<span style="text-decoration: underline;">57</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> feat_t          0.892  0.007<span style="text-decoration: underline;">14</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> feat_m          0.883  0.010<span style="text-decoration: underline;">7</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> feat_j          0.877  0.014<span style="text-decoration: underline;">3</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> feat_t          0.917  0.003<span style="text-decoration: underline;">57</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> feat_d          0.892  0.007<span style="text-decoration: underline;">14</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> feat_m          0.871  0.010<span style="text-decoration: underline;">7</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> feat_j          0.866  0.014<span style="text-decoration: underline;">3</span> </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $thresh_0.9</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 3</span></span></span>
 <span><span class="co">#&gt;   feature MaxSelectProb FDRbound</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> feat_d          0.907  0.003<span style="text-decoration: underline;">13</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> feat_t          0.917  0.003<span style="text-decoration: underline;">13</span></span></span></code></pre></div>
 <hr>
 </div>
 </div>

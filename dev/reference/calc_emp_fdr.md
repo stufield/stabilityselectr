@@ -88,7 +88,7 @@ For `calc_emp_fdr_breaks()`, a list containing:
   permutations during the stability selection algorithm.
 
 - `plot_emp_fdr()`: plots the mean number of false positives (FPs)
-  versus the numberof selected features by a sequence of selection
+  versus the number of selected features by a sequence of selection
   probability thresholds. For this to be possible, the `stab_sel` object
   *must* have permuted data in order to calculate empirical false
   discovery rates. The area in the sub-diagonal represents where more
@@ -123,12 +123,12 @@ y           <- sample(1:2, n_samples, replace = TRUE)
 ss <- stability_selection(x, y, n_iter = 25, n_perm = 50,
                           r_seed = 101, parallel = TRUE)
 #> ✓ Using kernel: 'binomial' and 1 core (serial)
-#> ✓ Stablity path run time: 0.105s
-#> ✓ Perm path run time: 3.505s
+#> ✓ Stablity path run time: 0.063s
+#> ✓ Perm path run time: 2.163s
 
 calc_emp_fdr(ss, seq(0.5, 0.9, 0.1))
 #> thresh_0.5 thresh_0.6 thresh_0.7 thresh_0.8 thresh_0.9 
-#>      20.00      19.74      17.22       9.78       2.78 
+#>      20.00      19.70      17.50       9.64       2.48 
 
 # calculate the FDR break points
 calc_emp_fdr_breaks(ss)
@@ -136,27 +136,27 @@ calc_emp_fdr_breaks(ss)
 #> # A tibble: 91 × 3
 #>    MeanFPs n_selected piThresh
 #>      <dbl>      <int>    <dbl>
-#>  1    0.16          1     1   
-#>  2    0.16          1     0.99
-#>  3    0.42          2     0.98
-#>  4    0.42          2     0.97
-#>  5    0.86          2     0.96
-#>  6    0.86          2     0.95
-#>  7    1.5           3     0.94
-#>  8    1.5           3     0.93
-#>  9    2.12          3     0.92
-#> 10    2.12          3     0.91
+#>  1    0.24          1     1   
+#>  2    0.24          1     0.99
+#>  3    0.5           2     0.98
+#>  4    0.5           2     0.97
+#>  5    0.82          3     0.96
+#>  6    0.82          3     0.95
+#>  7    1.2           3     0.94
+#>  8    1.2           3     0.93
+#>  9    1.68          3     0.92
+#> 10    1.68          3     0.91
 #> # ℹ 81 more rows
 #> 
 #> $breaks
 #> # A tibble: 5 × 4
 #>   FDR_breaks MeanFPs n_selected piThresh
 #>        <dbl>   <dbl>      <int>    <dbl>
-#> 1        0.5    0.86          2     0.96
-#> 2        1      1.5           3     0.94
-#> 3        2      2.12          3     0.92
-#> 4        3      3.88          5     0.88
-#> 5        5      5.02          5     0.86
+#> 1        0.5    0.82          3     0.96
+#> 2        1      1.2           3     0.94
+#> 3        2      2.48          3     0.9 
+#> 4        3      3.44          4     0.88
+#> 5        5      6.14          7     0.84
 #> 
 
 # plot the FDR
