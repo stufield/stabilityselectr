@@ -1,4 +1,10 @@
 
+# Setup ----
+# stab path tests were created using this RNGkind
+# this ensures the default doesn't get switched on remote machines
+rng <- RNGkind("Mersenne-Twister")
+withr::defer(restore_rng_kind(rng))
+
 # Testing ----
 # L1-logistic ----
 test_that("`calc_stability_paths()` generates expected matrix for `binomial`", {

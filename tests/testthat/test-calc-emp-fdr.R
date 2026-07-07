@@ -20,14 +20,14 @@ test_that("`calc_emp_fdr()` returns the correct values", {
   expect_equal(
     fdr,
     c(thresh_0.5 = 20.00, thresh_0.6 = 20.00, thresh_0.7 = 20.0,
-      thresh_0.8 = 19.8, thresh_0.9 = 5.80)
+      thresh_0.8 = 19.2, thresh_0.9 = 4.80)
   )
 })
 
 # Threshold @ 1 value ----
 test_that("`calc_emp_fdr()` returns correct values when thresh a double", {
   expect_equal(
-    calc_emp_fdr(ss_perm, thresh_seq = 0.85), c("thresh_0.85" = 13.5)
+    calc_emp_fdr(ss_perm, thresh_seq = 0.85), c("thresh_0.85" = 12.5)
   )
 })
 
@@ -42,6 +42,6 @@ test_that("`calc_emp_fdr()` trips a warning when < 5 permutations", {
   expect_equal(
     ssW, c(thresh_0.1 = 20, thresh_0.2 = 20, thresh_0.3 = 20,
            thresh_0.4 = 20, thresh_0.5 = 20, thresh_0.6 = 20,
-           thresh_0.7 = 20, thresh_0.8 = 19.75, thresh_0.9 = 5.75)
+           thresh_0.7 = 20, thresh_0.8 = 19.50, thresh_0.9 = 4.25)
   )
 })

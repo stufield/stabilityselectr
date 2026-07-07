@@ -200,11 +200,7 @@ stability_selection <- function(x, y = NULL,
   }
 
   # Checks for parallel processing
-  if ( parallel ) {
-    n_cores <- get_cores()
-  } else {
-    n_cores <- 1L
-  }
+  n_cores <- ifelse(parallel, get_cores(), 1L)
 
   signal_done(
     "Using kernel:", value(kernel), "and", value(n_cores),
@@ -214,8 +210,8 @@ stability_selection <- function(x, y = NULL,
   # set seed for reproducibility
   # Claude says "L'Ecuyer-CMRG" is better cross
   # platform & in parallel processing
-  rng <- RNGkind()
-  withr::local_seed(r_seed, .rng_kind = "L'Ecuyer-CMRG")
+  rng <- RNGkind("L'Ecuyer-CMRG")
+  withr::local_seed(r_seed)
   withr::defer(restore_rng_kind(rng))
 
   if ( n_perm > 0L ) {
@@ -250,6 +246,7 @@ stability_selection <- function(x, y = NULL,
   # THE ACTION ----
   stab_time <- system.time(
     stabpath_mat <- mclapply(seq(n_iter), function(i) {
+      withr::local_seed(r_seed + i)
       calc_stability_paths(x, y,
                            kernel         = kernel,
                            lambda_seq     = lambda_seq,
@@ -258,7 +255,7 @@ stability_selection <- function(x, y = NULL,
                            beta_threshold = beta_threshold,
                            elastic_alpha  = elastic_alpha,
                            standardize    = standardize)
-    }, mc.set.seed = TRUE, mc.cores = n_cores) |> Reduce(f = "+")
+    }, mc.set.seed = FALSE, mc.cores = n_cores) |> Reduce(f = "+")
   )
   signal_done(
     "Stablity path run time:",
@@ -269,6 +266,7 @@ stability_selection <- function(x, y = NULL,
     perm_time <- system.time(
       permpath_list <- lapply(perm_seq, function(.j) {
         mclapply(seq(n_iter), function(i) {
+          withr::local_seed(r_seed + i)
           calc_stability_paths(x, perm_y[[.j]],
                                kernel         = kernel,
                                lambda_seq     = perm_lambda,
@@ -277,7 +275,7 @@ stability_selection <- function(x, y = NULL,
                                standardize    = standardize,
                                beta_threshold = beta_threshold,
                                elastic_alpha  = elastic_alpha)
-          }, mc.set.seed = TRUE, mc.cores = n_cores) |> Reduce(f = "+")
+          }, mc.set.seed = FALSE, mc.cores = n_cores) |> Reduce(f = "+")
       }) |> setNames(sprintf("Perm_%03i", perm_seq))
     )
     signal_done(

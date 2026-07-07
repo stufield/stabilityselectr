@@ -105,8 +105,8 @@ test_that("`get_stable_features()` with permutation adds `EmpFDR` column", {
 
   # un-selected features
   expect_equal(setdiff(colnames(x), s_feat_perm$feature),
-               c("feat_b", "feat_e", "feat_h", "feat_i", "feat_j",
-                 "feat_k", "feat_n", "feat_o", "feat_p", "feat_q"))
+               c("feat_b", "feat_c", "feat_f", "feat_h", "feat_i",
+                 "feat_k", "feat_l", "feat_n", "feat_o", "feat_p"))
 
   withr::with_options(list(pillar.sigfig = 4L),
     expect_snapshot( print(s_feat_perm, n = Inf) )
