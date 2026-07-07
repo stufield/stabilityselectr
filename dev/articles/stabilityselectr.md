@@ -39,17 +39,17 @@ colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 y           <- sample(1:2, n_samples, replace = TRUE)
 stab_sel    <- stability_selection(x, y, "binomial", n_iter = 500L)
 #> ✓ Using kernel: 'binomial' and 1 core (serial)
-#> ✓ Stablity path run time: 2.194s
+#> ✓ Stablity path run time: 2.74s
 is_stab_sel(stab_sel)
 #> [1] TRUE
 stab_sel
 #> ══ Stability Selection (Kernel: binomial) ═════════════════════════════
-#> • Weakness (alpha)            0.8
-#> • Weakness Probability (Pw)   0.5
+#> • Weakness (alpha)            0.5
+#> • Weakness Probability (Pw)   0.2
 #> • Number of Iterations        500
 #> • Standardized                'Yes'
 #> • Imputed Outliers            'No'
-#> • Lambda Max                  0.1471
+#> • Lambda Max                  0.2261
 #> • Lambda Min Ratio            0.1
 #> • Permuted Data               'No'
 #> • Random Seed                 1234
@@ -71,23 +71,13 @@ plot(stab_sel, thresh = 0.85)
 
 get_stable_features(stab_sel, thresh = 0.85)
 #> $thresh_0.85
-#> # A tibble: 14 × 3
-#>    feature MaxSelectProb FDRbound
-#>    <chr>           <dbl>    <dbl>
-#>  1 feat_d          0.941  0.00357
-#>  2 feat_t          0.927  0.00714
-#>  3 feat_j          0.922  0.0107 
-#>  4 feat_m          0.914  0.0143 
-#>  5 feat_a          0.901  0.0179 
-#>  6 feat_s          0.889  0.0214 
-#>  7 feat_g          0.88   0.025  
-#>  8 feat_n          0.867  0.0286 
-#>  9 feat_r          0.865  0.0321 
-#> 10 feat_e          0.862  0.0357 
-#> 11 feat_h          0.859  0.0393 
-#> 12 feat_c          0.858  0.0429 
-#> 13 feat_p          0.856  0.0464 
-#> 14 feat_q          0.856  0.05
+#> # A tibble: 4 × 3
+#>   feature MaxSelectProb FDRbound
+#>   <chr>           <dbl>    <dbl>
+#> 1 feat_d          0.907  0.00357
+#> 2 feat_t          0.892  0.00714
+#> 3 feat_m          0.883  0.0107 
+#> 4 feat_j          0.877  0.0143
 
 # at multiple thresholds
 get_stable_features(stab_sel, thresh = seq(0.7, 0.9, 0.05))
@@ -95,105 +85,75 @@ get_stable_features(stab_sel, thresh = seq(0.7, 0.9, 0.05))
 #> # A tibble: 20 × 3
 #>    feature MaxSelectProb FDRbound
 #>    <chr>           <dbl>    <dbl>
-#>  1 feat_d          0.941  0.00625
-#>  2 feat_t          0.927  0.0125 
-#>  3 feat_j          0.922  0.0188 
-#>  4 feat_m          0.914  0.025  
-#>  5 feat_a          0.901  0.0313 
-#>  6 feat_s          0.889  0.0375 
-#>  7 feat_g          0.88   0.0438 
-#>  8 feat_n          0.867  0.05   
-#>  9 feat_r          0.865  0.0563 
-#> 10 feat_e          0.862  0.0625 
-#> 11 feat_h          0.859  0.0688 
-#> 12 feat_c          0.858  0.075  
-#> 13 feat_p          0.856  0.0813 
-#> 14 feat_q          0.856  0.0875 
-#> 15 feat_f          0.845  0.0938 
-#> 16 feat_l          0.842  0.1    
-#> 17 feat_i          0.832  0.106  
-#> 18 feat_b          0.823  0.113  
-#> 19 feat_k          0.823  0.119  
-#> 20 feat_o          0.82   0.125  
+#>  1 feat_d          0.907  0.00625
+#>  2 feat_t          0.892  0.0125 
+#>  3 feat_m          0.883  0.0188 
+#>  4 feat_j          0.877  0.025  
+#>  5 feat_s          0.848  0.0313 
+#>  6 feat_a          0.845  0.0375 
+#>  7 feat_g          0.82   0.0438 
+#>  8 feat_r          0.805  0.05   
+#>  9 feat_c          0.791  0.0563 
+#> 10 feat_h          0.789  0.0625 
+#> 11 feat_n          0.787  0.0688 
+#> 12 feat_e          0.779  0.075  
+#> 13 feat_q          0.779  0.0813 
+#> 14 feat_f          0.771  0.0875 
+#> 15 feat_l          0.771  0.0938 
+#> 16 feat_p          0.768  0.1    
+#> 17 feat_b          0.746  0.106  
+#> 18 feat_i          0.745  0.113  
+#> 19 feat_k          0.736  0.119  
+#> 20 feat_o          0.724  0.125  
 #> 
 #> $thresh_0.75
-#> # A tibble: 20 × 3
+#> # A tibble: 16 × 3
 #>    feature MaxSelectProb FDRbound
 #>    <chr>           <dbl>    <dbl>
-#>  1 feat_d          0.941    0.005
-#>  2 feat_t          0.927    0.01 
-#>  3 feat_j          0.922    0.015
-#>  4 feat_m          0.914    0.02 
-#>  5 feat_a          0.901    0.025
-#>  6 feat_s          0.889    0.03 
-#>  7 feat_g          0.88     0.035
-#>  8 feat_n          0.867    0.04 
-#>  9 feat_r          0.865    0.045
-#> 10 feat_e          0.862    0.05 
-#> 11 feat_h          0.859    0.055
-#> 12 feat_c          0.858    0.06 
-#> 13 feat_p          0.856    0.065
-#> 14 feat_q          0.856    0.07 
-#> 15 feat_f          0.845    0.075
-#> 16 feat_l          0.842    0.08 
-#> 17 feat_i          0.832    0.085
-#> 18 feat_b          0.823    0.09 
-#> 19 feat_k          0.823    0.095
-#> 20 feat_o          0.82     0.1  
+#>  1 feat_d          0.907    0.005
+#>  2 feat_t          0.892    0.01 
+#>  3 feat_m          0.883    0.015
+#>  4 feat_j          0.877    0.02 
+#>  5 feat_s          0.848    0.025
+#>  6 feat_a          0.845    0.03 
+#>  7 feat_g          0.82     0.035
+#>  8 feat_r          0.805    0.04 
+#>  9 feat_c          0.791    0.045
+#> 10 feat_h          0.789    0.05 
+#> 11 feat_n          0.787    0.055
+#> 12 feat_e          0.779    0.06 
+#> 13 feat_q          0.779    0.065
+#> 14 feat_f          0.771    0.07 
+#> 15 feat_l          0.771    0.075
+#> 16 feat_p          0.768    0.08 
 #> 
 #> $thresh_0.8
-#> # A tibble: 20 × 3
-#>    feature MaxSelectProb FDRbound
-#>    <chr>           <dbl>    <dbl>
-#>  1 feat_d          0.941  0.00417
-#>  2 feat_t          0.927  0.00833
-#>  3 feat_j          0.922  0.0125 
-#>  4 feat_m          0.914  0.0167 
-#>  5 feat_a          0.901  0.0208 
-#>  6 feat_s          0.889  0.025  
-#>  7 feat_g          0.88   0.0292 
-#>  8 feat_n          0.867  0.0333 
-#>  9 feat_r          0.865  0.0375 
-#> 10 feat_e          0.862  0.0417 
-#> 11 feat_h          0.859  0.0458 
-#> 12 feat_c          0.858  0.05   
-#> 13 feat_p          0.856  0.0542 
-#> 14 feat_q          0.856  0.0583 
-#> 15 feat_f          0.845  0.0625 
-#> 16 feat_l          0.842  0.0667 
-#> 17 feat_i          0.832  0.0708 
-#> 18 feat_b          0.823  0.075  
-#> 19 feat_k          0.823  0.0792 
-#> 20 feat_o          0.82   0.0833 
-#> 
-#> $thresh_0.85
-#> # A tibble: 14 × 3
-#>    feature MaxSelectProb FDRbound
-#>    <chr>           <dbl>    <dbl>
-#>  1 feat_d          0.941  0.00357
-#>  2 feat_t          0.927  0.00714
-#>  3 feat_j          0.922  0.0107 
-#>  4 feat_m          0.914  0.0143 
-#>  5 feat_a          0.901  0.0179 
-#>  6 feat_s          0.889  0.0214 
-#>  7 feat_g          0.88   0.025  
-#>  8 feat_n          0.867  0.0286 
-#>  9 feat_r          0.865  0.0321 
-#> 10 feat_e          0.862  0.0357 
-#> 11 feat_h          0.859  0.0393 
-#> 12 feat_c          0.858  0.0429 
-#> 13 feat_p          0.856  0.0464 
-#> 14 feat_q          0.856  0.05   
-#> 
-#> $thresh_0.9
-#> # A tibble: 5 × 3
+#> # A tibble: 8 × 3
 #>   feature MaxSelectProb FDRbound
 #>   <chr>           <dbl>    <dbl>
-#> 1 feat_d          0.941  0.00313
-#> 2 feat_t          0.927  0.00625
-#> 3 feat_j          0.922  0.00938
-#> 4 feat_m          0.914  0.0125 
-#> 5 feat_a          0.901  0.0156
+#> 1 feat_d          0.907  0.00417
+#> 2 feat_t          0.892  0.00833
+#> 3 feat_m          0.883  0.0125 
+#> 4 feat_j          0.877  0.0167 
+#> 5 feat_s          0.848  0.0208 
+#> 6 feat_a          0.845  0.025  
+#> 7 feat_g          0.82   0.0292 
+#> 8 feat_r          0.805  0.0333 
+#> 
+#> $thresh_0.85
+#> # A tibble: 4 × 3
+#>   feature MaxSelectProb FDRbound
+#>   <chr>           <dbl>    <dbl>
+#> 1 feat_d          0.907  0.00357
+#> 2 feat_t          0.892  0.00714
+#> 3 feat_m          0.883  0.0107 
+#> 4 feat_j          0.877  0.0143 
+#> 
+#> $thresh_0.9
+#> # A tibble: 1 × 3
+#>   feature MaxSelectProb FDRbound
+#>   <chr>           <dbl>    <dbl>
+#> 1 feat_d          0.907  0.00313
 ```
 
 ------------------------------------------------------------------------
@@ -207,6 +167,6 @@ See separate vignette on clustering:
 
 ## References
 
-Meinshausen, N. and Buhlmann, P. (2010). Stability selection. Journal of
+Meinshausen, N and P Buhlmann. (2010). Stability selection. Journal of
 the Royal Statistical Society: Series B (Statistical Methodology),
 **72**: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
