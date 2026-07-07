@@ -95,7 +95,7 @@ withr::with_par(list(mgp = c(2.00, 0.75, 0.0), bg = "white",
   plot(progeny_data,
        col = cols[stab_clust$true_cluster],
        bg  = cols[stab_clust$true_cluster],
-       pch  = stab_clust$true_cluster + 20, lwd = 1, cex = 1.75,
+       pch = stab_clust$true_cluster + 20, lwd = 1, cex = 1.75,
        main = "Orig. Simulated 3 Cluster Data")
   plot(progeny_data,
        col = cols[stab_clust$prob_k],
