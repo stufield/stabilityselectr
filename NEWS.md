@@ -7,7 +7,7 @@
 * Development ...
   - major structural changes
   - speed improvement
-  - converge params
+  - converge function parameters
   - general improved user experience
 
 # stabilityselectr 0.0.2
