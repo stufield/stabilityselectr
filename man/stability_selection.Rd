@@ -49,7 +49,7 @@ is_stab_sel(x)
 \item{x}{A numeric \eqn{n \times p} matrix of predictive features
 containing \code{n} observation rows and \code{p} feature columns.
 Alternatively, a \code{stab_sel} class object if passing to one of
-the S3 generic methods.}
+its generic S3 methods.}
 
 \item{y}{The response variable. If kernel is "binomial", see
 \code{\link[glmnet:glmnet]{glmnet::glmnet()}} for options. If kernel is "cox", a two column
@@ -229,9 +229,9 @@ regularization term. This weighting can be performed in two
 different ways. If \code{Pw = NA} then these random weights are
 sampled uniformly between \code{alpha} and 1. If \code{Pw} is supplied,
 then the random weights are chosen to be \code{alpha} with
-probability \code{Pw} and 1 otherwise. The latter choice is used
-in Theorem 2 in Meinshausen and Buhlmann. Recommended values
-of \code{alpha} and \code{Pw} are \verb{[0.5, 0.2]}.
+probability \code{Pw} and \code{1.0} otherwise. The latter choice is used
+in Theorem 2 in Meinshausen and Buhlmann (2010). Recommended
+values of \code{alpha} and \code{Pw} are \verb{[0.5, 0.2]} respectively.
 
 The \code{\link[=is_stab_sel]{is_stab_sel()}} function checks whether
 an object is class \code{stab_sel}. See \code{\link[=inherits]{inherits()}}.
@@ -239,8 +239,7 @@ an object is class \code{stab_sel}. See \code{\link[=inherits]{inherits()}}.
 \details{
 Stability selection can be run in parallel using multiple forked
 processes by setting \code{parallel = TRUE}. This requires
-\code{\link[parallel:mclapply]{parallel::mclapply()}} from the \pkg{parallel} package.
-This is \emph{not} available for Windows OS.
+\code{\link[parallel:mclapply]{parallel::mclapply()}} and is \emph{not} available for Windows.
 }
 \section{Functions}{
 \itemize{
@@ -281,7 +280,8 @@ summary method via the \code{add_features} argument.
 n_feat      <- 20L
 n_samp      <- 2500L
 x           <- matrix(rnorm(n_samp * n_feat), n_samp, n_feat)
-colnames(x) <- paste0("feat", "_", head(letters, n_feat))
+fn <- function() paste0(sample(letters, 4L), collapse = "")
+colnames(x) <- replicate(n_feat, paste0("f_", fn()))
 y           <- sample(1:2, n_samp, replace = TRUE)
 stab_sel    <- stability_selection(x, y)
 
@@ -310,7 +310,7 @@ plot(stab_sel, thresh = 0.8)
 
 }
 \references{
-Meinshausen, N. and Buhlmann, P. (2010). Stability selection.
+Meinshausen, N and P Buhlmann. (2010). Stability selection.
 Journal of the Royal Statistical Society: Series B (Statistical
 Methodology), \strong{72}: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
 }
