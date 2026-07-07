@@ -381,9 +381,9 @@ the `add_features` argument.
 
 ## References
 
-Meinshausen, N. and Buhlmann, P. (2010), Stability selection. Journal of
-the Royal Statistical Society: Series B (Statistical Methodology), 72:
-417-473. doi: 10.1111/j.1467-9868.2010.00740.x
+Meinshausen, N. and Buhlmann, P. (2010). Stability selection. Journal of
+the Royal Statistical Society: Series B (Statistical Methodology),
+**72**: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
 
 ## See also
 
@@ -405,7 +405,7 @@ colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 y           <- sample(1:2, n_samp, replace = TRUE)
 stab_sel    <- stability_selection(x, y)
 #> ✓ Using kernel: 'binomial' and 1 core (serial)
-#> ✓ Stablity path run time: 2.615
+#> ✓ Stablity path run time: 2.452s
 
 # Cox
 xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
@@ -417,7 +417,7 @@ xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
 ycox <- data.matrix(select(simdata, time, status))
 stab_sel_cox <- stability_selection(xcox, ycox, kernel = "cox", r_seed = 3)
 #> ✓ Using kernel: 'cox' and 1 core (serial)
-#> ✓ Stablity path run time: 0.64
+#> ✓ Stablity path run time: 0.533s
 # Test for class `stab_sel`
 is_stab_sel(stab_sel)
 #> [1] TRUE
@@ -430,7 +430,7 @@ stab_sel
 #> • Number of Iterations        100
 #> • Standardized                'Yes'
 #> • Imputed Outliers            'No'
-#> • Lambda Max                  0.0308
+#> • Lambda Max                  0.0359
 #> • Lambda Min Ratio            0.1
 #> • Permuted Data               'No'
 #> • Random Seed                 1234
@@ -441,49 +441,50 @@ summary(stab_sel, thresh = 0.6)
 #> # A tibble: 20 × 4
 #>    feature MaxSelectProb   AUC FDRbound
 #>    <chr>           <dbl> <dbl>    <dbl>
-#>  1 feat_m          0.975 0.460   0.0125
-#>  2 feat_t          0.95  0.468   0.025 
-#>  3 feat_d          0.945 0.383   0.0375
-#>  4 feat_e          0.925 0.433   0.05  
-#>  5 feat_b          0.915 0.383   0.0625
-#>  6 feat_i          0.91  0.358   0.075 
-#>  7 feat_s          0.9   0.345   0.0875
-#>  8 feat_r          0.89  0.340   0.1   
-#>  9 feat_a          0.87  0.315   0.113 
-#> 10 feat_f          0.87  0.264   0.125 
-#> 11 feat_g          0.87  0.288   0.138 
-#> 12 feat_q          0.87  0.330   0.15  
-#> 13 feat_h          0.85  0.292   0.163 
-#> 14 feat_l          0.84  0.302   0.175 
-#> 15 feat_o          0.84  0.273   0.188 
-#> 16 feat_p          0.835 0.240   0.2   
-#> 17 feat_c          0.825 0.274   0.213 
-#> 18 feat_k          0.82  0.238   0.225 
-#> 19 feat_n          0.785 0.238   0.238 
-#> 20 feat_j          0.78  0.237   0.25  
+#>  1 feat_r          0.985 0.513   0.0125
+#>  2 feat_f          0.98  0.479   0.025 
+#>  3 feat_h          0.93  0.410   0.0375
+#>  4 feat_b          0.925 0.387   0.05  
+#>  5 feat_s          0.92  0.367   0.0625
+#>  6 feat_p          0.915 0.331   0.075 
+#>  7 feat_c          0.89  0.329   0.0875
+#>  8 feat_l          0.885 0.240   0.1   
+#>  9 feat_k          0.875 0.277   0.113 
+#> 10 feat_j          0.87  0.255   0.125 
+#> 11 feat_m          0.86  0.224   0.138 
+#> 12 feat_a          0.855 0.276   0.15  
+#> 13 feat_e          0.85  0.243   0.163 
+#> 14 feat_t          0.845 0.257   0.175 
+#> 15 feat_d          0.84  0.224   0.188 
+#> 16 feat_g          0.83  0.226   0.2   
+#> 17 feat_n          0.825 0.224   0.213 
+#> 18 feat_q          0.805 0.214   0.225 
+#> 19 feat_i          0.8   0.191   0.238 
+#> 20 feat_o          0.78  0.217   0.25  
 
 summary(stab_sel, thresh = 0.8, add_features = "feat_c")   # force feat_c into table
-#> # A tibble: 18 × 4
+#> # A tibble: 19 × 4
 #>    feature MaxSelectProb   AUC FDRbound
 #>    <chr>           <dbl> <dbl>    <dbl>
-#>  1 feat_m          0.975 0.460  0.00417
-#>  2 feat_t          0.95  0.468  0.00833
-#>  3 feat_d          0.945 0.383  0.0125 
-#>  4 feat_e          0.925 0.433  0.0167 
-#>  5 feat_b          0.915 0.383  0.0208 
-#>  6 feat_i          0.91  0.358  0.025  
-#>  7 feat_s          0.9   0.345  0.0292 
-#>  8 feat_r          0.89  0.340  0.0333 
-#>  9 feat_a          0.87  0.315  0.0375 
-#> 10 feat_f          0.87  0.264  0.0417 
-#> 11 feat_g          0.87  0.288  0.0458 
-#> 12 feat_q          0.87  0.330  0.05   
-#> 13 feat_h          0.85  0.292  0.0542 
-#> 14 feat_l          0.84  0.302  0.0583 
-#> 15 feat_o          0.84  0.273  0.0625 
-#> 16 feat_p          0.835 0.240  0.0667 
-#> 17 feat_c          0.825 0.274  0.0708 
-#> 18 feat_k          0.82  0.238  0.075  
+#>  1 feat_r          0.985 0.513  0.00417
+#>  2 feat_f          0.98  0.479  0.00833
+#>  3 feat_h          0.93  0.410  0.0125 
+#>  4 feat_b          0.925 0.387  0.0167 
+#>  5 feat_s          0.92  0.367  0.0208 
+#>  6 feat_p          0.915 0.331  0.025  
+#>  7 feat_c          0.89  0.329  0.0292 
+#>  8 feat_l          0.885 0.240  0.0333 
+#>  9 feat_k          0.875 0.277  0.0375 
+#> 10 feat_j          0.87  0.255  0.0417 
+#> 11 feat_m          0.86  0.224  0.0458 
+#> 12 feat_a          0.855 0.276  0.05   
+#> 13 feat_e          0.85  0.243  0.0542 
+#> 14 feat_t          0.845 0.257  0.0583 
+#> 15 feat_d          0.84  0.224  0.0625 
+#> 16 feat_g          0.83  0.226  0.0667 
+#> 17 feat_n          0.825 0.224  0.0708 
+#> 18 feat_q          0.805 0.214  0.075  
+#> 19 feat_i          0.8   0.191  0.0792 
 
 # S3 plot method
 plot(stab_sel, thresh = 0.8)

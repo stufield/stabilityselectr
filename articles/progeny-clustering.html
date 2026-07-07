@@ -99,16 +99,16 @@ The “true” number of clusters in the <code>progeny_data</code> object is
 <span><span class="co">#&gt; • No. iterations    25</span></span>
 <span><span class="co">#&gt; • No. repeats       10</span></span>
 <span><span class="co">#&gt; ── Mean &amp; CI95 Stability Scores ───────────────────────────────────────</span></span>
-<span><span class="co">#&gt;        k=2  k=3   k=4  k=5  k=6  k=7  k=8 ★k=9★</span></span>
-<span><span class="co">#&gt; 2.5%  2.80 14.6  9.52 13.3 11.2 15.3 17.3  19.5</span></span>
-<span><span class="co">#&gt; mean  3.57 20.4 12.42 16.1 13.2 17.6 19.6  24.6</span></span>
-<span><span class="co">#&gt; 97.5% 4.63 35.7 18.52 20.3 15.4 19.9 21.0  31.6</span></span>
+<span><span class="co">#&gt;        k=2 ★k=3★  k=4  k=5  k=6  k=7  k=8  k=9</span></span>
+<span><span class="co">#&gt; 2.5%  2.74  19.2 10.3 12.2 11.8 15.6 17.7 23.1</span></span>
+<span><span class="co">#&gt; mean  3.72  29.0 12.4 15.6 13.2 18.1 19.7 27.5</span></span>
+<span><span class="co">#&gt; 97.5% 4.58  42.6 16.8 20.2 15.6 21.8 25.3 34.4</span></span>
 <span><span class="co">#&gt; ── Maximum Distance Scores ────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;    k=2  ★k=3★    k=4    k=5    k=6    k=7    k=8    k=9 </span></span>
-<span><span class="co">#&gt;  0.401 13.009  4.108  4.697 -3.677 -7.018  2.029  5.034</span></span>
+<span><span class="co">#&gt;  0.801 23.435  3.563  4.856  1.638  3.155  1.743  9.463</span></span>
 <span><span class="co">#&gt; ── Gap Distance Scores ────────────────────────────────────────────────</span></span>
 <span><span class="co">#&gt;    k=2  ★k=3★    k=4    k=5    k=6    k=7    k=8    k=9 </span></span>
-<span><span class="co">#&gt; -24.83  24.83 -11.63   6.49  -7.18   2.27  -2.96   2.96</span></span>
+<span><span class="co">#&gt; -41.93  41.93 -19.73   5.46  -7.19   3.18  -6.11   6.11</span></span>
 <span><span class="co">#&gt; ═══════════════════════════════════════════════════════════════════════</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pc</span><span class="op">)</span></span></code></pre></div>
@@ -134,69 +134,49 @@ arbitrarily assigned.</p>
 </li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">stab_clust</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/stability_cluster.html">stability_cluster</a></span><span class="op">(</span><span class="va">progeny_data</span>, k <span class="op">=</span> <span class="fl">3L</span>,</span>
-<span>                                n_iter <span class="op">=</span> <span class="fl">500L</span>, r_seed <span class="op">=</span> <span class="fl">999</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">stab_clust</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/stability_cluster.html">stability_cluster</a></span><span class="op">(</span><span class="va">progeny_data</span>, k <span class="op">=</span> <span class="fl">3L</span>, n_iter <span class="op">=</span> <span class="fl">750L</span>,</span>
+<span>                                r_seed <span class="op">=</span> <span class="fl">999</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>true_cluster <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3L</span>, each <span class="op">=</span> <span class="fl">50L</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">stab_clust</span><span class="op">$</span><span class="va">true_cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3L</span>, each <span class="op">=</span> <span class="fl">50L</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># view 3-way confusion matrix</span></span>
+<span><span class="co"># 3-way confusion matrix</span></span>
 <span><span class="va">stab_clust</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span>truth <span class="op">=</span> <span class="va">true_cluster</span>, predicted <span class="op">=</span> <span class="va">prob_k</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      predicted</span></span>
 <span><span class="co">#&gt; truth  1  2  3</span></span>
-<span><span class="co">#&gt;     1 50  0  0</span></span>
-<span><span class="co">#&gt;     2  0 47  3</span></span>
-<span><span class="co">#&gt;     3  1  0 49</span></span>
+<span><span class="co">#&gt;     1 49  1  0</span></span>
+<span><span class="co">#&gt;     2  0 46  4</span></span>
+<span><span class="co">#&gt;     3  1  1 48</span></span>
 <span></span>
-<span><span class="co"># identify false clusters</span></span>
-<span><span class="va">stab_clust</span> <span class="op">&lt;-</span> <span class="va">stab_clust</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    sample <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/row_number.html" class="external-link">row_number</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    pch    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">16</span><span class="op">:</span><span class="fl">18</span>, each <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span>
-<span>    pch    <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
-<span>      <span class="va">sample</span> <span class="op">&lt;=</span> <span class="fl">50</span> <span class="op">&amp;</span> <span class="va">prob_k</span> <span class="op">!=</span> <span class="fl">1L</span> <span class="op">~</span> <span class="fl">13L</span>,                 <span class="co"># cluster 1</span></span>
-<span>      <span class="va">sample</span> <span class="op">&gt;</span> <span class="fl">50</span> <span class="op">&amp;</span> <span class="va">sample</span> <span class="op">&lt;=</span> <span class="fl">100</span> <span class="op">&amp;</span> <span class="va">prob_k</span> <span class="op">!=</span> <span class="fl">2L</span> <span class="op">~</span> <span class="fl">13L</span>,  <span class="co"># cluster 2</span></span>
-<span>      <span class="va">sample</span> <span class="op">&gt;</span> <span class="fl">100</span> <span class="op">&amp;</span> <span class="va">prob_k</span> <span class="op">!=</span> <span class="fl">3L</span> <span class="op">~</span> <span class="fl">13L</span>,                 <span class="co"># cluster 3</span></span>
-<span>      <span class="cn">TRUE</span> <span class="op">~</span> <span class="va">pch</span></span>
-<span>    <span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span></span>
-<span><span class="co"># view incorrect clusters (n = 8)</span></span>
+<span><span class="co"># view incorrect clusters</span></span>
 <span><span class="va">stab_clust</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">true_cluster</span> <span class="op">!=</span> <span class="va">prob_k</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 7</span></span></span>
-<span><span class="co">#&gt;   `k=1` `k=2` `k=3` prob_k true_cluster sample   pch</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 0.182 0.318 0.5        3            2     58    13</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 0.174 0.328 0.498      3            2     73    13</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 0.182 0.364 0.454      3            2     86    13</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 0.64  0.204 0.156      1            3    115    13</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 7 × 5</span></span></span>
+<span><span class="co">#&gt;   `k=1` `k=2` `k=3` prob_k true_cluster</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 0.388 0.427 0.185      2            1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 0.175 0.353 0.472      3            2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 0.171 0.393 0.436      3            2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 0.188 0.403 0.409      3            2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 0.169 0.359 0.472      3            2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 0.197 0.419 0.384      2            3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> 0.66  0.179 0.161      1            3</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="plotting-clusters">Plotting Clusters<a class="anchor" aria-label="anchor" href="#plotting-clusters"></a>
 </h3>
-<p>We can plot the <code>progeny_data</code> object, which has 3 main
-clusters, and identify which samples that were “correctly” clustered via
-stability clustering with an “X”.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">withr</span><span class="fu">::</span><span class="fu"><a href="https://withr.r-lib.org/reference/with_par.html" class="external-link">with_par</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mgp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2.00</span>, <span class="fl">0.75</span>, <span class="fl">0.0</span><span class="op">)</span>,</span>
-<span>                     mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">3</span>, <span class="fl">1</span><span class="op">)</span>, mfrow <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2L</span><span class="op">)</span>, <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">progeny_data</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">4</span>, each <span class="op">=</span> <span class="fl">50L</span><span class="op">)</span>,</span>
-<span>       pch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">16</span><span class="op">:</span><span class="fl">18</span>, each <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">1.75</span>,</span>
-<span>       main <span class="op">=</span> <span class="st">"Simulated 3 Cluster Data"</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">progeny_data</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">4</span>, each <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>,</span>
-<span>       pch <span class="op">=</span> <span class="va">stab_clust</span><span class="op">$</span><span class="va">pch</span>, cex <span class="op">=</span> <span class="fl">1.75</span>,</span>
-<span>       main <span class="op">=</span> <span class="st">"Stability Clustering"</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-<p><img src="progeny-clustering_files/figure-html/plot-clusters-1.png" class="r-plt" alt="" width="864"></p>
+<p>We can plot the original <code>progeny_data</code> object, which has
+3 true clusters, and identify which samples that were “incorrectly”
+clustered via stability clustering with an outline of the incorrect
+color.</p>
+<p><img src="progeny-clustering_files/figure-html/plot-clusters-1.png" class="r-plt" alt="" width="912"></p>
 <hr>
 </div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<p>Hu, C.W., Kornblau, S.M., Slater, J.H. and A.A. Qutub (2015). Progeny
+<p>Hu, CW, Kornblau, SM, Slater, JH and AA Qutub (2015). Progeny
 Clustering: A Method to Identify Biological Phenotypes. Scientific
-Reports, 5:12894. <a href="http://www.nature.com/articles/srep12894" class="external-link uri">http://www.nature.com/articles/srep12894</a></p>
+Reports, <strong>5</strong>:12894. <a href="http://www.nature.com/articles/srep12894" class="external-link uri">http://www.nature.com/articles/srep12894</a></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -39,7 +39,7 @@ colnames(x) <- paste0("feat", "_", head(letters, n_feat))
 y           <- sample(1:2, n_samples, replace = TRUE)
 stab_sel    <- stability_selection(x, y, "binomial", n_iter = 500L)
 #> ✓ Using kernel: 'binomial' and 1 core (serial)
-#> ✓ Stablity path run time: 1.877
+#> ✓ Stablity path run time: 1.856s
 is_stab_sel(stab_sel)
 #> [1] TRUE
 stab_sel
@@ -202,3 +202,11 @@ get_stable_features(stab_sel, thresh = seq(0.7, 0.9, 0.05))
 
 See separate vignette on clustering:
 [`vignette("progeny-clustering")`](https://stufield.github.io/stabilityselectr/articles/progeny-clustering.md).
+
+------------------------------------------------------------------------
+
+## References
+
+Meinshausen, N. and Buhlmann, P. (2010). Stability selection. Journal of
+the Royal Statistical Society: Series B (Statistical Methodology),
+**72**: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
