@@ -40,9 +40,9 @@ as what comes out of k-means? Could be susceptible to index
 errors (but seems ok for now).
 }
 \examples{
-stab_clust <- stability_cluster(progeny_data, k = 3L, n_iter = 750L)
-
-stab_clust$true_cluster <- rep(1:3L, each = 50L)
+stab_clust <- stability_cluster(progeny_data, k = 3L,
+                                n_iter = 750L, r_seed = 999) |>
+  dplyr::mutate(true_cluster = rep(1:3L, each = 50L))
 
 # View stable clusters
 stab_clust
@@ -51,23 +51,26 @@ stab_clust
 stab_clust |>
   with(table(truth = true_cluster, predicted = prob_k))
 
-# View the incorrectly clustered samples (n = 5)
-filter(stab_clust, prob_k != true_cluster)
+# View the incorrectly clustered samples
+stab_clust |>
+  filter(prob_k != true_cluster)
 
 # Plot Stability Clusters
 cols <- c("#24135F", "#00A499", "#840B55")
 withr::with_par(list(mgp = c(2.00, 0.75, 0.0),
                      mar = c(3, 4, 3, 1), mfrow = 1:2L), {
   plot(progeny_data,
-       col = cols[stab_clust$true_cluster],
-       bg  = cols[stab_clust$true_cluster],
-       pch = stab_clust$true_cluster + 20,
-       lwd = 1, cex = 1.75, main = "Simulated 3 Cluster Data")
+       col  = cols[stab_clust$true_cluster],
+       bg   = cols[stab_clust$true_cluster],
+       pch  = stab_clust$true_cluster + 20,
+       lwd  = 1, cex = 1.75,
+       main = "Orig. Simulated 3 Cluster Data")
   plot(progeny_data,
-       col = cols[stab_clust$prob_k],
-       bg  = cols[stab_clust$true_cluster],
-       pch = stab_clust$true_cluster + 20,
-       lwd = 2.5, cex = 1.5, main = "Stability Clustering")
+       col  = cols[stab_clust$prob_k],
+       bg   = cols[stab_clust$true_cluster],
+       pch  = stab_clust$true_cluster + 20,
+       lwd  = 2.5, cex = 1.5,
+       main = "Predicted Clusters via Stability Clustering")
 })
 }
 \references{

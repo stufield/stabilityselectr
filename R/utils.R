@@ -42,12 +42,6 @@ get_cores <- function() {
       "Windows detected. Continuing with `cores = 1L`."
     )
     1L
-  } else if ( !requireNamespace("parallel", quietly = TRUE) ) {
-    signal_info(
-      "The `parallel` package is not installed ...\n",
-      "Continuing with `cores = 1L`."
-    )
-    1L
   } else if ( nzchar(chk) && chk == "TRUE" ) {
     2L   # use 2 cores in CRAN/Travis/AppVeyor
   } else if ( identical(Sys.getenv("TESTTHAT"), "true") ) {

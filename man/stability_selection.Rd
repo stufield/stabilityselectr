@@ -310,9 +310,9 @@ plot(stab_sel, thresh = 0.8)
 
 }
 \references{
-Meinshausen, N. and Buhlmann, P. (2010), Stability selection.
+Meinshausen, N. and Buhlmann, P. (2010). Stability selection.
 Journal of the Royal Statistical Society: Series B (Statistical
-Methodology), 72: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
+Methodology), \strong{72}: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
 }
 \seealso{
 \code{\link[glmnet:glmnet]{glmnet::glmnet()}}, \code{\link[=get_stable_features]{get_stable_features()}}

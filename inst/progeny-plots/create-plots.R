@@ -9,39 +9,40 @@ suppressPackageStartupMessages(devtools::load_all(quiet = TRUE))
 
 
 # Progeny Clustering ----
-
-# This can take a while!
 pclust <- progeny_cluster(progeny_data, clust_iter = 2:9L, r_seed = 101,
-                          repeats = 25L, n_iter = 100L, size = 8L)
+                          repeats = 25L, n_iter = 150L, size = 6L)
 
 p <- plot(pclust)
 
 ggplot2::ggsave(
   filename = "inst/progeny-plots/progeny_data_output.pdf",
-  plot = p, height = 5, width = 10
+  plot = p, height = 5, width = 10, bg = "white"
 )
 
 
 # Stability Clustering ----
 stab_clust <- stability_cluster(progeny_data, k = 3L, n_iter = 1000L,
-                                r_seed = 101)
-stab_clust$true_cluster <- rep(1:3L, each = 50L)
+                                r_seed = 999) |>
+  dplyr::mutate(true_cluster = rep(1:3L, each = 50L))
 
 cols <- c("#24135F", "#00A499", "#840B55")
 file <- "inst/progeny-plots/progeny_data_stability_scatter.pdf"
 
 withr::with_pdf(file, title = basename(file), width = 12, height = 6, {
-  withr::with_par(list(mgp = c(2.00, 0.75, 0.00), mar = c(3, 4, 3, 1),
+  withr::with_par(list(mgp   = c(2.00, 0.75, 0.00),
+                       mar   = c(3, 4, 3, 1),
                        mfrow = 1:2L), {
    plot(progeny_data,
         col = cols[stab_clust$true_cluster],
         bg  = cols[stab_clust$true_cluster],
         pch = stab_clust$true_cluster + 20,
-        lwd = 1, cex = 1.75, main = "Simulated 3 Cluster Data")
+        lwd = 1, cex = 1.75,
+        main = "Orig. Simulated 3 Cluster Data")
    plot(progeny_data,
-        col = cols[stab_clust$ProbK],
+        col = cols[stab_clust$prob_k],
         bg  = cols[stab_clust$true_cluster],
         pch = stab_clust$true_cluster + 20,
-        lwd = 2.5, cex = 1.5, main = "Stability Clustering")
+        lwd = 2.5, cex = 1.5,
+        main = "Predicted Clusters via Stability Clustering")
   })
 })

@@ -106,28 +106,32 @@ progeny_cluster <- function(data, clust_iter = 2:10L, repeats = 10L,
     data <- data.matrix(data)
   }
 
-  # set seed for reproducibility
-  # Claude says "L'Ecuyer-CMRG" is better cross
-  # platform & in parallel processing
-  rng <- RNGkind()
-  withr::local_seed(r_seed, .rng_kind = "L'Ecuyer-CMRG")
-  withr::defer(restore_rng_kind(rng))
-
   # internal: generate stability for a specific `k`
   .calc_k <- function(.data, .i) {
     calc_stability(progeny_k(.data, k = .i, ...))
   }
 
-  scores <- parallel::mclapply(seq(repeats), function(i) {
+  # set RNG for reproducibility
+  # Claude says "L'Ecuyer-CMRG" is better cross
+  # platform & in parallel processing
+  rng <- RNGkind("L'Ecuyer-CMRG")
+  withr::defer(restore_rng_kind(rng))
+
+  scores <- mclapply(seq(repeats), function(i) {
+       withr::local_seed(i + r_seed)
        vapply(clust_iter, .calc_k, .data = data, FUN.VALUE = 0.1)
-    }, mc.set.seed = TRUE, mc.cores = get_cores()) |>
+    }, mc.set.seed = FALSE, mc.cores = get_cores()) |>
     do.call(what = rbind)
 
   # Generate reference data of random noise from orig data
-  rdata <- apply(data, 2, sample) # scrambled data
-  random_scores <- replicate(repeats, {
+  # set seed here too (not parallel)
+  rdata <- withr::with_seed(r_seed, apply(data, 2L, sample)) # scrambled data
+
+  random_scores <- mclapply(seq(repeats), function(i) {
+       withr::local_seed(i + r_seed)
       vapply(clust_iter, .calc_k, .data = rdata, FUN.VALUE = 0.1)
-    }, simplify = FALSE) |> do.call(what = rbind)
+    }, mc.set.seed = FALSE, mc.cores = get_cores()) |>
+    do.call(what = base::rbind)
 
   stopifnot(identical(dim(scores), dim(random_scores))) # sanity check
   colnames(scores) <- sprintf("k=%i", clust_iter)

@@ -3,16 +3,18 @@ title: "Progeny and Stability Clustering"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Progeny and Stability Clustering}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include = FALSE}
 library(stabilityselectr)
 knitr::opts_chunk$set(
-  collapse = TRUE, comment = "#>"
+  collapse = TRUE,
+  comment  = "#>"
 )
-set.seed(101)
 ```
 
 
@@ -64,29 +66,15 @@ True clusters are:
 
 
 ```{r stab-clusters}
-stab_clust <- stability_cluster(progeny_data, k = 3L,
-                                n_iter = 500L, r_seed = 999)
+stab_clust <- stability_cluster(progeny_data, k = 3L, n_iter = 750L,
+                                r_seed = 999) |>
+  dplyr::mutate(true_cluster = rep(1:3L, each = 50L))
 
-stab_clust$true_cluster <- rep(1:3L, each = 50L)
-
-# view 3-way confusion matrix
+# 3-way confusion matrix
 stab_clust |>
   with(table(truth = true_cluster, predicted = prob_k))
 
-# identify false clusters
-stab_clust <- stab_clust |>
-  dplyr::mutate(
-    sample = dplyr::row_number(),
-    pch    = rep(16:18, each = 50),
-    pch    = dplyr::case_when(
-      sample <= 50 & prob_k != 1L ~ 13L,                 # cluster 1
-      sample > 50 & sample <= 100 & prob_k != 2L ~ 13L,  # cluster 2
-      sample > 100 & prob_k != 3L ~ 13L,                 # cluster 3
-      TRUE ~ pch
-    )
-  )
-
-# view incorrect clusters (n = 8)
+# view incorrect clusters
 stab_clust |>
   dplyr::filter(true_cluster != prob_k)
 ```
@@ -94,19 +82,26 @@ stab_clust |>
 
 ### Plotting Clusters
 
-We can plot the `progeny_data` object, which has 3 main clusters, and
-identify which samples that were "correctly" clustered via stability
-clustering with an "X".
+We can plot the original `progeny_data` object, which has 3 true
+clusters, and identify which samples that were "incorrectly"
+clustered via stability clustering with an outline of the 
+incorrect color.
 
-```{r plot-clusters, fig.height = 4.5, fig.width = 9}
-withr::with_par(list(mgp = c(2.00, 0.75, 0.0),
+```{r plot-clusters, fig.height = 4, fig.width = 9.5, echo = FALSE}
+# identify false clusters
+cols <- c("#24135F", "#00A499", "#840B55")
+withr::with_par(list(mgp = c(2.00, 0.75, 0.0), bg = "white",
                      mar = c(3, 4, 3, 1), mfrow = 1:2L), {
-  plot(progeny_data, col = rep(2:4, each = 50L),
-       pch = rep(16:18, each = 50), cex = 1.75,
-       main = "Simulated 3 Cluster Data")
-  plot(progeny_data, col = rep(2:4, each = 50),
-       pch = stab_clust$pch, cex = 1.75,
-       main = "Stability Clustering")
+  plot(progeny_data,
+       col = cols[stab_clust$true_cluster],
+       bg  = cols[stab_clust$true_cluster],
+       pch  = stab_clust$true_cluster + 20, lwd = 1, cex = 1.75,
+       main = "Orig. Simulated 3 Cluster Data")
+  plot(progeny_data,
+       col = cols[stab_clust$prob_k],
+       bg  = cols[stab_clust$true_cluster],
+       pch = stab_clust$true_cluster + 20, lwd = 2.5, cex = 1.5,
+       main = "Predicted Clusters via Stability Clustering")
 })
 ```
 

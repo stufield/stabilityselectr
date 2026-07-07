@@ -139,9 +139,9 @@
 #' @author Stu Field, Michael R. Mehan, and Robert Kirk DeLisle
 #' @seealso [glmnet()], [get_stable_features()]
 #'
-#' @references Meinshausen, N. and Buhlmann, P. (2010), Stability selection.
+#' @references Meinshausen, N. and Buhlmann, P. (2010). Stability selection.
 #'   Journal of the Royal Statistical Society: Series B (Statistical
-#'   Methodology), 72: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
+#'   Methodology), **72**: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x
 #'
 #' @examples
 #' # logistic regression
@@ -249,38 +249,40 @@ stability_selection <- function(x, y = NULL,
 
   # THE ACTION ----
   stab_time <- system.time(
-    stabpath_mat <- parallel::mclapply(seq(n_iter), function(i) {
-           calc_stability_paths(x, y,
-                                kernel         = kernel,
-                                lambda_seq     = lambda_seq,
-                                alpha          = alpha,
-                                Pw             = Pw,
-                                beta_threshold = beta_threshold,
-                                elastic_alpha  = elastic_alpha,
-                                standardize    = standardize)
-      }, mc.set.seed = TRUE, mc.cores = n_cores) |> Reduce(f = "+")
+    stabpath_mat <- mclapply(seq(n_iter), function(i) {
+      calc_stability_paths(x, y,
+                           kernel         = kernel,
+                           lambda_seq     = lambda_seq,
+                           alpha          = alpha,
+                           Pw             = Pw,
+                           beta_threshold = beta_threshold,
+                           elastic_alpha  = elastic_alpha,
+                           standardize    = standardize)
+    }, mc.set.seed = TRUE, mc.cores = n_cores) |> Reduce(f = "+")
   )
   signal_done(
-    "Stablity path run time:", value(round(stab_time["elapsed"], 4L))
+    "Stablity path run time:",
+    paste0(value(round(stab_time["elapsed"], 4L)), "s")
   )
 
   if ( n_perm > 0L ) {
     perm_time <- system.time(
       permpath_list <- lapply(perm_seq, function(.j) {
-          parallel::mclapply(seq(n_iter), function(i) {
-              calc_stability_paths(x, perm_y[[.j]],
-                                   kernel         = kernel,
-                                   lambda_seq     = perm_lambda,
-                                   alpha          = alpha,
-                                   Pw             = Pw,
-                                   standardize    = standardize,
-                                   beta_threshold = beta_threshold,
-                                   elastic_alpha  = elastic_alpha)
-            }, mc.set.seed = TRUE, mc.cores = n_cores) |> Reduce(f = "+")
-        }) |> setNames(sprintf("Perm_%03i", perm_seq))
+        mclapply(seq(n_iter), function(i) {
+          calc_stability_paths(x, perm_y[[.j]],
+                               kernel         = kernel,
+                               lambda_seq     = perm_lambda,
+                               alpha          = alpha,
+                               Pw             = Pw,
+                               standardize    = standardize,
+                               beta_threshold = beta_threshold,
+                               elastic_alpha  = elastic_alpha)
+          }, mc.set.seed = TRUE, mc.cores = n_cores) |> Reduce(f = "+")
+      }) |> setNames(sprintf("Perm_%03i", perm_seq))
     )
     signal_done(
-      "Perm path run time:", value(round(perm_time["elapsed"], 4L))
+      "Perm path run time:",
+      paste0(value(round(perm_time["elapsed"], 4L)), "s")
     )
   }
 
