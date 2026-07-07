@@ -6,19 +6,20 @@
 #'
 #' @details Stability selection is performed using [stability_selection()],
 #'   which returns a `stab_sel` class object. The stability path can be
-#'   plotted using [graphics::plot()]. A `tibble` with the highest
+#'   plotted using a S3 [graphics::plot()] method. A `tibble` with the highest
 #'   selection probability can be created using [get_stable_features()].
 #'   See vignettes.
 #'
 #' @import helpr wranglr
+#'
 #' @seealso [glmnet::glmnet()], [kmeans()]
 #'
-#' @references **Meinshausen, N. and Buhlmann, P.** (*2010*).
+#' @references Meinshausen, N and P Buhlmann (2010).
 #'   Stability selection. Journal of the Royal Statistical Society:
 #'   Series B (Statistical Methodology), **72**: 417-473.
 #'   doi: 10.1111/j.1467-9868.2010.00740.x
 #'
-#' @references **Hu, C.W., Kornblau, S.M., Slater, J.H. and A.A. Qutub** (*2015*).
+#' @references Hu, CW, Kornblau, SM, Slater, JH and AA Qutub (*2015*).
 #'   Progeny Clustering: A Method to Identify Biological Phenotypes.
 #'   Scientific Reports, **5**:12894. \url{http://www.nature.com/articles/srep12894}
 NULL

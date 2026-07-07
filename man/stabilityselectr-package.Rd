@@ -11,17 +11,17 @@ The stabilityselectr package performs stability selection with a variety of kern
 \details{
 Stability selection is performed using \code{\link[=stability_selection]{stability_selection()}},
 which returns a \code{stab_sel} class object. The stability path can be
-plotted using \code{\link[graphics:plot.default]{graphics::plot()}}. A \code{tibble} with the highest
+plotted using a S3 \code{\link[graphics:plot.default]{graphics::plot()}} method. A \code{tibble} with the highest
 selection probability can be created using \code{\link[=get_stable_features]{get_stable_features()}}.
 See vignettes.
 }
 \references{
-\strong{Meinshausen, N. and Buhlmann, P.} (\emph{2010}).
+Meinshausen, N and P Buhlmann (2010).
 Stability selection. Journal of the Royal Statistical Society:
 Series B (Statistical Methodology), \strong{72}: 417-473.
 doi: 10.1111/j.1467-9868.2010.00740.x
 
-\strong{Hu, C.W., Kornblau, S.M., Slater, J.H. and A.A. Qutub} (\emph{2015}).
+Hu, CW, Kornblau, SM, Slater, JH and AA Qutub (\emph{2015}).
 Progeny Clustering: A Method to Identify Biological Phenotypes.
 Scientific Reports, \strong{5}:12894. \url{http://www.nature.com/articles/srep12894}
 }

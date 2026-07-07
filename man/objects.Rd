@@ -15,7 +15,7 @@ and containing 20 observations.
 "F1" and "F2", 150 observations, and 3 clusters in bivariate space.
 }
 \source{
-\code{clust_data}: Hu, et. al.
+\code{clust_data}: Hu, \emph{et al}. (2015).
 
 \code{progeny_data}: Stu Field
 }
@@ -44,11 +44,11 @@ head(clust_data)
 
 plot(progeny_data, col = rep(2:4, each = 50L),
      pch = rep(16:18, each = 50L), cex = 1.75,
-     main = "Simulated 3 Cluster Data")
+     main = "Original Simulated 3 Cluster Data")
 }
 \references{
-\code{clust_data}: Hu, C.W., Kornblau, S.M., Slater, J.H.
-and A.A. Qutub (\emph{2015}). Progeny Clustering: A Method to Identify
+\code{clust_data}: Hu, CW, Kornblau, SM, Slater, JH
+and AA Qutub (2015). Progeny Clustering: A Method to Identify
 Biological Phenotypes. Scientific Reports, \strong{5}:12894.
 pg. 3. \url{http://www.nature.com/articles/srep12894}
 }

@@ -44,9 +44,9 @@
 #'
 #' @author Stu Field
 #'
-#' @references Hu, C.W., Kornblau, S.M., Slater, J.H. and A.A. Qutub (2015).
+#' @references Hu, CW, Kornblau, SM, Slater, JH and AA Qutub (2015).
 #'   Progeny Clustering: A Method to Identify Biological Phenotypes.
-#'   Scientific Reports, 5:12894. \url{http://www.nature.com/articles/srep12894}
+#'   Scientific Reports, **5**:12894. \url{http://www.nature.com/articles/srep12894}
 #'
 #' @seealso [stats::kmeans()]
 #'
