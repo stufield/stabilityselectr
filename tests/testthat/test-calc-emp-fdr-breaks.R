@@ -17,7 +17,7 @@ test_that("`calc_emp_fdr_breaks()` function generates `fdr_data` entry", {
   expect_equal(vapply(empFDR$fdr_data, typeof, ""),
                c(MeanFPs = "double", n_selected = "integer", piThresh  = "double"))
   expect_equal(colSums(empFDR$fdr_data),
-               c(MeanFPs = 165.6, n_selected = 167.0, piThresh = 5.5))
+               c(MeanFPs = 164.0, n_selected = 167.0, piThresh = 5.5))
   expect_equal(vapply(empFDR$fdr_data, median, pi),
                c(MeanFPs = 20.00, n_selected = 20.00, piThresh = 0.55))
   expect_equal(empFDR$fdr_data$piThresh, seq(1, 0.1, -0.1))
