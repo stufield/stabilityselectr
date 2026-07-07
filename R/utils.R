@@ -54,25 +54,23 @@ get_cores <- function() {
 restore_rng_kind <- getFromNamespace("restore_rng_kind", "withr")
 
 #' Internal for calculating the AUC for all stability paths
+#'   using the trapezoidal rule. Must use `abs()` because decreasing.
 #'
 #' @param x A `stabpath_matrix` entry of a `stab_path` object.
 #'
 #' @param values A vector of values to iterate over,
-#'   typically `lambda_norm`.
+#'   typically `lambda_norm` (`lambda / max(lambda)`).
 #'
 #' @importFrom utils head tail
 #' @noRd
 calc_path_auc <- function(x, values) {
   stopifnot(
-    "Must pass `x` as a `stability path matrix`." = is_stabpath_matrix(x)
+    "`x` must be a `stability path matrix`." = is_stabpath_matrix(x)
   )
-  sum_diffs <- head(values, -1L) + tail(values, -1L)
-  # flip matrix to perform row-wise operations column-wise
-  vapply(
-    data.frame(t(x)),
-    function(.x) as.double(diff(.x) %*% sum_diffs) / 2,
-    0.1
-  )
+  auc_trapz <- function(x, y) {
+    sum(abs(diff(x)) * (head(y, -1L) + tail(y, -1L)) / 2)
+  }
+  apply(x, 1L, auc_trapz, x = values)
 }
 
 log_rfu <- function(x) {
