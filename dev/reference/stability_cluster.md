@@ -64,25 +64,25 @@ Stu Field
 ## Examples
 
 ``` r
-stab_clust <- stability_cluster(progeny_data, k = 3L, n_iter = 750L)
-
-stab_clust$true_cluster <- rep(1:3L, each = 50L)
+stab_clust <- stability_cluster(progeny_data, k = 3L,
+                                n_iter = 750L, r_seed = 999) |>
+  dplyr::mutate(true_cluster = rep(1:3L, each = 50L))
 
 # View stable clusters
 stab_clust
 #> # A tibble: 150 × 5
 #>    `k=1` `k=2` `k=3` prob_k true_cluster
 #>    <dbl> <dbl> <dbl>  <int>        <int>
-#>  1 0.68  0.159 0.161      1            1
-#>  2 0.669 0.16  0.171      1            1
-#>  3 0.657 0.172 0.171      1            1
-#>  4 0.675 0.169 0.156      1            1
-#>  5 0.647 0.168 0.185      1            1
-#>  6 0.663 0.185 0.152      1            1
-#>  7 0.673 0.175 0.152      1            1
-#>  8 0.653 0.188 0.159      1            1
-#>  9 0.665 0.177 0.157      1            1
-#> 10 0.66  0.184 0.156      1            1
+#>  1 0.675 0.165 0.16       1            1
+#>  2 0.668 0.161 0.171      1            1
+#>  3 0.661 0.172 0.167      1            1
+#>  4 0.671 0.145 0.184      1            1
+#>  5 0.671 0.155 0.175      1            1
+#>  6 0.669 0.144 0.187      1            1
+#>  7 0.689 0.153 0.157      1            1
+#>  8 0.656 0.16  0.184      1            1
+#>  9 0.644 0.172 0.184      1            1
+#> 10 0.675 0.153 0.172      1            1
 #> # ℹ 140 more rows
 
 # confusion matrix
@@ -91,34 +91,38 @@ stab_clust |>
 #>      predicted
 #> truth  1  2  3
 #>     1 49  1  0
-#>     2  0 47  3
+#>     2  0 46  4
 #>     3  1  1 48
 
-# View the incorrectly clustered samples (n = 5)
-filter(stab_clust, prob_k != true_cluster)
-#> # A tibble: 6 × 5
+# View the incorrectly clustered samples
+stab_clust |>
+  filter(prob_k != true_cluster)
+#> # A tibble: 7 × 5
 #>   `k=1` `k=2` `k=3` prob_k true_cluster
 #>   <dbl> <dbl> <dbl>  <int>        <int>
-#> 1 0.355 0.457 0.188      2            1
-#> 2 0.153 0.407 0.44       3            2
-#> 3 0.141 0.393 0.465      3            2
-#> 4 0.189 0.36  0.451      3            2
-#> 5 0.639 0.201 0.16       1            3
-#> 6 0.171 0.416 0.413      2            3
+#> 1 0.388 0.427 0.185      2            1
+#> 2 0.175 0.353 0.472      3            2
+#> 3 0.171 0.393 0.436      3            2
+#> 4 0.188 0.403 0.409      3            2
+#> 5 0.169 0.359 0.472      3            2
+#> 6 0.197 0.419 0.384      2            3
+#> 7 0.66  0.179 0.161      1            3
 
 # Plot Stability Clusters
 cols <- c("#24135F", "#00A499", "#840B55")
 withr::with_par(list(mgp = c(2.00, 0.75, 0.0),
                      mar = c(3, 4, 3, 1), mfrow = 1:2L), {
   plot(progeny_data,
-       col = cols[stab_clust$true_cluster],
-       bg  = cols[stab_clust$true_cluster],
-       pch = stab_clust$true_cluster + 20,
-       lwd = 1, cex = 1.75, main = "Simulated 3 Cluster Data")
+       col  = cols[stab_clust$true_cluster],
+       bg   = cols[stab_clust$true_cluster],
+       pch  = stab_clust$true_cluster + 20,
+       lwd  = 1, cex = 1.75,
+       main = "Orig. Simulated 3 Cluster Data")
   plot(progeny_data,
-       col = cols[stab_clust$prob_k],
-       bg  = cols[stab_clust$true_cluster],
-       pch = stab_clust$true_cluster + 20,
-       lwd = 2.5, cex = 1.5, main = "Stability Clustering")
+       col  = cols[stab_clust$prob_k],
+       bg   = cols[stab_clust$true_cluster],
+       pch  = stab_clust$true_cluster + 20,
+       lwd  = 2.5, cex = 1.5,
+       main = "Predicted Clusters via Stability Clustering")
 })
 ```

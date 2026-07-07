@@ -179,32 +179,24 @@ Scientific Reports, 5:12894. <a href="http://www.nature.com/articles/srep12894" 
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">•</span> No. repeats       <span style="color: #0000BB;">10</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> Mean &amp; CI95 Stability Scores <span style="color: #00BBBB;">───────────────────────────────────────</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        k=2  k=3  k=4  k=5  k=6  k=7  k=8 ★k=9★</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2.5%  2.40 13.4 10.2 12.6 10.8 15.0 16.2  21.8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> mean  3.34 18.2 13.8 15.8 13.9 16.4 18.4  24.7</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97.5% 4.87 24.4 18.7 20.2 17.0 17.6 22.0  27.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        k=2  k=3  k=4   k=5  k=6  k=7  k=8 ★k=9★</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2.5%  2.73 12.3  8.5  9.67 10.7 15.1 16.7  23.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mean  3.79 23.3 11.2 13.63 12.0 18.3 20.0  27.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97.5% 4.88 36.9 13.4 16.99 13.9 26.0 23.0  30.8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> Maximum Distance Scores <span style="color: #00BBBB;">────────────────────────────────────────────</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    k=2  ★k=3★    k=4    k=5    k=6    k=7    k=8    k=9 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  0.666 11.403  4.447  2.235 -2.585  1.216  2.930  6.430 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1.004 16.700  3.295  3.544  0.382  3.670  3.215  8.484 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> Gap Distance Scores <span style="color: #00BBBB;">────────────────────────────────────────────────</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     k=2   ★k=3★     k=4     k=5     k=6     k=7     k=8     k=9 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -19.367  19.367  -6.464   3.913  -4.502   0.622  -4.341   4.341 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    k=2  ★k=3★    k=4    k=5    k=6    k=7    k=8    k=9 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -31.55  31.55 -14.56   4.06  -7.81   4.45  -5.54   5.54 </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">═══════════════════════════════════════════════════════════════════════</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Test progeny clustering on iris data set</span></span></span>
 <span class="r-in"><span><span class="co"># Doesn't work as well as the simulated data set</span></span></span>
 <span class="r-in"><span><span class="va">clust_iris</span> <span class="op">&lt;-</span> <span class="fu">progeny_cluster</span><span class="op">(</span><span class="va">iris</span><span class="op">[</span>, <span class="op">-</span><span class="fl">5L</span><span class="op">]</span>, clust_iter <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">5L</span>,</span></span>
 <span class="r-in"><span>                              size <span class="op">=</span> <span class="fl">6L</span>, n_iter <span class="op">=</span> <span class="fl">250</span><span class="op">)</span>  <span class="co"># pass `...`</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>did not converge in 20 iterations</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>did not converge in 20 iterations</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>did not converge in 20 iterations</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>did not converge in 20 iterations</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>did not converge in 20 iterations</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>did not converge in 20 iterations</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>did not converge in 20 iterations</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>did not converge in 20 iterations</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>did not converge in 20 iterations</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>did not converge in 20 iterations</span>
 <span class="r-in"><span></span></span>
@@ -219,17 +211,17 @@ Scientific Reports, 5:12894. <a href="http://www.nature.com/articles/srep12894" 
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> Mean &amp; CI95 Stability Scores <span style="color: #00BBBB;">───────────────────────────────────────</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       ★k=2★  k=3  k=4  k=5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2.5%    396 50.2 26.6 43.6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> mean   1015 56.7 27.9 48.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97.5%  1499 65.1 30.3 52.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2.5%    274 45.4 26.0 41.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mean    874 59.7 28.3 46.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 97.5%  1499 69.4 30.2 52.9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> Maximum Distance Scores <span style="color: #00BBBB;">────────────────────────────────────────────</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ★k=2★   k=3   k=4   k=5 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 969.3  48.7  19.6  38.3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 804.4  52.6  19.7  36.5 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">──</span> Gap Distance Scores <span style="color: #00BBBB;">────────────────────────────────────────────────</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  ★k=2★    k=3    k=4    k=5 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  927.7 -927.7  -48.9   48.9 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  779.2 -779.2  -49.8   49.8 </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">═══════════════════════════════════════════════════════════════════════</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Test for class `pclust`</span></span></span>

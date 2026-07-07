@@ -123,8 +123,9 @@ y           <- sample(1:2, n_samples, replace = TRUE)
 ss <- stability_selection(x, y, n_iter = 25, n_perm = 50,
                           r_seed = 101, parallel = TRUE)
 #> ✓ Using kernel: 'binomial' and 1 core (serial)
-#> ✓ Stablity path run time: 0.21
-#> ✓ Perm path run time: 2.433
+#> ✓ Stablity path run time: 0.319s
+#> ✓ Perm path run time: 11.29s
+
 calc_emp_fdr(ss, seq(0.5, 0.9, 0.1))
 #> thresh_0.5 thresh_0.6 thresh_0.7 thresh_0.8 thresh_0.9 
 #>      20.00      19.82      17.36       9.94       2.80 

@@ -107,7 +107,7 @@ below.</p>
 <span><span class="va">y</span>           <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="va">n_samples</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">stab_sel</span>    <span class="op">&lt;-</span> <span class="fu"><a href="../reference/stability_selection.html">stability_selection</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="st">"binomial"</span>, n_iter <span class="op">=</span> <span class="fl">500L</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ✓ Using kernel: 'binomial' and 1 core (serial)</span></span>
-<span><span class="co">#&gt; ✓ Stablity path run time: 1.844</span></span>
+<span><span class="co">#&gt; ✓ Stablity path run time: 1.53s</span></span>
 <span><span class="fu"><a href="../reference/stability_selection.html">is_stab_sel</a></span><span class="op">(</span><span class="va">stab_sel</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="va">stab_sel</span></span>
@@ -267,6 +267,14 @@ below.</p>
 </h2>
 <p>See separate vignette on clustering:
 <code><a href="../articles/progeny-clustering.html">vignette("progeny-clustering")</a></code>.</p>
+<hr>
+</div>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<p>Meinshausen, N. and Buhlmann, P. (2010). Stability selection. Journal
+of the Royal Statistical Society: Series B (Statistical Methodology),
+<strong>72</strong>: 417-473. doi: 10.1111/j.1467-9868.2010.00740.x</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

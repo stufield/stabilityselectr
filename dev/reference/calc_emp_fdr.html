@@ -165,8 +165,9 @@ of the <code>n</code> class scrambled permutations, i.e. the null.</p></li>
 <span class="r-in"><span><span class="va">ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="stability_selection.html">stability_selection</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, n_iter <span class="op">=</span> <span class="fl">25</span>, n_perm <span class="op">=</span> <span class="fl">50</span>,</span></span>
 <span class="r-in"><span>                          r_seed <span class="op">=</span> <span class="fl">101</span>, parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Using kernel: <span style="color: #0000BB;">'binomial'</span> and <span style="color: #0000BB;">1</span> core (serial)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Stablity path run time: <span style="color: #0000BB;">0.21</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Perm path run time: <span style="color: #0000BB;">2.433</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Stablity path run time: <span style="color: #0000BB;">0.319</span>s</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✓</span> Perm path run time: <span style="color: #0000BB;">11.29</span>s</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">calc_emp_fdr</span><span class="op">(</span><span class="va">ss</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> thresh_0.5 thresh_0.6 thresh_0.7 thresh_0.8 thresh_0.9 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      20.00      19.82      17.36       9.94       2.80 </span>
