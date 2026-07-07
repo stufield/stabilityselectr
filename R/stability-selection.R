@@ -14,7 +14,7 @@
 #'   coefficients are randomly re-weighted when calculating the
 #'   regularization term. This weighting can be performed in two
 #'   different ways. If `Pw = NA` then these random weights are
-#'   sampled uniformly between `alpha` and 1. If `Pw` is supplied,
+#'   sampled uniformly between `alpha` and `1.0`. If `Pw` is supplied,
 #'   then the random weights are chosen to be `alpha` with
 #'   probability `Pw` and `1.0` otherwise. The latter choice is used
 #'   in Theorem 2 in Meinshausen and Buhlmann (2010). Recommended
@@ -64,7 +64,7 @@
 #'
 #' @param Pw `numeric(1)`. Value defining probability of
 #'   a weak weight, see `alpha`. If `Pw = NA` then the
-#'   coefficient weights are sampled uniformly from `alpha` to 1.
+#'   coefficient weights are sampled uniformly from `alpha` to `1.0`.
 #'
 #' @param standardize `logical(1)`. Whether the data should
 #'   be centered and scaled. Passed to [glmnet()].
@@ -171,7 +171,7 @@ stability_selection <- function(x, y = NULL,
                                            "cox", "multinomial",
                                            "pca.sd", "pca.thresh"),
                                 n_iter = 100, parallel = FALSE,
-                                alpha = 0.8, Pw = 0.5,
+                                alpha = 0.5, Pw = 0.2,
                                 n_perm = 0, standardize = TRUE,
                                 lambda_min_ratio = 0.1,
                                 beta_threshold = 0L,

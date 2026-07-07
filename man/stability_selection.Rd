@@ -14,8 +14,8 @@ stability_selection(
   kernel = c("binomial", "lasso", "ridge", "cox", "multinomial", "pca.sd", "pca.thresh"),
   n_iter = 100,
   parallel = FALSE,
-  alpha = 0.8,
-  Pw = 0.5,
+  alpha = 0.5,
+  Pw = 0.2,
   n_perm = 0,
   standardize = TRUE,
   lambda_min_ratio = 0.1,
@@ -83,7 +83,7 @@ beta coefficient in the regularization.}
 
 \item{Pw}{\code{numeric(1)}. Value defining probability of
 a weak weight, see \code{alpha}. If \code{Pw = NA} then the
-coefficient weights are sampled uniformly from \code{alpha} to 1.}
+coefficient weights are sampled uniformly from \code{alpha} to \code{1.0}.}
 
 \item{n_perm}{\code{integer(1)}. The number of permutations
 to use in calculating the empirical false positive rate.}
@@ -227,7 +227,7 @@ a value less than 1. In a randomized Lasso the model
 coefficients are randomly re-weighted when calculating the
 regularization term. This weighting can be performed in two
 different ways. If \code{Pw = NA} then these random weights are
-sampled uniformly between \code{alpha} and 1. If \code{Pw} is supplied,
+sampled uniformly between \code{alpha} and \code{1.0}. If \code{Pw} is supplied,
 then the random weights are chosen to be \code{alpha} with
 probability \code{Pw} and \code{1.0} otherwise. The latter choice is used
 in Theorem 2 in Meinshausen and Buhlmann (2010). Recommended

@@ -56,7 +56,8 @@ test_that("`stability_selection()` generates the correct values", {
 
 # Testing outlier imputation ----
 test_that("the `stab_select` object is created correctly when imputing outliers", {
-  ss1 <- stability_selection(x, y, impute_outliers = TRUE, r_seed = 101)
+  ss1 <- stability_selection(x, y, alpha = 0.8, Pw = 0.5,
+                             impute_outliers = TRUE, r_seed = 101)
   expect_s3_class(ss1, "stab_sel")
   expect_equal(dim(ss1$stabpath_matrix), dim(ss$stabpath_matrix))
   expect_true(ss1$impute_outliers)
@@ -141,8 +142,8 @@ test_that("`stability_selection()` trips the correct error for `kernel = pca.sd`
 test_that("`stability_selection()` generates expected values for the Cox kernel", {
   xcox   <- feature_matrix(log_rfu(simdata))
   ycox   <- survival::Surv(simdata$time, simdata$status)  # a matrix
-  ss_cox <- stability_selection(xcox, ycox, kernel = "cox", r_seed = 101)
-
+  ss_cox <- stability_selection(xcox, ycox, alpha = 0.8, Pw = 0.5,
+                                kernel = "cox", r_seed = 101)
   expect_equal(sum(ss_cox$lambda), 13.5338163)
   expect_equal(sum(ss_cox$perm_lambda), 2.31104197)
   expect_length(ss_cox$perm_lambda, 20L)
