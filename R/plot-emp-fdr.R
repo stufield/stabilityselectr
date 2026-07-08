@@ -23,6 +23,7 @@
 #'
 #' @importFrom ggplot2 ggplot aes geom_abline geom_point theme
 #' @importFrom ggplot2 scale_color_manual labs annotate geom_step
+#' @importFrom ggplot2 scale_y_continuous scale_x_continuous
 #' @export
 plot_emp_fdr <- function(x, ...) {
 
@@ -36,6 +37,8 @@ plot_emp_fdr <- function(x, ...) {
   emp_breaks$fdr_data |>
     ggplot(aes(x = n_selected, y = MeanFPs)) +
     geom_step(linewidth = 0.5) +
+    scale_x_continuous(breaks = scales::breaks_pretty()) +
+    scale_y_continuous(breaks = scales::breaks_pretty()) +
     geom_point(alpha = 0.5, size = 3.5) +
     geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
     geom_point(data = emp_breaks$breaks, size = 2.5,
