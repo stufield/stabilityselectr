@@ -34,11 +34,15 @@ plot_emp_fdr <- function(x, ...) {
   emp_breaks$breaks$thresh_mean <- paste(emp_breaks$breaks$piThresh, "|",
                                          emp_breaks$breaks$MeanFPs)
 
+  integer_breaks <- function(n = 5L) {
+    function(x) unique(round(pretty(x, n)))
+  }
+
   emp_breaks$fdr_data |>
     ggplot(aes(x = n_selected, y = MeanFPs)) +
     geom_step(linewidth = 0.5) +
-    scale_x_continuous(breaks = scales::breaks_pretty()) +
-    scale_y_continuous(breaks = scales::breaks_pretty()) +
+    scale_x_continuous(breaks = integer_breaks()) +
+    scale_y_continuous(breaks = integer_breaks()) +
     geom_point(alpha = 0.5, size = 3.5) +
     geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
     geom_point(data = emp_breaks$breaks, size = 2.5,
