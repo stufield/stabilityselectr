@@ -92,7 +92,7 @@ to use in calculating the empirical false positive rate.}
 be centered and scaled. Passed to \code{\link[glmnet:glmnet]{glmnet::glmnet()}}.}
 
 \item{lambda_min_ratio}{The minimum value of
-lambda/max(lambda) to use during
+\eqn{\lambda / max(\lambda)} to use during
 the selection procedure. See \code{\link[glmnet:glmnet]{glmnet::glmnet()}}.}
 
 \item{beta_threshold}{\code{numeric(1)}. Floating point value
@@ -191,25 +191,28 @@ The S3 print method returns:
 \item{Stability Selection Kernel}{The kernel used in
 the stability selection algorithm.}
 
-\item{Weakness}{The weakness used (\code{alpha} argument).}
+\item{weakness}{the weakness used (\eqn{\alpha}).}
 
-\item{Weakness Probability}{The probability of the weakness being applied
-(\verb{Pw =} argument).}
+\item{P(alpha)}{the probability of the \eqn{\alpha}
+being applied (\verb{Pw =} argument).}
 
-\item{Number of Iterations}{Number of iterations in the selection
-(\verb{n_iter =} argument).}
+\item{iter}{number of iterations in the stability selection algorithm.}
 
-\item{Standardized}{Was the data standardized prior to stability selection?}
+\item{standardized}{was the data pre-standardized?}
 
-\item{Imputed Outliers}{Were statistical outliers imputed to the Gaussian
-approximation prior to stability selection?}
+\item{imputed outliers}{were statistical outliers imputed via
+Gaussian approximation prior to stability selection?}
 
-\item{Lambda Max}{The maximum lambda (tuning parameter) used.}
+\item{max lambda}{the maximum \eqn{\lambda} (tuning parameter)
+used.}
 
-\item{Lambda Max}{The maximum lambda (tuning parameter) used.}
+\item{min ratio}{the minimum ratio used: \eqn{\lambda/max(\lambda)}.}
 
-\item{Random Seed}{The seed passed to the random number generator
-for subset selection.}
+\item{permuted data}{was permuted (null) data generated during
+stability selection?.}
+
+\item{random seed}{the seed passed to the random number generator
+during stability selection.}
 
 A \code{ggplot}.
 }

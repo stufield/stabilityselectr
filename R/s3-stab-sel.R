@@ -22,25 +22,28 @@ is_stab_sel <- function(x) inherits(x, "stab_sel")
 #' \item{Stability Selection Kernel}{The kernel used in
 #'       the stability selection algorithm.}
 #'
-#' \item{Weakness}{The weakness used (`alpha` argument).}
+#' \item{weakness}{the weakness used (\eqn{\alpha}).}
 #'
-#' \item{Weakness Probability}{The probability of the weakness being applied
-#'       (`Pw =` argument).}
+#' \item{P(alpha)}{the probability of the \eqn{\alpha}
+#'       being applied (`Pw =` argument).}
 #'
-#' \item{Number of Iterations}{Number of iterations in the selection
-#'       (`n_iter =` argument).}
+#' \item{iter}{number of iterations in the stability selection algorithm.}
 #'
-#' \item{Standardized}{Was the data standardized prior to stability selection?}
+#' \item{standardized}{was the data pre-standardized?}
 #'
-#' \item{Imputed Outliers}{Were statistical outliers imputed to the Gaussian
-#'       approximation prior to stability selection?}
+#' \item{imputed outliers}{were statistical outliers imputed via
+#'       Gaussian approximation prior to stability selection?}
 #'
-#' \item{Lambda Max}{The maximum lambda (tuning parameter) used.}
+#' \item{max lambda}{the maximum \eqn{\lambda} (tuning parameter)
+#'       used.}
 #'
-#' \item{Lambda Max}{The maximum lambda (tuning parameter) used.}
+#' \item{min ratio}{the minimum ratio used: \eqn{\lambda/max(\lambda)}.}
 #'
-#' \item{Random Seed}{The seed passed to the random number generator
-#'       for subset selection.}
+#' \item{permuted data}{was permuted (null) data generated during
+#'       stability selection?.}
+#'
+#' \item{random seed}{the seed passed to the random number generator
+#'       during stability selection.}
 #'
 #' @examples
 #' # S3 print method
@@ -55,25 +58,25 @@ print.stab_sel <- function(x, ...) {
     line_col = "blue", lty = "double"
   )
   key <- c(
-    "Weakness (alpha)",
-    "Weakness Probability (Pw)",
-    "Number of Iterations",
-    "Standardized ",
-    "Imputed Outliers",
-    "Lambda Max",
-    "Lambda Min Ratio",
-    "Permuted Data",
-    "Random Seed"
+    "weakness (\u03B1)",
+    "P(\u03B1) -> (Pw)",
+    "iter",
+    "standardized",
+    "imputed outliers",
+    "max \u03BB",
+    "min ratio (\u03BB)",
+    "permuted data",
+    "random Seed"
     ) |> pad(27)
   value <- list(
     round(x$alpha, 2L),
     round(x$Pw, 2L),
     round(x$n_iter),
-    ifelse(x$standardize, "Yes", "No"),
-    ifelse(x$impute_outliers, "Yes", "No"),
+    x$standardize,
+    x$impute_outliers,
     round(x$lambda[1L], 4L),
     round(x$lambda_min_ratio, 1L),
-    ifelse(x$perm_data, "Yes", "No"),
+    x$perm_data,
     x$r_seed
   )
   liter(key, value, function(.x, .y) {
@@ -191,7 +194,7 @@ plot.stab_sel <- function(x, thresh = 0.60,
   lambda_norm <- x$lambda / max(x$lambda)
 
   if ( is.null(main) ) {
-    main <- sprintf("Stability Paths (Weakness = %0.2f, Pw = %0.2f)",
+    main <- sprintf("Stability Paths (\u03B1 = %0.2f, P(\u03B1) = %0.2f)",
                     x$alpha, x$Pw)
   }
 
@@ -257,9 +260,10 @@ plot.stab_sel <- function(x, thresh = 0.60,
     scale_colour_manual(values = line_cols) +
     scale_x_reverse(expand = c(0, 0)) +
     scale_y_continuous(limits = c(0, 1)) +
-    geom_hline(yintercept = thresh, colour = "black", linetype = "solid") +
+    geom_hline(yintercept = thresh, alpha = 0.75,
+               colour = "black", linetype = "dashed") +
     guides(colour = guide_legend(title = "Feature", ncol = legend_cols)) +
-    labs(x = "lambda / max(lambda)",
+    labs(x = "\u03BB / max(\u03BB)",
          y = "Selection Probability",
          title = main) +
     theme(legend.position = "right")

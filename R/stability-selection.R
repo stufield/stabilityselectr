@@ -70,7 +70,7 @@
 #'   be centered and scaled. Passed to [glmnet()].
 #'
 #' @param lambda_min_ratio The minimum value of
-#'   lambda/max(lambda) to use during
+#'   \eqn{\lambda / max(\lambda)} to use during
 #'   the selection procedure. See [glmnet()].
 #'
 #' @param n_perm `integer(1)`. The number of permutations

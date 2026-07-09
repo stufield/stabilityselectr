@@ -128,15 +128,15 @@
 # `stab_sel` S3 print method returns expected known output
 
     == Stability Selection (Kernel: binomial) ======================================
-    * Weakness (alpha)            0.8
-    * Weakness Probability (Pw)   0.5
-    * Number of Iterations        100
-    * Standardized                'Yes'
-    * Imputed Outliers            'No'
-    * Lambda Max                  0.1471
-    * Lambda Min Ratio            0.1
-    * Permuted Data               'No'
-    * Random Seed                 101
+    * weakness (α)                0.8
+    * P(α) -> (Pw)                0.5
+    * iter                        100
+    * standardized                TRUE
+    * imputed outliers            FALSE
+    * max λ                       0.1471
+    * min ratio (λ)               0.1
+    * permuted data               FALSE
+    * random Seed                 101
     ================================================================================
 
 # `stability_selection()` generates expected values for the Cox kernel
