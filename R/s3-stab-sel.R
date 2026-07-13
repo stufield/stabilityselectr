@@ -194,8 +194,9 @@ plot.stab_sel <- function(x, thresh = 0.60,
   lambda_norm <- x$lambda / max(x$lambda)
 
   if ( is.null(main) ) {
-    main <- sprintf("Stability Paths (\u03B1 = %0.2f, P(\u03B1) = %0.2f)",
-                    x$alpha, x$Pw)
+    main <- bquote(
+      "Stability Paths (" * alpha == .(x$alpha) *
+        "," ~ italic(P)(alpha) == .(x$Pw) * ")")
   }
 
   custom_features <- intersect(custom_labels, rownames(x$stabpath_matrix))
@@ -263,7 +264,7 @@ plot.stab_sel <- function(x, thresh = 0.60,
     geom_hline(yintercept = thresh, alpha = 0.75,
                colour = "black", linetype = "dashed") +
     guides(colour = guide_legend(title = "Feature", ncol = legend_cols)) +
-    labs(x = "\u03BB / max(\u03BB)",
+    labs(x = bquote(lambda ~ "/" ~ max()(lambda)),
          y = "Selection Probability",
          title = main) +
     theme(legend.position = "right")
