@@ -27,25 +27,26 @@ features were found at the specified threshold OR if the
 FDR upper bound is undefined at thresholds \verb{<= 0.5}?}
 }
 \value{
-A two column data frame containing maximum selection
-probabilities and FDR upper bounds when appropriate, see \code{Details}.
+A 2-3 column tibble containing maximum selection
+probabilities, AUC, and FDR upper bounds (when appropriate),
+see \code{Details}.
 }
 \description{
-Returns a data frame object of all features with a maximum
+Returns a tibble of all features with a maximum
 selection probability greater than a minimum threshold.
 }
 \details{
 A "stable feature" is defined as a feature with a maximum selection
-probability greater than a supplied threshold. This function returns a
-\code{data.frame} of all features that satisfy this criterion along with the
-maximum selection probability and the upper bound on the false discover
-rate. This false discovery rate bound is only defined for \code{thresh > 0.5},
+probability greater than a supplied threshold. Features that satisfy
+this criterion are returned along with the maximum selection probability
+and the upper bound on the false discovery rate.
+This false discovery rate bound is only defined for \code{thresh > 0.5},
 it is otherwise undefined.
 
 \emph{IMPORTANT!} If you pass to the \code{matrix} method, there
 is no permutation analysis performed, i.e. no \verb{$EmpFDR} column
-in the returned data frame. This calculation takes a long
-time and is not always desired, so this method offers the
+in the returned tibble. This calculation is time consuming
+and is not always desired. This method offers the
 user a control mechanism for the output behavior.
 }
 \examples{

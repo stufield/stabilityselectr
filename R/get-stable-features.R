@@ -1,19 +1,19 @@
 #' Calculate Stable Features
 #'
-#' Returns a data frame object of all features with a maximum
+#' Returns a tibble of all features with a maximum
 #'   selection probability greater than a minimum threshold.
 #'
 #' A "stable feature" is defined as a feature with a maximum selection
-#'   probability greater than a supplied threshold. This function returns a
-#'   `data.frame` of all features that satisfy this criterion along with the
-#'   maximum selection probability and the upper bound on the false discover
-#'   rate. This false discovery rate bound is only defined for `thresh > 0.5`,
+#'   probability greater than a supplied threshold. Features that satisfy
+#'   this criterion are returned along with the maximum selection probability
+#'   and the upper bound on the false discovery rate.
+#'   This false discovery rate bound is only defined for `thresh > 0.5`,
 #'   it is otherwise undefined.
 #'
 #' *IMPORTANT!* If you pass to the `matrix` method, there
 #'   is no permutation analysis performed, i.e. no `$EmpFDR` column
-#'   in the returned data frame. This calculation takes a long
-#'   time and is not always desired, so this method offers the
+#'   in the returned tibble. This calculation is time consuming
+#'   and is not always desired. This method offers the
 #'   user a control mechanism for the output behavior.
 #'
 #' @param x An `stab_sel` class object OR a matrix containing
@@ -35,8 +35,9 @@
 #'   features were found at the specified threshold OR if the
 #'   FDR upper bound is undefined at thresholds `<= 0.5`?
 #'
-#' @return A two column data frame containing maximum selection
-#'   probabilities and FDR upper bounds when appropriate, see `Details`.
+#' @return A 2-3 column tibble containing maximum selection
+#'   probabilities, AUC, and FDR upper bounds (when appropriate),
+#'   see `Details`.
 #'
 #' @seealso [stability_selection()]
 #' @author Stu Field
@@ -133,23 +134,19 @@ get_stable_features.matrix <- function(x, thresh = 0.75,
 
     if ( nrow(df) == 0L ) {
       if ( warn ) {
-        warning("No stable features at `thresh = ",
-                value(round(pi, 3L)), "`",
-                call. = FALSE)
+        warning(
+          "No stable features at `thresh = ", value(round(pi, 3L)), "`",
+          call. = FALSE)
       }
-      df <- dplyr::mutate(df, FDRbound = numeric(0))
+      df$FDR_bound <- numeric(0)
     } else if ( pi <= 0.5 ) {
       if ( warn ) {
         warning("FDR upper bound not defined for `thresh <= 0.5`",
                 call. = FALSE)
       }
-      df <- dplyr::mutate(df, FDRbound = NA_real_)
+      df$FDR_bound <- NA_real_
     } else {
-      n_feat <- nrow(x)
-      df <- df |>
-        dplyr::mutate(
-          FDRbound = row_number() / n_feat^2 / (2 * pi - 1)
-        )
+      df$FDR_bound <- seq_len(nrow(df)) / nrow(x)^2 / (2 * pi - 1)
     }
     as_tibble(df)
   }

@@ -8,7 +8,7 @@ test_that("`get_stable_features()` without permutation check shape & dims", {
   s_feat <- get_stable_features(ss, 0.55)$thresh_0.55
   expect_s3_class(s_feat, "tbl_df")
   expect_equal(dim(s_feat), c(n_feat, 3L))       # all feats included
-  expect_named(s_feat, c("feature", "MaxSelectProb", "FDRbound"))
+  expect_named(s_feat, c("feature", "MaxSelectProb", "FDR_bound"))
   expect_setequal(s_feat$feature, colnames(x))
 })
 
@@ -34,8 +34,8 @@ test_that("`get_stable_features()` returns correct values at thresh = 0.55", {
 
   expect_true(all(s_feat$MaxSelectProb <= 1L))
   expect_true(all(s_feat$MaxSelectProb >= 0L))
-  expect_true(all(s_feat$FDRbound <= 1L))
-  expect_true(all(s_feat$FDRbound >= 0L))
+  expect_true(all(s_feat$FDR_bound <= 1L))
+  expect_true(all(s_feat$FDR_bound >= 0L))
   expect_setequal(colnames(x), s_feat$feature)
 })
 
@@ -56,8 +56,8 @@ test_that("`get_stable_features` returns correct values at thresh = 0.90", {
   )
   expect_true(all(s_feat$MaxSelectProb <= 1L))
   expect_true(all(s_feat$MaxSelectProb >= 0L))
-  expect_true(all(s_feat$FDRbound <= 1L))
-  expect_true(all(s_feat$FDRbound >= 0L))
+  expect_true(all(s_feat$FDR_bound <= 1L))
+  expect_true(all(s_feat$FDR_bound >= 0L))
   expect_false(all(colnames(x) %in% s_feat$feature))
   expect_true(all(s_feat$feature %in% colnames(x)))
 })
@@ -93,7 +93,7 @@ test_that("`get_stable_features()` returns empty data frame when thresh too high
     "No stable features at `thresh = 0.99`"
   )
   expect_equal(dim(s_feat), c(0, 3))
-  expect_named(s_feat, c("feature", "MaxSelectProb", "FDRbound"))
+  expect_named(s_feat, c("feature", "MaxSelectProb", "FDR_bound"))
 })
 
 # with permutation ----

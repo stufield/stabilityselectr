@@ -89,28 +89,28 @@
       FDR upper bound not defined for `thresh <= 0.5`
     Output
       # A tibble: 20 x 4
-         feature MaxSelectProb      AUC FDRbound
-         <chr>           <dbl>    <dbl>    <dbl>
-       1 feat_t          0.93  0.436532       NA
-       2 feat_d          0.91  0.408626       NA
-       3 feat_q          0.905 0.256633       NA
-       4 feat_a          0.9   0.286384       NA
-       5 feat_g          0.895 0.222145       NA
-       6 feat_j          0.89  0.440141       NA
-       7 feat_s          0.89  0.291720       NA
-       8 feat_r          0.885 0.342005       NA
-       9 feat_m          0.88  0.533218       NA
-      10 feat_n          0.87  0.220431       NA
-      11 feat_b          0.865 0.245937       NA
-      12 feat_e          0.865 0.253644       NA
-      13 feat_c          0.85  0.287507       NA
-      14 feat_f          0.85  0.224109       NA
-      15 feat_h          0.845 0.243903       NA
-      16 feat_l          0.845 0.221616       NA
-      17 feat_o          0.825 0.198936       NA
-      18 feat_p          0.815 0.186961       NA
-      19 feat_k          0.81  0.216318       NA
-      20 feat_i          0.8   0.235128       NA
+         feature MaxSelectProb      AUC FDR_bound
+         <chr>           <dbl>    <dbl>     <dbl>
+       1 feat_t          0.93  0.436532        NA
+       2 feat_d          0.91  0.408626        NA
+       3 feat_q          0.905 0.256633        NA
+       4 feat_a          0.9   0.286384        NA
+       5 feat_g          0.895 0.222145        NA
+       6 feat_j          0.89  0.440141        NA
+       7 feat_s          0.89  0.291720        NA
+       8 feat_r          0.885 0.342005        NA
+       9 feat_m          0.88  0.533218        NA
+      10 feat_n          0.87  0.220431        NA
+      11 feat_b          0.865 0.245937        NA
+      12 feat_e          0.865 0.253644        NA
+      13 feat_c          0.85  0.287507        NA
+      14 feat_f          0.85  0.224109        NA
+      15 feat_h          0.845 0.243903        NA
+      16 feat_l          0.845 0.221616        NA
+      17 feat_o          0.825 0.198936        NA
+      18 feat_p          0.815 0.186961        NA
+      19 feat_k          0.81  0.216318        NA
+      20 feat_i          0.8   0.235128        NA
 
 ---
 
@@ -118,12 +118,12 @@
       summary(ss, thresh = 0.9)
     Output
       # A tibble: 4 x 4
-        feature MaxSelectProb      AUC FDRbound
-        <chr>           <dbl>    <dbl>    <dbl>
-      1 feat_t          0.93  0.436532 0.003125
-      2 feat_d          0.91  0.408626 0.00625 
-      3 feat_q          0.905 0.256633 0.009375
-      4 feat_a          0.9   0.286384 0.0125  
+        feature MaxSelectProb      AUC FDR_bound
+        <chr>           <dbl>    <dbl>     <dbl>
+      1 feat_t          0.93  0.436532  0.003125
+      2 feat_d          0.91  0.408626  0.00625 
+      3 feat_q          0.905 0.256633  0.009375
+      4 feat_a          0.9   0.286384  0.0125  
 
 # `stab_sel` S3 print method returns expected known output
 
