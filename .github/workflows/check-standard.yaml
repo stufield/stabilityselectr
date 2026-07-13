@@ -70,6 +70,9 @@ jobs:
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
+        env:
+          LC_ALL: en_US.UTF-8
+          LANG: en_US.UTF-8
         with:
           args: 'c("--no-manual", "--as-cran", "--no-build-vignettes", "--timings")'
           build_args: 'c("--no-manual", "--no-resave-data")'
