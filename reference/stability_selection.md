@@ -135,8 +135,8 @@ plot(
 
 - lambda_min_ratio:
 
-  The minimum value of lambda/max(lambda) to use during the selection
-  procedure. See
+  The minimum value of \\\lambda / max(\lambda)\\ to use during the
+  selection procedure. See
   [`glmnet::glmnet()`](https://glmnet.stanford.edu/reference/glmnet.html).
 
 - beta_threshold:
@@ -305,38 +305,43 @@ The S3 print method returns:
 
   The kernel used in the stability selection algorithm.
 
-- Weakness:
+- weakness:
 
-  The weakness used (`alpha` argument).
+  the weakness used (\\\alpha\\).
 
-- Weakness Probability:
+- P(alpha):
 
-  The probability of the weakness being applied (`Pw =` argument).
+  the probability of the \\\alpha\\ being applied (`Pw =` argument).
 
-- Number of Iterations:
+- iter:
 
-  Number of iterations in the selection (`n_iter =` argument).
+  number of iterations in the stability selection algorithm.
 
-- Standardized:
+- standardized:
 
-  Was the data standardized prior to stability selection?
+  was the data pre-standardized?
 
-- Imputed Outliers:
+- imputed outliers:
 
-  Were statistical outliers imputed to the Gaussian approximation prior
-  to stability selection?
+  were statistical outliers imputed via Gaussian approximation prior to
+  stability selection?
 
-- Lambda Max:
+- max lambda:
 
-  The maximum lambda (tuning parameter) used.
+  the maximum \\\lambda\\ (tuning parameter) used.
 
-- Lambda Max:
+- min ratio:
 
-  The maximum lambda (tuning parameter) used.
+  the minimum ratio used: \\\lambda/max(\lambda)\\.
 
-- Random Seed:
+- permuted data:
 
-  The seed passed to the random number generator for subset selection.
+  was permuted (null) data generated during stability selection?.
+
+- random seed:
+
+  the seed passed to the random number generator during stability
+  selection.
 
 A `ggplot`.
 
@@ -406,7 +411,7 @@ colnames(x) <- replicate(n_feat, paste0("f_", fn()))
 y           <- sample(1:2, n_samp, replace = TRUE)
 stab_sel    <- stability_selection(x, y)
 #> ✓ Using kernel: 'binomial' and 1 core (serial)
-#> ✓ Stablity path run time: 2.592s
+#> ✓ Stablity path run time: 2.92s
 
 # Cox
 xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
@@ -418,7 +423,7 @@ xcox <- feature_matrix(stabilityselectr:::log_rfu(simdata))
 ycox <- data.matrix(select(simdata, time, status))
 stab_sel_cox <- stability_selection(xcox, ycox, kernel = "cox", r_seed = 3)
 #> ✓ Using kernel: 'cox' and 1 core (serial)
-#> ✓ Stablity path run time: 0.569s
+#> ✓ Stablity path run time: 1.068s
 # Test for class `stab_sel`
 is_stab_sel(stab_sel)
 #> [1] TRUE
@@ -426,61 +431,61 @@ is_stab_sel(stab_sel)
 # S3 print method
 stab_sel
 #> ══ Stability Selection (Kernel: binomial) ═════════
-#> • Weakness (alpha)            0.5
-#> • Weakness Probability (Pw)   0.2
-#> • Number of Iterations        100
-#> • Standardized                'Yes'
-#> • Imputed Outliers            'No'
-#> • Lambda Max                  0.0418
-#> • Lambda Min Ratio            0.1
-#> • Permuted Data               'No'
-#> • Random Seed                 1234
+#> • weakness (α)                0.5
+#> • P(α) -> (Pw)                0.2
+#> • iter                        100
+#> • standardized                TRUE
+#> • imputed outliers            FALSE
+#> • max λ                       0.0418
+#> • min ratio (λ)               0.1
+#> • permuted data               FALSE
+#> • random Seed                 1234
 #> ═══════════════════════════════════════════════════════════════════════
 
 # S3 summary method
 summary(stab_sel, thresh = 0.6)
 #> # A tibble: 20 × 4
-#>    feature MaxSelectProb   AUC FDRbound
-#>    <chr>           <dbl> <dbl>    <dbl>
-#>  1 f_xfwc          1     0.585   0.0125
-#>  2 f_vemo          0.93  0.297   0.025 
-#>  3 f_jpmk          0.9   0.259   0.0375
-#>  4 f_mvky          0.89  0.264   0.05  
-#>  5 f_qkhp          0.885 0.226   0.0625
-#>  6 f_iefg          0.865 0.232   0.075 
-#>  7 f_wyng          0.86  0.218   0.0875
-#>  8 f_ytqs          0.83  0.203   0.1   
-#>  9 f_jdip          0.83  0.207   0.113 
-#> 10 f_dlxf          0.82  0.161   0.125 
-#> 11 f_joxm          0.805 0.173   0.138 
-#> 12 f_uzmr          0.805 0.153   0.15  
-#> 13 f_pyab          0.8   0.117   0.163 
-#> 14 f_jxrn          0.8   0.122   0.175 
-#> 15 f_efpn          0.795 0.160   0.188 
-#> 16 f_nwov          0.78  0.126   0.2   
-#> 17 f_xdiy          0.765 0.186   0.213 
-#> 18 f_gsac          0.755 0.134   0.225 
-#> 19 f_fbxn          0.755 0.138   0.238 
-#> 20 f_lgtk          0.735 0.122   0.25  
+#>    feature MaxSelectProb   AUC FDR_bound
+#>    <chr>           <dbl> <dbl>     <dbl>
+#>  1 f_xfwc          1     0.585    0.0125
+#>  2 f_vemo          0.93  0.297    0.025 
+#>  3 f_jpmk          0.9   0.259    0.0375
+#>  4 f_mvky          0.89  0.264    0.05  
+#>  5 f_qkhp          0.885 0.226    0.0625
+#>  6 f_iefg          0.865 0.232    0.075 
+#>  7 f_wyng          0.86  0.218    0.0875
+#>  8 f_ytqs          0.83  0.203    0.1   
+#>  9 f_jdip          0.83  0.207    0.113 
+#> 10 f_dlxf          0.82  0.161    0.125 
+#> 11 f_joxm          0.805 0.173    0.138 
+#> 12 f_uzmr          0.805 0.153    0.15  
+#> 13 f_pyab          0.8   0.117    0.163 
+#> 14 f_jxrn          0.8   0.122    0.175 
+#> 15 f_efpn          0.795 0.160    0.188 
+#> 16 f_nwov          0.78  0.126    0.2   
+#> 17 f_xdiy          0.765 0.186    0.213 
+#> 18 f_gsac          0.755 0.134    0.225 
+#> 19 f_fbxn          0.755 0.138    0.238 
+#> 20 f_lgtk          0.735 0.122    0.25  
 
 summary(stab_sel, thresh = 0.8, add_features = "feat_c")   # force feat_c into table
 #> # A tibble: 14 × 4
-#>    feature MaxSelectProb   AUC FDRbound
-#>    <chr>           <dbl> <dbl>    <dbl>
-#>  1 f_xfwc          1     0.585  0.00417
-#>  2 f_vemo          0.93  0.297  0.00833
-#>  3 f_jpmk          0.9   0.259  0.0125 
-#>  4 f_mvky          0.89  0.264  0.0167 
-#>  5 f_qkhp          0.885 0.226  0.0208 
-#>  6 f_iefg          0.865 0.232  0.025  
-#>  7 f_wyng          0.86  0.218  0.0292 
-#>  8 f_ytqs          0.83  0.203  0.0333 
-#>  9 f_jdip          0.83  0.207  0.0375 
-#> 10 f_dlxf          0.82  0.161  0.0417 
-#> 11 f_joxm          0.805 0.173  0.0458 
-#> 12 f_uzmr          0.805 0.153  0.05   
-#> 13 f_pyab          0.8   0.117  0.0542 
-#> 14 f_jxrn          0.8   0.122  0.0583 
+#>    feature MaxSelectProb   AUC FDR_bound
+#>    <chr>           <dbl> <dbl>     <dbl>
+#>  1 f_xfwc          1     0.585   0.00417
+#>  2 f_vemo          0.93  0.297   0.00833
+#>  3 f_jpmk          0.9   0.259   0.0125 
+#>  4 f_mvky          0.89  0.264   0.0167 
+#>  5 f_qkhp          0.885 0.226   0.0208 
+#>  6 f_iefg          0.865 0.232   0.025  
+#>  7 f_wyng          0.86  0.218   0.0292 
+#>  8 f_ytqs          0.83  0.203   0.0333 
+#>  9 f_jdip          0.83  0.207   0.0375 
+#> 10 f_dlxf          0.82  0.161   0.0417 
+#> 11 f_joxm          0.805 0.173   0.0458 
+#> 12 f_uzmr          0.805 0.153   0.05   
+#> 13 f_pyab          0.8   0.117   0.0542 
+#> 14 f_jxrn          0.8   0.122   0.0583 
 
 # S3 plot method
 plot(stab_sel, thresh = 0.8)

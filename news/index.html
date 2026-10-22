@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">stabilityselectr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,9 +37,36 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="stabilityselectr-development-version">stabilityselectr (development version)<a class="anchor" aria-label="anchor" href="#stabilityselectr-development-version"></a></h2>
-<ul><li>
-</li></ul></div>
+<h2 class="pkg-version" data-toc-text="0.2.0" id="stabilityselectr-020">stabilityselectr 0.2.0<a class="anchor" aria-label="anchor" href="#stabilityselectr-020"></a></h2>
+<ul><li>Bug fixes
+<ul><li>fixed trapezoidal AUC calculation in the S3 <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> method; previous AUCs were incorrect (also affected the plot routine)</li>
+<li>fixed integer x and y axes in <code><a href="../reference/calc_emp_fdr.html">plot_emp_fdr()</a></code>
+</li>
+<li>fixed unicode symbols in the S3 plot method via <code><a href="https://rdrr.io/r/base/bquote.html" class="external-link">bquote()</a></code>; previously failed during R CMD check</li>
+</ul></li>
+<li>Reproducibility
+<ul><li>reworked seed handling for multi-core runs</li>
+<li>
+<code><a href="../reference/stability_selection.html">stability_selection()</a></code> now sets the seed within <code>mclapply()</code>, as in <code><a href="../reference/stability_cluster.html">stability_cluster()</a></code> and <code><a href="../reference/progeny_cluster.html">progeny_cluster()</a></code>; parallel and serial results now match</li>
+<li>unit tests updated for the new seed behavior</li>
+</ul></li>
+<li>Changes
+<ul><li>modified default <code>alpha</code> and <code>Pw</code> in <code><a href="../reference/stability_selection.html">stability_selection()</a></code> to match the docs</li>
+<li>simplified <code>FDRbound</code> calculation in <code><a href="../reference/get_stable_features.html">get_stable_features()</a></code>
+</li>
+<li>removed the scales dependency from the plot routine</li>
+<li>cleaned up <code><a href="../reference/calc_emp_fdr.html">plot_emp_fdr()</a></code>; fixed ggplot <code>linewidth</code> warning</li>
+<li>cleaned up internal permutation checks</li>
+</ul></li>
+<li>Docs
+<ul><li>cleaned up examples, references, vignettes, and spelling; re-rendered README</li>
+</ul></li>
+<li>CI
+<ul><li>bumped GHA <code>actions/checkout</code> v3 -&gt; v7</li>
+<li>corrected GHA runner to <code>macos-latest</code>
+</li>
+</ul></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.0" id="stabilityselectr-010">stabilityselectr 0.1.0<a class="anchor" aria-label="anchor" href="#stabilityselectr-010"></a></h2>
 <ul><li>Development …
@@ -74,7 +101,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
   </div></footer></body></html>
